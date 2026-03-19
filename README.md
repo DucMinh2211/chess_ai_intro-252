@@ -35,12 +35,8 @@ A modern Chess game implementation in Python featuring multiple AI algorithms, i
    pip install -r requirements.txt
    ```
    and (if not install setup-tools yet)
-   ```
-   pip install -r requirements.txt && pip install setuptools
-   ```
-   ```
-   ```
-   ```
+   ```bash
+   pip install setuptools
    ```
 
 ## 🎮 How to Run
