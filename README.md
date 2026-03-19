@@ -25,7 +25,7 @@ A modern Chess game implementation in Python featuring multiple AI algorithms, i
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/chess-ai-intro-252.git
+   git clone https://github.com/DucMinh2211/chess-ai-intro-252.git
    cd chess-ai-intro-252
    ```
 
@@ -33,6 +33,14 @@ A modern Chess game implementation in Python featuring multiple AI algorithms, i
    It is recommended to use a virtual environment.
    ```bash
    pip install -r requirements.txt
+   ```
+   and (if not install setup-tools yet)
+   ```
+   pip install -r requirements.txt && pip install setuptools
+   ```
+   ```
+   ```
+   ```
    ```
 
 ## 🎮 How to Run

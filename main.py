@@ -78,6 +78,8 @@ def get_game_status(fen):
     return {'game_over': False, 'result': ''}
 
 if __name__ == "__main__":
+    print("Chess AI starting...")
+    print("If no browser window opens automatically, please visit: http://localhost:8000")
     try:
         # Standard launch (tries to find Chrome/Chromium)
         eel.start('index.html', size=(1000, 700), cmdline_flags=['--no-sandbox'])
