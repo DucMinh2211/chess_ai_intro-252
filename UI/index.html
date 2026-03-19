@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Chess Game</title>
+	<link rel="stylesheet" href="style.css">
+	<script type="text/javascript" src="/eel.js"></script>
+</head>
+<body>
+	<div id="container">
+		<div id="result-overlay" style="display:none;">
+			<div id="result-popup">
+				<button id="close-popup" class="close-btn"> × </button>
+				<div id="result-content">
+					<h2 id="result-title"></h2>
+					<p id="result-message"></p>
+				</div>
+				<button id="main-menu-btn">Main Menu</button>
+			</div>
+		</div>
+
+		<div id="board-area">
+			<div id="board-wrapper">
+				<div id="ranks"> </div>
+				<div id="board-and-files">
+					<div id="chessboard"></div>
+					<div id="files"></div>
+				</div>
+			</div>
+		</div>
+
+		<div id="sidebar" style="position: relative;">
+			<div id="sidebar-menu">
+				<button id="btn-offline">Start Game</button>
+			</div>
+
+			<div id="sidebar-offline" style="display:none">
+				<button id="btn-back" class="back-btn" title="Back">&#8592;</button>
+				<div id="bot-list" class="radio-group"></div>
+				<div id="side-picker" style="display:none">
+					<!-- Alpha beta depth -->
+				<div id="depth-picker" style="display:none">
+					<div class="depth-row">
+						<span class="pick-label">Alpha-Beta Depth:</span>
+						<span id="depth-value">1</span>
+					</div>
+					<input type="range" id="depth-range" min="1" max="10" step="1" value="1">
+				</div>
+
+					<div class="pick-label">Side:</div>
+					<div class="radio-group" id="side-list">
+						<label><input type="radio" name="side" value="white">White</label>
+						<label><input type="radio" name="side" value="random">Random</label>
+						<label><input type="radio" name="side" value="black">Black</label>
+					</div>
+				</div>
+				<button id="start-btn" style="display:none; margin-top:24px"> Start </button>
+			</div>
+
+			<!-- History -->
+			<div id="sidebar-game" style="display:none">
+				<div id="game-info">
+					<div id="move-list"></div>
+				</div>
+				<button id="resign-btn">Resign</button>
+			</div>
+		</div>
+	</div>
+
+	<script src="app.js"></script>
+</body>
+</html>
