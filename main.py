@@ -53,7 +53,7 @@ def get_bot_move(fen, bot_type, depth):
         move = alpha_beta_search(board, int(depth))
     elif bot_type == 'mcts':
         # * Fixed iterations for MCTS
-        move = mcts_search(board, iterations=500)
+        move = mcts(board, iterations=500)
     else:
         return None
     
