@@ -7,7 +7,7 @@ import random
 eel.init('UI')
 
 @eel.expose
-def get_legal_moves(fen):
+def get_legal_moves(fen: str):
     board = chess.Board(fen)
     moves_dict = {}
     for move in board.legal_moves:
@@ -19,7 +19,7 @@ def get_legal_moves(fen):
     return moves_dict
 
 @eel.expose
-def apply_move(fen, from_sq, to_sq, promotion=None):
+def apply_move(fen: str, from_sq: str, to_sq: str, promotion=None):
     board = chess.Board(fen)
     move_uci = from_sq + to_sq
     
@@ -42,7 +42,7 @@ def apply_move(fen, from_sq, to_sq, promotion=None):
     return fen
 
 @eel.expose
-def get_bot_move(fen, bot_type, depth):
+def get_bot_move(fen: str, bot_type: str, depth: int):
     board = chess.Board(fen)
     move = None
     
@@ -50,21 +50,22 @@ def get_bot_move(fen, bot_type, depth):
         moves = list(board.legal_moves)
         move = random.choice(moves)
     elif bot_type == 'alphabeta':
-        move = alpha_beta_search(board, int(depth))
+        move = alpha_beta_best_move(board, int(depth))
     elif bot_type == 'mcts':
         # * Fixed iterations for MCTS
         move = mcts(board, iterations=500)
     else:
-        return None
-    
+        raise Exception('Unknown Bot type')
+
+    if not move: raise Exception('Bot could not find a move')
     return {
         'from': chess.square_name(move.from_square),
         'to': chess.square_name(move.to_square),
-        'promotion': chess.piece_name(move.promotion) if move.promotion else None
+        'promotion': chess.piece_symbol(move.promotion) if move.promotion else None
     }
 
 @eel.expose
-def get_game_status(fen):
+def get_game_status(fen: str):
     board = chess.Board(fen)
     
     if board.is_checkmate():
@@ -82,7 +83,7 @@ if __name__ == "__main__":
     print("If no browser window opens automatically, please visit: http://localhost:8000")
     try:
         # Standard launch (tries to find Chrome/Chromium)
-        eel.start('index.html', size=(1000, 700), cmdline_flags=['--no-sandbox'])
+        eel.start('index.html', size=(1000, 700), cmdline_args=['--no-sandbox'])
     except Exception as e:
         print(f"Native browser launch failed ({e}). Falling back to browser mode...")
         # Fallback for WSL/headless: opens in the default system browser (Windows or Linux)
