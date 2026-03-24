@@ -24,6 +24,7 @@ def uct(node):
     explore = C * math.sqrt(math.log(node.parent.visits) / node.visits)
 
     heuristic = evaluate(node.board) * 0.01
+    print("heuristic", heuristic)
 
     return exploit + explore + heuristic
 
