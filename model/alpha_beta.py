@@ -1,5 +1,5 @@
 import chess
-from model.evaluation import evaluate
+from model.evaluation import evaluate, evaluate_move
 
 # Maximum captures to search in quiescence
 QUIESCENCE_DEPTH = 4
@@ -59,23 +59,6 @@ def quiescence(board: chess.Board, alpha: float, beta: float, depth: int):
             alpha = score
     
     return alpha
-
-def evaluate_move(board: chess.Board, move: chess.Move):
-    """
-    Score a move for move ordering (MVV-LVA).
-    """
-    score = 0
-    if board.is_capture(move):
-        victim = board.piece_at(move.to_square)
-        attacker = board.piece_at(move.from_square)
-        if victim and attacker:
-            score = 10 * victim.piece_type - attacker.piece_type
-    
-    # Prioritize promotions
-    if move.promotion:
-        score += 900
-        
-    return score
 
 def negamax(board: chess.Board, depth: int, alpha: float, beta: float):
     """

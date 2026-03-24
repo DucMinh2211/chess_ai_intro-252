@@ -150,3 +150,22 @@ def evaluate(board: chess.Board) -> int:
         score += value if piece.color == chess.WHITE else -value
 
     return score
+
+def evaluate_move(board: chess.Board, move: chess.Move):
+    """
+    Score a move for move ordering (MVV-LVA).
+    Useful for both Alpha-Beta (move ordering) and MCTS (smart rollouts).
+    """
+    score = 0
+    if board.is_capture(move):
+        victim = board.piece_at(move.to_square)
+        attacker = board.piece_at(move.from_square)
+        if victim and attacker:
+            # MVV-LVA: Most Valuable Victim - Least Valuable Attacker
+            score = 10 * victim.piece_type - attacker.piece_type
+    
+    # Prioritize promotions
+    if move.promotion:
+        score += 900
+        
+    return score
