@@ -72,7 +72,7 @@ body {
 .square.light { background-color: var(--square-light); }
 .square.dark { background-color: var(--square-dark); }
 .square.selected { background-color: var(--highlight) !important; }
-.square.last-move { background-color: rgba(255, 255, 0, 0.25) !important; }
+.square.last-move { background-color: #f5f682 !important; }
 
 .piece { width: 85%; height: 85%; pointer-events: none; z-index: 5; position: absolute; }
 

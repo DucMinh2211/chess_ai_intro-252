@@ -29,7 +29,6 @@ def apply_move(fen: str, from_sq: str, to_sq: str, promotion=None):
         from_square = chess.parse_square(from_sq)
         to_square = chess.parse_square(to_sq)
         piece = board.piece_at(from_square)
-        
         if piece and piece.piece_type == chess.PAWN:
             to_rank = chess.square_rank(to_square)
             if to_rank == 7 or to_rank == 0:
@@ -37,9 +36,10 @@ def apply_move(fen: str, from_sq: str, to_sq: str, promotion=None):
     
     move = chess.Move.from_uci(move_uci)
     if move in board.legal_moves:
+        san_move = board.san(move) # Get SAN before pushing
         board.push(move)
-        return board.fen()
-    return fen
+        return {'fen': board.fen(), 'san': san_move}
+    return {'fen': fen, 'san': ''}
 
 @eel.expose
 def get_bot_move(fen: str, bot_type: str, depth: int):
