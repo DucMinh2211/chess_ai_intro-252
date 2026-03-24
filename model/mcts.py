@@ -1,7 +1,7 @@
 import chess
 import math
 import random
-from model.evaluation import evaluate
+from model.evaluation import evaluate, evaluate_move
 
 # ===================== MCTS =====================
 
@@ -46,22 +46,16 @@ def expand(node):
 
 def heuristic_move(board):
     moves = list(board.legal_moves)
+    if not moves: return None
 
-    captures = [m for m in moves if board.is_capture(m)]
-    if captures:
-        return random.choice(captures)
-
-    checks = []
-    for m in moves:
-        board.push(m)
-        if board.is_check():
-            checks.append(m)
-        board.pop()
-
-    if checks:
-        return random.choice(checks)
-
-    return random.choice(moves)
+    # Pick the best move according to evaluate_move (captures/promotions)
+    best_move = max(moves, key=lambda m: evaluate_move(board, m))
+    
+    # If the best move is not a capture/promotion, pick randomly to maintain some exploration
+    if evaluate_move(board, best_move) == 0:
+        return random.choice(moves)
+        
+    return best_move
 
 
 def simulate(board):

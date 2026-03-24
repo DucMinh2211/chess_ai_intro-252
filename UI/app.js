@@ -1,21 +1,8 @@
-const PIECES_SVG = {
-    'P': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NSIgaGVpZ2h0PSI0NSI+PHBhdGggZD0iTTEyIDljMCA0LjQyIDMuNTggOCA4IDhzOC0zLjU4IDgtOC0zLjU4LTgtOC04LTggMy41OC04IDh6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=', // Simplified for brevity in this step, I will use a better library-like approach
-};
-
-// I will use a much better method: using standard wikimedia URLs which are very stable for SVG pieces
 const FEN_TO_FILEPATH = {
-    'P': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
-    'N': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
-    'B': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
-    'R': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
-    'Q': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
-    'K': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg',
-    'p': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
-    'n': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
-    'b': 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
-    'r': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
-    'q': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
-    'k': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg',
+    'P': 'white_pawn.png', 'N': 'white_knight.png', 'B': 'white_bishop.png',
+    'R': 'white_rook.png', 'Q': 'white_queen.png', 'K': 'white_king.png',
+    'p': 'black_pawn.png', 'n': 'black_knight.png', 'b': 'black_bishop.png',
+    'r': 'black_rook.png', 'q': 'black_queen.png', 'k': 'black_king.png',
 };
 
 const BOT_LIST = [
@@ -25,9 +12,9 @@ const BOT_LIST = [
 ];
 
 const SIDE_LIST = [
-    { value: "white", label: "White Pieces", icon: FEN_TO_FILEPATH['K'] },
+    { value: "white", label: "White Pieces", icon: `./assets/chess_img/${FEN_TO_FILEPATH['K']}` },
     { value: "random", label: "Random Side", icon: "./assets/icon/random.png" },
-    { value: "black", label: "Black Pieces", icon: FEN_TO_FILEPATH['k'] }
+    { value: "black", label: "Black Pieces", icon: `./assets/chess_img/${FEN_TO_FILEPATH['k']}` }
 ];
 
 const STARTING_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -84,7 +71,12 @@ function renderBoard(fen) {
             if (char >= '1' && char <= '8') col += parseInt(char);
             else {
                 const sq = document.querySelector(`#chessboard .square[data-square="${String.fromCharCode('a'.charCodeAt(0) + col)}${8 - row}"]`);
-                if (sq) { const img = document.createElement('img'); img.classList.add('piece'); img.src = FEN_TO_FILEPATH[char]; sq.appendChild(img); }
+                if (sq) {
+                    const img = document.createElement('img');
+                    img.classList.add('piece');
+                    img.src = `./assets/chess_img/${FEN_TO_FILEPATH[char]}`;
+                    sq.appendChild(img);
+                }
                 col++;
             }
         }
@@ -135,7 +127,6 @@ async function conductGame(side, botType, depth) {
     renderBoard(currentFen); document.getElementById('sidebar-game').style.display = 'flex';
     clearLastMove();
     
-    // Reset buttons
     document.getElementById('resign-btn').style.display = 'block';
     document.getElementById('game-back-btn').style.display = 'none';
 
@@ -171,7 +162,6 @@ async function conductGame(side, botType, depth) {
                 notifyAIMove(result.san);
             }
 
-            // SFX Logic (using SAN for better accuracy)
             if (result.san.includes('+')) playSound('check');
             else if (result.san.includes('x')) playSound('capture');
             else playSound('move');
