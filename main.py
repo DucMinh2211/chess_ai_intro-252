@@ -42,7 +42,7 @@ def apply_move(fen: str, from_sq: str, to_sq: str, promotion=None):
     return {'fen': fen, 'san': ''}
 
 @eel.expose
-def get_bot_move(fen: str, bot_type: str, depth: int):
+def get_bot_move(fen: str, bot_type: str, params: dict):
     board = chess.Board(fen)
     move = None
     
@@ -50,10 +50,13 @@ def get_bot_move(fen: str, bot_type: str, depth: int):
         moves = list(board.legal_moves)
         move = random.choice(moves)
     elif bot_type == 'alphabeta':
-        move = alpha_beta_best_move(board, int(depth))
+        depth = int(params.get('depth', 3))
+        q_depth = int(params.get('q_depth', 4))
+        move = alpha_beta_best_move(board, depth, q_depth)
     elif bot_type == 'mcts':
-        # * Fixed iterations for MCTS
-        move = mcts(board, iterations=500)
+        iters = int(params.get('iterations', 1000))
+        rollout_depth = int(params.get('rollout_depth', 30))
+        move = mcts(board, iterations=iters, rollout_depth=rollout_depth)
     else:
         raise Exception('Unknown Bot type')
 

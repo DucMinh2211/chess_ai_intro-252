@@ -6,7 +6,6 @@ from model.evaluation import evaluate, evaluate_move
 # ===================== MCTS =====================
 
 C = 1.4
-ROLLOUT_DEPTH = 100
 
 class Node:
     def __init__(self, board, parent=None):
@@ -58,11 +57,11 @@ def heuristic_move(board):
     return best_move
 
 
-def simulate(board):
+def simulate(board, rollout_depth: int):
     depth = 0
 
     while not board.is_game_over():
-        if depth >= ROLLOUT_DEPTH:
+        if depth >= rollout_depth:
             return evaluate(board)
 
         move = heuristic_move(board)
@@ -82,13 +81,13 @@ def backpropagate(node, result):
         node = node.parent
 
 
-def mcts(board, iterations=1000):
+def mcts(board, iterations=1000, rollout_depth=100):
     root = Node(board)
 
     for _ in range(iterations):
         node = select(root)
         node = expand(node)
-        result = simulate(node.board.copy())
+        result = simulate(node.board.copy(), rollout_depth)
         backpropagate(node, result)
 
     if not root.children:

@@ -1,9 +1,6 @@
 import chess
 from model.evaluation import evaluate, evaluate_move
 
-# Maximum captures to search in quiescence
-QUIESCENCE_DEPTH = 4
-
 # Transposition Table to store evaluated positions
 # Key: Zobrist hash (or board FEN), Value: (depth, score, flag)
 # flag: 0 = exact, 1 = alpha (upper bound), 2 = beta (lower bound)
@@ -60,7 +57,7 @@ def quiescence(board: chess.Board, alpha: float, beta: float, depth: int):
     
     return alpha
 
-def negamax(board: chess.Board, depth: int, alpha: float, beta: float):
+def negamax(board: chess.Board, depth: int, alpha: float, beta: float, q_depth: int):
     """
     Negamax implementation of Alpha-Beta Pruning.
     """
@@ -76,7 +73,7 @@ def negamax(board: chess.Board, depth: int, alpha: float, beta: float):
         return score if board.turn == chess.WHITE else -score
     
     if depth == 0:
-        return quiescence(board, alpha, beta, QUIESCENCE_DEPTH)
+        return quiescence(board, alpha, beta, q_depth)
 
     best_value = -float('inf')
     moves = list(board.legal_moves)
@@ -85,7 +82,7 @@ def negamax(board: chess.Board, depth: int, alpha: float, beta: float):
 
     for move in moves:
         board.push(move)
-        value = -negamax(board, depth - 1, -beta, -alpha)
+        value = -negamax(board, depth - 1, -beta, -alpha, q_depth)
         board.pop()
         
         best_value = max(best_value, value)
@@ -105,14 +102,10 @@ def negamax(board: chess.Board, depth: int, alpha: float, beta: float):
     
     return best_value
 
-def alpha_beta_best_move(board: chess.Board, depth: int):
+def alpha_beta_best_move(board: chess.Board, depth: int, q_depth: int = 4):
     """
     Entry point for bot move selection using Negamax.
     """
-    # Clear TT for a new search to avoid stale data if memory is an issue, 
-    # but keeping it across turns is usually better.
-    # transposition_table.clear() 
-
     best_move = None
     best_value = -float('inf')
     
@@ -124,8 +117,7 @@ def alpha_beta_best_move(board: chess.Board, depth: int):
     
     for move in moves:
         board.push(move)
-        # Negamax: value is relative to the side that just moved
-        value = -negamax(board, depth - 1, -beta, -alpha)
+        value = -negamax(board, depth - 1, -beta, -alpha, q_depth)
         board.pop()
 
         if value > best_value:

@@ -120,7 +120,7 @@ function highlightLastMove(from, to) {
     document.querySelector(`#chessboard .square[data-square="${to}"]`)?.classList.add('last-move');
 }
 
-async function conductGame(side, botType, depth) {
+async function conductGame(side, botType, params) {
     const flipped = side === 'black';
     createBoard(flipped); createCoordinates(flipped);
     let currentFen = STARTING_FEN, turn = (side === "white") ? "player" : "bot", history = [];
@@ -155,7 +155,7 @@ async function conductGame(side, botType, depth) {
                 turn = 'bot';
             } else {
                 await new Promise(r => setTimeout(r, 600));
-                move = await eel.get_bot_move(currentFen, botType, depth)();
+                move = await eel.get_bot_move(currentFen, botType, params)();
                 if (!move) break;
                 result = await eel.apply_move(currentFen, move.from, move.to, move.promotion)();
                 turn = 'player';
@@ -204,15 +204,35 @@ function renderChoices(targetId, list, name, onSelect) {
 
 window.addEventListener('DOMContentLoaded', () => {
     requestNotificationPermission();
-    document.getElementById('btn-offline').onclick = () => { document.getElementById('sidebar-menu').style.display = 'none'; document.getElementById('sidebar-offline').style.display = 'flex'; renderChoices('bot-list', BOT_LIST, 'bot', (v) => { document.getElementById('depth-picker').style.display = v === 'alphabeta' ? '' : 'none'; document.getElementById('side-picker').style.display = ''; renderChoices('side-list', SIDE_LIST, 'side', () => document.getElementById('start-btn').style.display = ''); }); };
+    
+    document.getElementById('btn-offline').onclick = () => { 
+        document.getElementById('sidebar-menu').style.display = 'none'; 
+        document.getElementById('sidebar-offline').style.display = 'flex'; 
+        renderChoices('bot-list', BOT_LIST, 'bot', (v) => { 
+            document.getElementById('alphabeta-settings').style.display = v === 'alphabeta' ? '' : 'none'; 
+            document.getElementById('mcts-settings').style.display = v === 'mcts' ? '' : 'none'; 
+            document.getElementById('side-picker').style.display = ''; 
+            renderChoices('side-list', SIDE_LIST, 'side', () => document.getElementById('start-btn').style.display = ''); 
+        }); 
+    };
+
     document.getElementById('start-btn').onclick = () => { 
         const bot = document.querySelector('#bot-list .selected input')?.value;
         const selectedSide = document.querySelector('#side-list .selected input')?.value;
         const actualSide = getPlayerSide(selectedSide);
-        const depth = parseInt(document.getElementById('depth-range').value);
+        
+        const params = {
+            bot: bot,
+            depth: parseInt(document.getElementById('depth-range').value),
+            q_depth: parseInt(document.getElementById('q-depth-range').value),
+            iterations: parseInt(document.getElementById('iter-range').value),
+            rollout_depth: parseInt(document.getElementById('rollout-range').value)
+        };
+
         document.getElementById('sidebar-offline').style.display = 'none';
-        conductGame(actualSide, bot, depth).then(data => showPopup(data.result, actualSide));
+        conductGame(actualSide, bot, params).then(data => showPopup(data.result, actualSide));
     };
+
     document.getElementById('btn-back').onclick = () => { document.getElementById('sidebar-offline').style.display = 'none'; document.getElementById('sidebar-menu').style.display = 'flex'; };
     const toMenu = () => { 
         document.getElementById('result-overlay').style.display = 'none'; 
@@ -224,6 +244,18 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('main-menu-btn').onclick = toMenu;
     document.getElementById('game-back-btn').onclick = toMenu;
     document.getElementById('close-popup').onclick = () => document.getElementById('result-overlay').style.display = 'none';
-    document.getElementById('depth-range').oninput = function() { document.getElementById('depth-value').textContent = this.value; };
+    
+    // Update Slider Labels
+    const sliders = [
+        { id: 'depth-range', val: 'depth-value' },
+        { id: 'q-depth-range', val: 'q-depth-value' },
+        { id: 'iter-range', val: 'iter-value' },
+        { id: 'rollout-range', val: 'rollout-value' }
+    ];
+    sliders.forEach(s => {
+        const el = document.getElementById(s.id);
+        if (el) el.oninput = function() { document.getElementById(s.val).textContent = this.value; };
+    });
+
     createBoard(); renderBoard(STARTING_FEN);
 });
