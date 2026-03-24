@@ -1,72 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>Chess Game</title>
-	<link rel="stylesheet" href="style.css">
-	<script type="text/javascript" src="/eel.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess AI Intro</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-	<div id="container">
-		<div id="result-overlay" style="display:none;">
-			<div id="result-popup">
-				<button id="close-popup" class="close-btn"> × </button>
-				<div id="result-content">
-					<h2 id="result-title"></h2>
-					<p id="result-message"></p>
-				</div>
-				<button id="main-menu-btn">Main Menu</button>
-			</div>
-		</div>
+    <div id="app-container">
+        <!-- LEFT: Chess Board -->
+        <div id="board-wrapper">
+            <div id="chessboard-container">
+                <div id="ranks"></div>
+                <div id="board-main">
+                    <div id="chessboard"></div>
+                    <div id="files"></div>
+                </div>
+            </div>
+        </div>
 
-		<div id="board-area">
-			<div id="board-wrapper">
-				<div id="ranks"> </div>
-				<div id="board-and-files">
-					<div id="chessboard"></div>
-					<div id="files"></div>
-				</div>
-			</div>
-		</div>
+        <!-- RIGHT: Control Panels -->
+        <!-- Main Menu Sidebar -->
+        <div id="sidebar-menu" class="sidebar">
+            <h2>Chess AI Intro</h2>
+            <div class="choice-list">
+                <button id="btn-offline" class="btn btn-primary">Start Game</button>
+            </div>
+            <p style="text-align: center; color: var(--text-muted); margin-top: 20px; font-size: 14px;">
+                Explore AI algorithms in Chess
+            </p>
+        </div>
 
-		<div id="sidebar" style="position: relative;">
-			<div id="sidebar-menu">
-				<button id="btn-offline">Start Game</button>
-			</div>
+        <!-- Setup Sidebar -->
+        <div id="sidebar-offline" class="sidebar" style="display: none;">
+            <h2>AI Settings</h2>
+            
+            <div id="bot-picker">
+                <p style="margin-bottom:10px; color:var(--text-muted);">Choose AI Engine</p>
+                <div id="bot-list" class="choice-list"></div>
+            </div>
 
-			<div id="sidebar-offline" style="display:none">
-				<button id="btn-back" class="back-btn" title="Back">&#8592;</button>
-				<div id="bot-list" class="radio-group"></div>
-				<div id="side-picker" style="display:none">
-					<!-- Alpha beta depth -->
-				<div id="depth-picker" style="display:none">
-					<div class="depth-row">
-						<span class="pick-label">Alpha-Beta Depth:</span>
-						<span id="depth-value">1</span>
-					</div>
-					<input type="range" id="depth-range" min="1" max="10" step="1" value="1">
-				</div>
+            <div id="depth-picker" style="display: none;">
+                <p style="margin:15px 0 10px; color:var(--text-muted);">Search Depth: <span id="depth-value">3</span></p>
+                <input type="range" id="depth-range" min="1" max="10" value="3" style="width:100%; accent-color:var(--accent);">
+            </div>
 
-					<div class="pick-label">Side:</div>
-					<div class="radio-group" id="side-list">
-						<label><input type="radio" name="side" value="white">White</label>
-						<label><input type="radio" name="side" value="random">Random</label>
-						<label><input type="radio" name="side" value="black">Black</label>
-					</div>
-				</div>
-				<button id="start-btn" style="display:none; margin-top:24px"> Start </button>
-			</div>
+            <div id="side-picker" style="display: none;">
+                <p style="margin:15px 0 10px; color:var(--text-muted);">Play As</p>
+                <div id="side-list" class="choice-list"></div>
+            </div>
 
-			<!-- History -->
-			<div id="sidebar-game" style="display:none">
-				<div id="game-info">
-					<div id="move-list"></div>
-				</div>
-				<button id="resign-btn">Resign</button>
-			</div>
-		</div>
-	</div>
+            <div style="margin-top:auto; display:flex; gap:10px;">
+                <button id="btn-back" class="btn" style="flex:1; background:#3c3934; color:white;">Back</button>
+                <button id="start-btn" class="btn btn-primary" style="flex:2; display:none;">Battle!</button>
+            </div>
+        </div>
 
-	<script src="app.js"></script>
+        <!-- In-Game Sidebar -->
+        <div id="sidebar-game" class="sidebar" style="display: none;">
+            <h2>Live Match</h2>
+            <div id="move-history">
+                <div id="move-list"></div>
+            </div>
+            <button id="resign-btn" class="btn" style="background:#fa412d; color:white; margin-top:20px;">Resign</button>
+        </div>
+    </div>
+
+    <!-- UI Components -->
+    <div id="result-overlay">
+        <div class="popup">
+            <h1 id="result-title">Victory!</h1>
+            <p id="result-message" style="margin:20px 0; color:var(--text-muted);"></p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <button id="close-popup" class="btn btn-primary">View Board</button>
+                <button id="main-menu-btn" class="btn" style="background:#3c3934; color:white;">New Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sounds -->
+    <audio id="snd-move" src="https://images.chesscomfiles.com/chess-themes/pieces/neo/audio/move-self.mp3"></audio>
+    <audio id="snd-capture" src="https://images.chesscomfiles.com/chess-themes/pieces/neo/audio/capture.mp3"></audio>
+    <audio id="snd-check" src="https://images.chesscomfiles.com/chess-themes/pieces/neo/audio/move-check.mp3"></audio>
+    <audio id="snd-game-over" src="https://images.chesscomfiles.com/chess-themes/pieces/neo/audio/game-end.mp3"></audio>
+
+    <script type="text/javascript" src="/eel.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

@@ -67,15 +67,10 @@ def get_bot_move(fen: str, bot_type: str, depth: int):
 @eel.expose
 def get_game_status(fen: str):
     board = chess.Board(fen)
-    
     if board.is_checkmate():
-        if board.turn == chess.WHITE:
-            return {'game_over': True, 'result': 'black'}
-        else:
-            return {'game_over': True, 'result': 'white'}
-    elif board.is_stalemate() or board.is_insufficient_material() or board.is_seventyfive_moves() or board.is_fivefold_repetition():
+        return {'game_over': True, 'result': 'black' if board.turn == chess.WHITE else 'white'}
+    if board.is_game_over():
         return {'game_over': True, 'result': 'draw'}
-    
     return {'game_over': False, 'result': ''}
 
 if __name__ == "__main__":
