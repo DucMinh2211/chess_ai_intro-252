@@ -1,0 +1,43 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{longtable}
+% Note: It may be necessary to compile the document several times to get a multi-page table to line up properly
+\begin{longtable}{|l|p{5cm}|ll|}
+\hline
+\multirow{2}{*}{Nhu cầu}   & \multirow{2}{*}{Tính năng}                                              & \multicolumn{2}{l|}{Khả năng đáp ứng} \\ \cline{3-4} 
+                             &                                                & \multicolumn{1}{l|}{Databrick} & PAT \\ \hline
+\endhead
+%
+\multirow{4}{*}{Tính năng} & Cho phép nhiều người   dùng cùng sử dụng                                & \multicolumn{1}{l|}{x}        &        \\ \cline{2-4} 
+                             & Có cơ chế xử   lý xung đột                     & \multicolumn{1}{l|}{x}          &     \\ \cline{2-4} 
+                             & Có lưu trữ,   ghi nhận hoạt động người dùng    & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Dữ liệu tích   hợp từ nhiều nguồn              & \multicolumn{1}{l|}{}          &     \\ \hline
+\multirow{5}{*}{Flexibility} & Hỗ trợ truy cập từ xa                          & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Hỗ trợ đa   dạng các chức năng                 & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Hỗ trợ đa   dạng ngôn ngữ truy vấn             & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Dễ dàng tự   điều chỉnh, tinh chỉnh            & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Các addon,   tính năng phụ thêm có thể bổ sung & \multicolumn{1}{l|}{}          &     \\ \hline
+\multirow{5}{*}{Hiệu suất}   & Thời gian phản hồi   nhanh                     & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Chịu tải file   lớn, kích thước hàng chục GB   & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                           & Tốc độ trả   truy vấn cho các file lớn \textless{}10G                   & \multicolumn{1}{l|}{}        &        \\ \cline{2-4} 
+                           & Tốc độ trả dữ   liệu cho truy vấn đơn giản \textless{}2s                & \multicolumn{1}{l|}{}        &        \\ \cline{2-4} 
+                             &                                                & \multicolumn{1}{l|}{}          &     \\ \hline
+\multirow{5}{*}{Chi phí}     & Chi phí ban đầu                                & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Chi phí hoạt   động                            & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Chi phí đào   tạo nhân lực                     & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Chi phí mở   rộng (scale up)                   & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Chi phí mở   rộng (scale out)                  & \multicolumn{1}{l|}{}          &     \\ \hline
+\multirow{6}{*}{Bảo mật}     & Quyền kiểm soát tài   nguyên                   & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Bảo toàn dữ   liệu (fault tolerance)           & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Mã hóa dữ   liệu                               & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Bảo mật dữ   liệu                              & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Tường lửa                                      & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Phân quyền   người dùng                        & \multicolumn{1}{l|}{}          &     \\ \hline
+\multirow{5}{*}{Maintenance} & Mức độ hỗ trợ báo lỗi                          & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & mức độ hỗ trợ   sửa lỗi                        & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Khả năng   trace lỗi                           & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                             & Hỗ trợ mở   rộng hệ thống                      & \multicolumn{1}{l|}{}          &     \\ \cline{2-4} 
+                           & Có thể tồn   tại, hoạt động bền vững, không phụ thuộc vào các bên thứ 3 & \multicolumn{1}{l|}{}        &        \\ \hline
+\caption{Bảng đánh giá tóm tắt Databrick và PAT}
+\label{tab:databrick-PAT}\\
+\end{longtable}

@@ -1,0 +1,9 @@
+\section{Chuẩn hóa kiến trúc hệ thống}
+
+Để tránh trộn lẫn logic xử lý và phần hiển thị, bài tập đặt mục tiêu tách hai phần này ra rõ ràng: Lớp \textbf{Board} và lớp \textbf{Renderer}.
+
+Lớp Board chịu trách nhiệm toàn bộ logic trò chơi: sinh mìn, tính toán lân cận, xử lý reveal và toggle flag. Phần này hoàn toàn không phụ thuộc vào Pygame.
+
+Ngược lại, lớp Renderer chỉ đọc trạng thái từ Board và vẽ lại lên màn hình. Nó không can thiệp vào logic bên trong.
+
+Việc tách riêng lớp Board không chỉ để code sạch hơn, mà còn để biến nó thành một “môi trường” đúng nghĩa. Sau này, nếu muốn xây dựng một AI tự động chơi Minesweeper, ta chỉ cần cho tác tử tương tác trực tiếp với lớp Board, mà không cần mở giao diện đồ họa.

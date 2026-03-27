@@ -1,0 +1,17 @@
+\section{Kết luận}
+
+Dự án đã hoàn thành mục tiêu xây dựng một môi trường giả lập Minesweeper đầy đủ, đáp ứng các yêu cầu về thuật toán trong học phần Nhập môn Trí tuệ Nhân tạo.
+
+Các kết quả kỹ thuật chính gồm:
+
+\textbf{Kiến trúc hệ thống rõ ràng và tách biệt:}  
+Hệ thống áp dụng nguyên lý Separation of Concerns, tách riêng hoàn toàn lớp Board - quản lý trạng thái và logic trò chơi khỏi lớp Renderer - hiển thị bằng Pygame. Điều này giúp mã nguồn sạch hơn, dễ bảo trì và sẵn sàng cho việc chạy không giao diện.
+
+\textbf{Tối ưu thuật toán duyệt đồ thị:}  
+Thuật toán DFS được triển khai dưới dạng lặp, sử dụng trực tiếp Stack nội tại thay vì đệ quy. Nhờ đó, hệ thống tránh hoàn toàn lỗi tràn bộ nhớ đệ quy ngay cả ở lưới lớn nhất ($16 \times 16$).
+
+\textbf{Hiệu năng ổn định ở mức tuyến tính:}  
+Nhờ cơ chế khởi tạo trì hoãn và tính toán trước số mìn lân cận, độ phức tạp thời gian và không gian của hệ thống được giữ ở mức $O(N)$ trong trường hợp xấu nhất. Điều này giúp trò chơi phản hồi gần như tức thì trong thực tế.
+
+Tóm lại, dù chưa có khả năng suy luận tự động, dự án đã xây dựng thành công một môi trường sẵn sàng làm nền tảng cho các nghiên cứu AI nâng cao hơn.
+

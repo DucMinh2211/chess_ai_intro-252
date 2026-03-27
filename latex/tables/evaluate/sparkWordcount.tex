@@ -1,0 +1,20 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% \usepackage{longtable}
+% Note: It may be necessary to compile the document several times to get a multi-page table to line up properly
+\begin{longtable}{|l|l|l|}
+\hline
+\multicolumn{1}{|c|}{\multirow{2}{*}{Input Size}} & \multicolumn{1}{c|}{Block size} & \multicolumn{1}{c|}{Block size} \\ \cline{2-3} 
+\multicolumn{1}{|c|}{}                            & \multicolumn{1}{c|}{248MB}      & \multicolumn{1}{c|}{124 MB}     \\ \hline
+\endhead
+%
+128MB &  &  \\ \hline
+512MB &  &  \\ \hline
+1G    &  &  \\ \hline
+5G    &  &  \\ \hline
+10GB  &  &  \\ \hline
+25GB  &  &  \\ \hline
+50GB  &  &  \\ \hline
+\caption{Bảng đo hiệu suất bài toán đếm từ (word count)}
+\label{tab:wordcount}\\
+\end{longtable}

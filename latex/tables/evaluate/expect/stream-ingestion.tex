@@ -1,0 +1,16 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{longtable}
+% Note: It may be necessary to compile the document several times to get a multi-page table to line up properly
+\begin{longtable}{|l|l|}
+\hline
+Input   Size & Expected max   execute time \\ \hline
+\endfirsthead
+%
+\endhead
+%
+MongoDB      & 1.5min                      \\ \hline
+MSSQL        & 3min                        \\ \hline
+Oracle       & 3min                        \\ \hline
+\caption{Thời gian thực thi mong đợi khi tổng hợp dữ liệu có kích thước lớn theo thời gian thực}
+\label{tab:stream-time-eval}\\
+\end{longtable}

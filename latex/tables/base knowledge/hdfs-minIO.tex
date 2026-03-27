@@ -1,0 +1,44 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{longtable}
+% Note: It may be necessary to compile the document several times to get a multi-page table to line up properly
+\begin{longtable}{lllll}
+Criterion &
+  HDFS &
+  Object Storage &
+  Advantage &
+  Rationale \\
+\endhead
+%
+Infrastructure &
+  HDFS can operate on commodity hardware. It is highly   flexible for horizontal scaling, with clusters running from a few nodes to   thousands of nodes (Facebook boasts of one with 2000 nodes and 21PB storage) &
+  Object storage, on the other hand, is more vertically   scalable. We can add storage to the existing servers, but it is not easy to   add a Server, limiting horizontal scalability. Hence it needs the high-end   storage server machines only, preferably NVMe. &
+  HDFS &
+  High performance, at a relatively cheaper price \\
+Architecture &
+  HDFS has both compute and storage components. HDFS   clusters will consist of a minimum of one Name node (More than one in high   availability environments) with storage distributed across multiple data   nodes &
+  Object storage, on the other hand, is pure storage with   practically no compute &
+  Object Storage &
+  Decoupled Storage and Compute architecture provide   flexibility. AWS's serverless solutions are a prime example \\
+Data Types &
+  HDFS handles structured data such as sales figures for a   region linked to Product and Salesperson. Folder hierarchies are similar to   file systems, making them very transparent. It also handles 'Append,' i.e.,   adding records to the end of the table. &
+  Object storage works very well with unstructured and   semi-structured data such as images, music, videos, and web content. The   entire 'document' is created, consumed, and deleted through a focus on   'Create' and 'Delete.' &
+  HDFS &
+  The use-case here is Data Warehousing which is purely   structured data \\
+Storage Utilization &
+  HDFS relies on replicating data to avoid data loss, which   results in it using 2x or more storage space due to duplication of data &
+  Erasure coding, which prevents the need to replicate data   and yet has a fallback in case of failures &
+  None &
+  Although HDFS has now introduced Erasure coding, since it   is relatively new, there is no reliable history of its effectiveness.   Moreover, HDFS runs with commodity hardware, while Object Storage requires   high-end storage. \\
+Utility Costs &
+  HDFS has more moving parts, i.e., processors, memory, and   storage, to provide horizontal scalability. On-Prem also needs cooling and   Electricity. &
+  Object Storage has a lesser number of high-end machines;   they are less &
+  Object Storage &
+  HDFS incurs relatively higher utility costs than object   storage \\
+Flavours/ Variations &
+  Though coming from multiple vendors like Cloudera and   MapR, the underlying file system remains HDFS. &
+  Object storage comes in several flavors, each flavor   coming from a vendor. Some examples are S3, ADLS, and MinIo. &
+  HDFS &
+  HDFS provides transparency and interoperability between   offerings
+\caption{Bảng so sánh 2 hệ thống lưu trữ}
+\label{tab:hdfs-minIO}\\
+\end{longtable}

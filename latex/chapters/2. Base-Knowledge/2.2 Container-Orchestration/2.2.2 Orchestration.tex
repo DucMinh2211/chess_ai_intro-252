@@ -1,0 +1,50 @@
+\subsection{Tổng quan về Container Orchestration và Kubernetes}
+
+\subsubsection{Bài toán điều phối Container }
+Công nghệ Container hóa (như Docker) đã giải quyết xuất sắc vấn đề đóng gói môi trường thực thi, đảm bảo tính nhất quán giữa môi trường phát triển và vận hành ("It works on my machine"). Tuy nhiên, trong bối cảnh kiến trúc Microservices hiện đại, số lượng container có thể tăng lên hàng trăm, thậm chí hàng nghìn instance. Việc quản lý thủ công các container rời rạc này bộc lộ những giới hạn nghiêm trọng, thường được gọi là vấn đề về khả năng mở rộng và quản trị vòng đời ứng dụng.
+
+Container Orchestration ra đời như một lớp phần mềm trung gian để tự động hóa việc triển khai, quản lý, mở rộng quy mô và kết nối mạng cho các container. Các hệ thống điều phối giải quyết ba thách thức cốt lõi:
+\begin{itemize}
+    \item \textbf{Tự động hóa vòng đời và Tự phục hồi:} Hệ thống liên tục giám sát trạng thái của các container. Nếu một container bị lỗi hoặc node vật lý gặp sự cố, Orchestrator sẽ tự động thay thế bằng một instance mới hoặc lập lịch lại trên một node khả dụng khác, đảm bảo trạng thái mong muốn luôn được duy trì.
+    \item \textbf{Quản lý tài nguyên và Lập lịch:} Orchestrator quyết định vị trí đặt container dựa trên các ràng buộc về tài nguyên (CPU, RAM) và các chính sách, giúp tối ưu hóa việc sử dụng hạ tầng phần cứng.
+    \item \textbf{Service Discovery và Load Balancing:} Trong môi trường động nơi các container liên tục được sinh ra và mất đi với địa chỉ IP thay đổi, Orchestrator cung cấp cơ chế định danh dịch vụ ổn định và tự động phân phối tải truy cập tới các container backend khỏe mạnh.
+\end{itemize}
+
+\subsubsection{Kiến trúc chuẩn của Kubernetes}
+Kubernetes (K8s) hiện là nền tảng tiêu chuẩn cho điều phối container\footnote{The Linux Foundation, ``Kubernetes Documentation,'' 2024. Truy cập: \url{https://kubernetes.io/docs/}}. Kiến trúc Kubernetes được thiết kế theo mô hình hệ thống phân tán lỏng lẻo, xoay quanh hai thành phần chính: Control Plane và Worker Nodes.
+
+\begin{enumerate}
+    \item \textbf{Control Plane (Mặt phẳng điều khiển):} Đóng vai trò là "bộ não" của cụm, chịu trách nhiệm đưa ra các quyết định toàn cục và phát hiện/phản hồi các sự kiện của cluster. Các thành phần chính bao gồm:
+    \begin{itemize}
+        \item \textit{kube-apiserver:} Thành phần trung tâm xử lý các yêu cầu REST, xác thực và là điểm giao tiếp duy nhất giữa các thành phần khác.
+        \item \textit{etcd:} Kho lưu trữ key-value phân tán, nhất quán và có độ sẵn sàng cao, được sử dụng làm "nguồn sự thật" lưu trữ toàn bộ dữ liệu cấu hình và trạng thái của cluster.
+        \item \textit{kube-scheduler:} Chịu trách nhiệm theo dõi các Pod mới được tạo chưa có Node và chọn Node phù hợp nhất để chúng chạy dựa trên tài nguyên khả dụng.
+        \item \textit{kube-controller-manager:} Chạy các quy trình điều khiển để điều chỉnh trạng thái thực tế khớp với trạng thái mong muốn (ví dụ: Node Controller, Replication Controller).
+    \end{itemize}
+    
+    \item \textbf{Worker Nodes (Mặt phẳng dữ liệu):} Là nơi các ứng dụng thực sự vận hành. Mỗi Node bao gồm:
+    \begin{itemize}
+        \item \textit{Kubelet:} Một agent chạy trên mỗi node, đảm bảo các container đang chạy trong Pod đúng theo đặc tả (PodSpec) nhận được từ API Server.
+        \item \textit{Kube-proxy:} Duy trì các quy tắc mạng trên node, cho phép giao tiếp mạng đến các Pod từ bên trong hoặc bên ngoài cluster.
+        \item \textit{Container Runtime:} Phần mềm chịu trách nhiệm chạy các container (ví dụ: containerd, CRI-O, Docker Engine).
+    \end{itemize}
+\end{enumerate}
+
+
+
+\subsubsection{Các tài nguyên trừu tượng hóa}
+Kubernetes trừu tượng hóa hạ tầng bên dưới thông qua các API objects, cho phép các nhà phát triển mô tả ứng dụng một cách khai báo:
+
+\begin{itemize}
+    \item \textbf{Pod:} Đơn vị triển khai nguyên tử nhỏ nhất trong Kubernetes. Một Pod gói gọn một hoặc nhiều container (thường là một ứng dụng chính và các sidecar container hỗ trợ). Các container trong cùng một Pod chia sẻ không gian mạng như IP address, port space và không gian lưu trữ, giúp chúng giao tiếp qua \texttt{localhost} một cách hiệu quả.
+    
+    \item \textbf{Workload Resources (Deployment, StatefulSet):} Thay vì quản lý Pod trực tiếp, người dùng thường sử dụng các bộ điều khiển cao cấp hơn. \textit{Deployment} quản lý các ứng dụng phi trạng thái, hỗ trợ cập nhật phiên bản (Rolling Update) và phục hồi (Rollback). \textit{StatefulSet} được dùng cho các ứng dụng có trạng thái (như Database), đảm bảo thứ tự khởi tạo và định danh mạng cố định.
+
+    \item \textbf{Service \& Ingress:}
+    \begin{itemize}
+        \item \textit{Service:} Một lớp trừu tượng định nghĩa một tập hợp các Pod logic và chính sách truy cập chúng. Service cung cấp một địa chỉ IP ảo (ClusterIP) ổn định, giải quyết vấn đề IP động của Pod.
+        \item \textit{Ingress:} Quản lý truy cập từ bên ngoài vào các Service trong cụm (thường là HTTP/HTTPS), cung cấp các tính năng như cân bằng tải, SSL termination và định tuyến dựa trên tên miền.
+    \end{itemize}
+
+    \item \textbf{Custom Resource Definitions (CRD):} Đây là tính năng mạnh mẽ nhất giúp Kubernetes trở thành một nền tảng mở rộng. CRD cho phép người dùng định nghĩa các loại tài nguyên mới không có sẵn trong lõi Kubernetes (ví dụ: định nghĩa resource \texttt{SparkApplication} cho Big Data hoặc \texttt{KafkaCluster}). Khi kết hợp với Custom Controllers (mô hình Operator), Kubernetes có thể quản lý các ứng dụng phức tạp với logic vận hành chuyên biệt.
+\end{itemize}

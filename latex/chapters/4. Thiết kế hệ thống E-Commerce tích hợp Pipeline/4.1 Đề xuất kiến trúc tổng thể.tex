@@ -1,0 +1,15 @@
+\section{Mô hình hóa đồ thị và quan hệ lân cận}
+
+Để xử lý bằng thuật toán, bàn Minesweeper kích thước $R \times C$ được mô hình hóa thành một đồ thị vô hướng $G = (V, E)$.
+
+\textbf{Tập đỉnh (V):}  
+Mỗi ô trên bàn là một đỉnh, với tọa độ $(r, c)$, trong đó $0 \le r < R$, $0 \le c < C$.  
+Tổng số đỉnh là $R \times C$.
+
+\textbf{Tập cạnh (E):}  
+Hai đỉnh được nối với nhau nếu chúng kề nhau theo 8 hướng (trên, dưới, trái, phải và 4 đường chéo). Điều này tương ứng với lân cận Moore trong đồ thị lưới.
+
+Vì mỗi ô chỉ có tối đa 8 ô xung quanh, nên bậc của đồ thị bị chặn trên bởi một hằng số (tối đa 8). Điều này rất quan trọng khi phân tích độ phức tạp.
+
+Mỗi đỉnh trong mô hình sẽ lưu các trạng thái rời rạc như: có mìn hay không, đã mở hay chưa, có cắm cờ hay không, và số mìn lân cận.
+

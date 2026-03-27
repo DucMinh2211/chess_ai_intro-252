@@ -1,0 +1,18 @@
+\section{Phân tích tổng hợp}
+
+Một lần click có thể khiến thuật toán mở ra rất nhiều ô, tạo cảm giác chi phí tính toán tăng đột ngột. Tuy nhiên, nếu xét trên toàn bộ một ván chơi, thuật toán lại rất ổn định.
+
+Tổng số ô an toàn cần mở để thắng là $N - k$. Mỗi ô chỉ được mở và đánh dấu \texttt{revealed = True} đúng một lần duy nhất trong suốt ván chơi. Vì vậy, tổng công sức của tất cả các lần gọi \_dfs\_reveal luôn nhỏ hơn hoặc bằng $N$.
+
+Chi phí tổng thể của trò chơi có thể biểu diễn như sau:
+
+\[
+\text{Total Time} = O(N)_{\text{init}} 
++ O(N)_{\text{DFS total}} 
++ O(m \times N)_{\text{win checks}}
+\]
+
+Trong đó $m$ là số lần click của người chơi ($m \le N$).
+
+Nhờ tiền tính toán lân cận với chi phí $O(N)$ và giới hạn tổng công sức DFS ở mức $O(N)$, chi phí trung bình cho mỗi lần click tiến dần về $O(1)$. Điều này giúp độ trễ xử lý gần như bằng 0 trong trải nghiệm thực tế.
+

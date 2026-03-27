@@ -1,0 +1,17 @@
+\section{Kiến trúc phân tách mối quan tâm}
+
+Để dễ mở rộng và bảo trì, bài tập áp dụng nguyên lý Separation of Concerns. Hệ thống được chia thành hai thành phần chính:
+
+\textbf{Lớp Board (logic cốt lõi):}  
+Chịu trách nhiệm toàn bộ xử lý trạng thái và thuật toán. Lớp này không phụ thuộc vào Pygame, nên có thể chạy độc lập như một môi trường headless, sẵn sàng tích hợp AI trong tương lai.  
+Trạng thái bàn chơi được lưu bằng 4 ma trận 2D:
+\begin{itemize}
+    \item \texttt{mines}: vị trí mìn (boolean)
+    \item \texttt{revealed}: trạng thái đã mở
+    \item \texttt{flagged}: trạng thái cắm cờ
+    \item \texttt{neighbour}: số mìn lân cận (integer)
+\end{itemize}
+
+\textbf{Lớp Renderer (hiển thị):}  
+Đọc dữ liệu từ Board và vẽ lên màn hình theo vòng lặp. Lớp này không xử lý logic, chỉ làm nhiệm vụ hiển thị.
+

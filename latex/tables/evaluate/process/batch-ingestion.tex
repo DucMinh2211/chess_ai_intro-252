@@ -1,0 +1,25 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{lscape}
+% \usepackage{longtable}
+% Note: It may be necessary to compile the document several times to get a multi-page table to line up properly
+\begin{longtable}{|l|l|l|l|l|}
+\hline
+Bước & Thao tác                  & Kết quả               & Luồng mong đợi              & \begin{tabular}[c]{@{}l@{}}Các thành phần\\ liên quan\end{tabular} \\ \hline
+\endfirsthead
+%
+\endhead
+%
+1 &
+  Xác thực nguồn dữ lliệu &
+  Liên kết thành công &
+  \begin{tabular}[c]{@{}l@{}}Xác thực liên kết\\ Khởi tạo liên kết\end{tabular} &
+  Spark \\ \hline
+2    & Chỉ định địa điểm lưu trữ & Được phép ghi dữ liệu & Kiểm tra không gian lưu trữ & Spark                                                              \\ \hline
+3 &
+  Xác nhận thực hiện &
+   &
+  \begin{tabular}[c]{@{}l@{}}Khởi tạo luồng streaming cho file\\ Thực hiện tổng hợp dữ liệu\\ Hoàn thành quá trình\end{tabular} &
+  Spark \\ \hline
+\caption{Quy trình kiểm thử tổng hợp dữ liệu có kích thước lớn theo bó}
+\label{tab: process-batch-ingestion-eval}\\
+\end{longtable}

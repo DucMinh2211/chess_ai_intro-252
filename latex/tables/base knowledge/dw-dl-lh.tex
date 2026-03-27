@@ -1,0 +1,45 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{longtable}
+% Note: It may be necessary to compile the document several times to get a multi-page table to line up properly
+\\
+\begin{longtable}{|p{0.15\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|p{0.2\textwidth}|}
+\hline
+Aspects &
+  Data warehouses &
+  Data lakes &
+  Data lakehouses \endhead \hline
+Data format &
+  Closed, proprietary format &
+  Open format &
+  Open format \\ \hline
+Types of data &
+  Structured data, with limited support for semi-structured data &
+  All types: Structured data, semi-structured data, textual data,   unstructured (raw) data &
+  All types: Structured data, semi-structured data, textual data,   unstructured (raw) data \\ \hline
+Data access &
+  SQL-only &
+  Open APIs for direct access to files with SQL, R, Python, and other   languages &
+  Open APIs for direct access to files with SQL, R, Python, and other   languages \\ \hline
+Reliability &
+  High quality, reliable data with ACID transactions &
+  Low quality, data swamp &
+  High quality, reliable data with ACID transactions \\ \hline
+Governance and security &
+  Fine-grained security and governance for row/columnar level for tables &
+  Poor governance as security needs to be applied to files &
+  Fine-grained security and governance for row/columnar level for tables \\ \hline
+Performance &
+  High &
+  Low &
+  High \\ \hline
+Scalability &
+  Scaling becomes exponentially more expensive &
+  Scales to hold any amount of data at low cost, regardless of type &
+  Scales to hold any amount of data at low cost, regardless of type \\ \hline
+Use case support &
+  Limited to BI, SQL applications, and decision support &
+  Limited to machine learning &
+  One data architecture for BI, SQL, and machine learning \\ \hline
+\caption{Bảng so sánh 3 kiến trúc: data warehouse, data lake, lakehouse}
+\label{tab:dw-dl-lh}\\
+\end{longtable}

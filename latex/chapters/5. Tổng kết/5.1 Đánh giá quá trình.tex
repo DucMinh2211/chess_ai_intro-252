@@ -1,0 +1,101 @@
+\section{Đánh giá quá trình thực hiện đồ án}
+
+Trong quá trình thực hiện đồ án, nhóm đã đạt được các kết quả so với mục tiêu đề ra:
+
+\subsection{Các kết quả đạt được}
+
+\begin{itemize}
+
+    \item \textbf{Làm rõ các kiến thức nền tảng:}
+    \begin{itemize}
+        \item \textbf{Kiến thức về Recommender Systems:} Hiểu được nguyên lý, các thành phần, cơ chế hoạt động của các phương pháp gợi ý truyền thống (Content-based, Collaborative Filtering) và hạn chế của chúng.
+        \item \textbf{Session-based Recommendation:} Nắm vững đặc điểm của bài toán gợi ý theo phiên, các thách thức kỹ thuật và yêu cầu xử lý thời gian thực.
+        \item \textbf{Container Orchestration:} Hiểu sâu về Kubernetes, các đối tượng trừu tượng hóa (Pod, Deployment, Service, Ingress) và cơ chế điều phối container.
+    \end{itemize}
+
+    \item \textbf{Phân tích và đánh giá hệ thống Florus cũ:}
+    \begin{itemize}
+        \item Đánh giá chi tiết hiện trạng vận hành của hệ thống Florus trên nền tảng Docker Compose.
+        \item Xác định các hạn chế cốt lõi: thiếu khả năng điều phối, Service Discovery thủ công, không có High Availability cho microservices, CI/CD đứt gãy.
+        \item Phân tích sự xung đột kiến trúc giữa HDFS và Kubernetes, đề xuất MinIO thay thế.
+    \end{itemize}
+
+    \item \textbf{Đề xuất và thiết kế giải pháp Kubernetes:}
+    \begin{itemize}
+        \item Đề xuất lộ trình chuyển đổi 2 giai đoạn: Thiết lập nền tảng Cluster và Quy trình triển khai ứng dụng.
+        \item Xây dựng chiến lược tái cấu trúc từ mô hình Imperative sang Declarative.
+        \item Thiết kế bảng ánh xạ chuyển đổi tài nguyên từ Docker Compose sang Kubernetes Manifests.
+        \item Xây dựng mô hình Umbrella Chart với phân tầng (Infrastructure, Platform, Monitoring) để giải quyết vấn đề quản lý phức tạp.
+    \end{itemize}
+
+    \item \textbf{Thiết kế kiến trúc hệ thống E-commerce tích hợp Florus:}
+    \begin{itemize}
+        \item Đề xuất kiến trúc Microservices với sự tách biệt giữa tầng E-commerce và tầng xử lý dữ liệu Florus.
+        \item Thiết kế các luồng thực thi chính: Luồng nghiệp vụ E-commerce và Luồng dữ liệu (Data Pipeline).
+        \item Thiết kế cơ chế Hybrid để giải quyết Cold-start (AI Model + Popular Engine).
+        \item Xây dựng mô hình dữ liệu Polyglot Persistence với MongoDB, Neo4j, Redis và MinIO.
+    \end{itemize}
+
+    \item \textbf{Thực nghiệm và chứng minh tính khả thi:}
+    \begin{itemize}
+        \item Thiết lập thành công môi trường Minikube với đầy đủ các addons cần thiết.
+        \item Triển khai thành công một số các thành phần Infrastructure (MongoDB, MinIO).
+        \item Triển khai thành công 6 microservices của Florus và kiểm tra connectivity.
+        \item Xây dựng Umbrella Helm Charts hoạt động đúng với mô hình phân tầng.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Các hạn chế và thách thức}
+
+Tuy nhiên, nhóm cũng gặp một số hạn chế trong quá trình hiện thực:
+
+\begin{itemize}
+    \item \textbf{Về mô hình AI:}
+    \begin{itemize}
+        \item Chưa huấn luyện mô hình Session-based Recommendation trên dữ liệu thực.
+        \item Chưa tích hợp mô hình AI vào Serving Service để thử nghiệm end-to-end.
+    \end{itemize}
+
+    \item \textbf{Về hạ tầng:}
+    \begin{itemize}
+        \item Thử nghiệm mới chỉ thực hiện trên Minikube (single-node), chưa triển khai trên multi-node cluster.
+        \item Chỉ mới hiện thực được một phần của hệ thống Florus, chưa chuyển đổi hoàn thiện hệ thống lên nền tảng K8s.
+        \item Chưa cấu hình High Availability cho các database (chỉ chạy single instance).
+        \item Chưa thiết lập pipeline CI/CD tự động với GitOps.
+    \end{itemize}
+
+    \item \textbf{Về đánh giá hiệu năng:}
+    \begin{itemize}
+        \item Chưa thực hiện benchmark so sánh hiệu năng giữa kiến trúc cũ và mới.
+        \item Chưa có dữ liệu thực tế để đánh giá throughput và latency của hệ thống.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Bảng đối chiếu mục tiêu}
+
+\begin{table}[H]
+\centering
+\caption{Đối chiếu kết quả với mục tiêu đề ra}
+\label{tab:objective-mapping}
+\begin{tabular}{|p{6cm}|l|p{5cm}|}
+\hline
+\textbf{Mục tiêu} & \textbf{Trạng thái} & \textbf{Ghi chú} \\
+\hline
+Làm rõ kiến thức nền tảng & Hoàn thành & Chương 2 \\
+\hline
+Đánh giá hệ thống Florus cũ & Hoàn thành & Mục 3.3 \\
+\hline
+Đề xuất giải pháp Kubernetes & Hoàn thành & Mục 3.4 \\
+\hline
+Thiết kế kiến trúc tổng thể & Hoàn thành & Chương 4 \\
+\hline
+Xây dựng Helm Charts & Hoàn thành & Mục 3.4.4 \\
+\hline
+Thử nghiệm trên Minikube & Hoàn thành & Mục 3.5 \\
+\hline
+% Huấn luyện mô hình AI & Chưa thực hiện & Chuyển sang ĐATN \\
+% \hline
+% Triển khai Production & Chưa thực hiện & Chuyển sang ĐATN \\
+% \hline
+\end{tabular}
+\end{table}

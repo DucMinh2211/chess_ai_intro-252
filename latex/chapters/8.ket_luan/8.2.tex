@@ -1,0 +1,32 @@
+\section{Hướng phát triển trong tương lai}
+
+Bước tiếp theo không còn nằm ở tối ưu cấu trúc dữ liệu, mà ở việc xây dựng một AI Agent có thể tự chơi trò chơi.
+
+Nhờ thiết kế lớp Board độc lập, các thuật toán AI trong tương lai có thể gọi trực tiếp các hàm như \texttt{reveal(r, c)} hoặc \texttt{toggle\_flag(r, c)} mà không cần phụ thuộc vào giao diện đồ họa.
+
+Lộ trình phát triển có thể chia làm hai giai đoạn:
+
+\textbf{Giai đoạn 1: Suy luận tất định bằng Constraint Satisfaction Problem}
+
+Mỗi ô viền số $V$ với giá trị $n$ tạo ra một ràng buộc: tổng số mìn trong các ô lân cận chưa mở bằng $n - f$ (trong đó $f$ là số cờ đã cắm đúng).
+
+Tác tử CSP có thể:
+\begin{itemize}
+    \item Nếu số ô chưa mở đúng bằng số mìn còn thiếu $\Rightarrow$ đánh dấu tất cả là mìn.
+    \item Nếu số cờ xung quanh đã đủ bằng $n$ $\Rightarrow$ mở tất cả các ô còn lại.
+\end{itemize}
+
+Tác tử sẽ liên tục quét bảng và áp dụng các luật suy luận này cho đến khi không còn nước đi chắc chắn.
+
+\textbf{Giai đoạn 2: Suy luận xác suất}
+
+Khi không còn kết luận chắc chắn, tác tử phải đưa ra quyết định dựa trên xác suất.
+
+Hệ thống sẽ:
+\begin{itemize}
+    \item Liệt kê các cấu hình mìn khả thi thỏa mãn các ràng buộc hiện tại.
+    \item Tính xác suất mỗi ô chứa mìn.
+    \item Chọn mở ô có xác suất rủi ro thấp nhất.
+\end{itemize}
+
+Nếu triển khai được hai giai đoạn này trên nền tảng lớp Board hiện có, dự án sẽ chuyển từ một bài tập về DFS sang một hệ thống AI có khả năng tự suy luận và tự ra quyết định trong không gian trạng thái phức tạp.

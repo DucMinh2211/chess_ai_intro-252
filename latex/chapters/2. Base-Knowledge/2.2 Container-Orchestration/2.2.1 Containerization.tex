@@ -1,0 +1,35 @@
+\subsection{Containerization}
+
+Containerization (Cnontainer hóa) là một hình thức ảo hóa ở cấp độ hệ điều hành. Khác với ảo hóa phần cứng truyền thống (như Virtual Machines), container hóa cho phép chạy nhiều ứng dụng trong các không gian người dùng riêng biệt, được gọi là các container, trên cùng một hệ điều hành máy chủ.
+
+Mỗi container bao gồm toàn bộ các thành phần cần thiết để chạy ứng dụng: mã nguồn, runtime, công cụ hệ thống, thư viện và các tệp cấu hình. Nhờ đó, Containerization giải quyết triệt để vấn đề không nhất quán giữa môi trường phát triển và môi trường triển khai, đảm bảo nguyên lý "Write Once, Run Anywhere".
+
+\subsubsection{So sánh Container và Virtual Machine}
+Để làm rõ hơn về sự khác nhau cũng như ưu/nhược điểm của từng phương pháp, cần phải so sánh kiến trúc Container với kiến trúc Máy ảo truyền thống:
+
+\begin{itemize}
+    \item \textbf{Virtual Machines:} Sử dụng Hypervisor để ảo hóa phần cứng vật lý. Mỗi Virtual Machine là một hệ thống trọn vẹn bao gồm cả Hệ điều hành đầy đủ, dẫn đến kích thước lớn và tốn nhiều tài nguyên khi khởi động.
+    \item \textbf{Containers:} Chia sẻ chung Kernel của Host OS và chỉ đóng gói lớp ứng dụng và thư viện phụ thuộc. Điều này giúp Container cực kỳ nhẹ (kích thước tính bằng Megabytes) và có thời gian khởi động gần như tức thì.
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\caption{Bảng so sánh giữa Virtual Machine và Container}
+\label{tab:vm_vs_container}
+\begin{tabular}{|p{4cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Tiêu chí} & \textbf{Virtual Machine} & \textbf{Container} \\
+\hline
+\textbf{Ảo hóa} & Ảo hóa tầng phần cứng & Ảo hóa tầng hệ điều hành \\
+\hline
+\textbf{Hệ điều hành} & Mỗi VM có Guest OS riêng & Chia sẻ chung Kernel của máy Host \\
+\hline
+\textbf{Kích thước} & Lớn (GB) & Nhẹ (MB) \\
+\hline
+\textbf{Hiệu năng} & Kém hơn do overhead của Guest OS & Gần bằng hiệu năng máy vật lý \\
+\hline
+\textbf{Thời gian khởi động} & Chậm & Rất nhanh \\
+\hline
+\end{tabular}
+\end{table}
+

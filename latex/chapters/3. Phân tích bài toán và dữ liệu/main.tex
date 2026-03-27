@@ -1,0 +1,15 @@
+
+\import{chapters/3. Phân tích bài toán và dữ liệu/}{3.1 Phân tích bài toán Gợi ý theo phiên.tex}
+\import{chapters/3. Phân tích bài toán và dữ liệu/}{3.2 Đặc tả dữ liệu.tex}
+\import{chapters/3. Phân tích bài toán và dữ liệu/}{3.3 Đánh giá hiện trạng vận hành của hệ thống Florus cũ.tex}
+% \import{chapters/3. Phân tích bài toán và dữ liệu/}{3.4 Đề xuất giải pháp Kubernetes cho Florus.tex}
+% \import{chapters/3. Phân tích bài toán và dữ liệu/}{3.5 Kết quả thử nghiệm hạ tầng sơ bộ.tex}
+
+% \newpage
+\section{Kết chương}
+
+Tóm lại, việc không chọn BFS hay DFS đệ quy xuất phát từ các ràng buộc kỹ thuật cụ thể của bài toán.
+
+BFS dễ gặp vấn đề bộ nhớ khi vùng cần mở quá lớn, do hàng đợi có thể phình to nhanh. Trong khi đó, DFS đệ quy lại tiềm ẩn nguy cơ tràn call stack khi chạy trên các lưới lớn. Vì vậy, giải pháp hợp lý nhất là DFS dạng lặp - vừa giữ được ưu điểm bộ nhớ của DFS, vừa tránh hoàn toàn giới hạn đệ quy.
+
+Những lựa chọn này dựa trên nền tảng lý thuyết về đồ thị và cấu trúc dữ liệu, và đóng vai trò làm cơ sở để xây dựng môi trường giả lập ổn định. Chương tiếp theo sẽ trình bày các nền tảng lý thuyết này một cách hệ thống hơn.

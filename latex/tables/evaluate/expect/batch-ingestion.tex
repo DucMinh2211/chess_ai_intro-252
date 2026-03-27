@@ -1,0 +1,20 @@
+% Please add the following required packages to your document preamble:
+% \usepackage[table,xcdraw]{xcolor}
+% If you use beamer only pass "xcolor=table" option, i.e. \documentclass[xcolor=table]{beamer}
+% \usepackage{longtable}
+% Note: It may be necessary to compile the document several times to get a multi-page table to line up properly
+\begin{longtable}{|l|l|}
+\hline
+Input Size & Expected max execute time \\ \hline
+\endhead
+%
+128MB                             & 30s                       \\ \hline
+512MB                             & 30s                       \\ \hline
+1G                                & 40s                       \\ \hline
+5G                                & 1min                      \\ \hline
+10GB                              & 1.3min                    \\ \hline
+25GB                              & 3min                      \\ \hline
+50GB                              & 5min                      \\ \hline
+\caption{Thời gian thực thi mong đợi khi tổng hợp dữ liệu có kích thước lớn theo bó}
+\label{tab:batch-time-eval}\\
+\end{longtable}

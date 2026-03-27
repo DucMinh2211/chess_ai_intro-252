@@ -1,0 +1,13 @@
+\section{So sánh BFS và DFS trong bối cảnh bài toán}
+
+Cả BFS và DFS đều đảm bảo mở đầy đủ các ô hợp lệ, nhưng cách chúng sử dụng bộ nhớ và duyệt trạng thái lại rất khác nhau.
+
+\textbf{BFS (Tìm kiếm theo chiều rộng)}:
+BFS sử dụng hàng đợi và mở rộng theo từng lớp từ điểm bắt đầu. Cách duyệt này tạo hiệu ứng lan đều, khá trực quan nếu nhìn trên giao diện.
+
+Tuy nhiên, nhược điểm nằm ở bộ nhớ. Trong những trường hợp vùng trống lớn, hàng đợi phải chứa toàn bộ các ô ở “biên” của vùng đang mở. Với các bàn lớn hoặc gần như không có mìn, kích thước hàng đợi có thể tăng nhanh, gây áp lực bộ nhớ không cần thiết.
+
+\textbf{DFS (Tìm kiếm theo chiều sâu)}:
+DFS sử dụng stack và đi sâu theo từng nhánh trước khi quay lui. Cách này ít “đẹp” về mặt trực quan, nhưng lại gọn hơn về bộ nhớ.
+
+Trong thực tế, stack thường chỉ chứa một nhánh đang duyệt, nên kích thước nhỏ hơn đáng kể so với frontier của BFS. Ngoài ra, stack cũng rất dễ cài đặt trong Python chỉ bằng list với append/pop, không cần thêm cấu trúc dữ liệu phụ.

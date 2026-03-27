@@ -1,0 +1,20 @@
+\section{Thách thức trong hiện thực hóa kỹ thuật}
+
+Khi chuyển từ lý thuyết đồ thị sang mã nguồn thực tế, dự án gặp hai thách thức lớn.
+
+\textbf{Cơ chế “safe-click” và khởi tạo trì hoãn:}
+
+Theo luật chơi, lần nhấp chuột đầu tiên phải luôn an toàn và tốt nhất là rơi vào ô có trọng số lân cận bằng 0. Điều này tạo ra một vấn đề: hệ thống không thể đặt mìn trước khi biết người chơi sẽ nhấp vào ô nào.
+
+Để giải quyết, hệ thống phải áp dụng cơ chế khởi tạo trì hoãn. Nghĩa là chỉ khi người chơi click lần đầu, chương trình mới bắt đầu sinh mìn. Ô được chọn và vùng lân cận $3 \times 3$ xung quanh nó sẽ bị loại khỏi danh sách đặt mìn. Sau đó hệ thống mới tạo danh sách ứng viên và thực hiện chọn ngẫu nhiên trong thời gian thực.
+
+Cách làm này giúp đảm bảo luật chơi, nhưng đồng thời khiến luồng khởi tạo phức tạp hơn và không còn đơn giản như một quá trình thiết lập tĩnh ban đầu.
+
+\textbf{Giới hạn đệ quy của Python:}
+
+Trong lý thuyết, DFS thường được trình bày dưới dạng đệ quy. Tuy nhiên, khi áp dụng vào lưới lớn ($16 \times 16$), nếu xuất hiện một vùng trống liên thông dài, số lần gọi hàm lồng nhau có thể lên đến hàng trăm tầng.
+
+Điều này vượt quá giới hạn Call Stack mặc định của Python và dẫn đến lỗi \texttt{RecursionError}. Vì vậy, dự án buộc phải chuyển sang cách cài đặt DFS dạng lặp, tự quản lý Stack bằng cấu trúc \texttt{list}. 
+
+Giải pháp này giúp hệ thống an toàn hơn và chủ động hơn trong việc kiểm soát bộ nhớ.
+

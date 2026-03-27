@@ -1,0 +1,59 @@
+\section{Đánh giá hiệu năng}
+
+Để kiểm chứng lại những phân tích lý thuyết về độ phức tạp $O(N)$ ở các chương trước, nhóm đã thực hiện một bài stress test trực tiếp trên lớp \texttt{Board}.
+
+\subsection{Kịch bản kiểm thử }
+
+Bài kiểm thử được thiết kế theo hướng “xấu nhất có thể”. Toàn bộ số mìn được đặt bằng $0$. Điều này có nghĩa là không có bất kỳ cơ chế dừng sớm nào của thuật toán. Chỉ với một cú nhấp chuột tại tọa độ $(0,0)$, thuật toán DFS lặp buộc phải mở và xử lý toàn bộ $N$ ô trong ma trận.
+
+Nói cách khác, đây là tình huống khiến Stack phải làm việc tối đa công suất.
+
+Thời gian thực thi được đo bằng \texttt{time.perf\_counter} của Python với độ chính xác cao, nhằm đảm bảo số liệu thu được khách quan và đủ tin cậy.
+
+\subsection{Kết quả thực nghiệm}
+
+\textbf{Môi trường kiểm thử:}
+Để đảm bảo tính minh bạch và khả năng tái lập của dữ liệu benchmark, toàn bộ quá trình được thực thi trên môi trường phần cứng và phần mềm như sau:
+\begin{itemize}
+    \item \textbf{Vi xử lý:} Intel Core I7-12700H 2.3 GHz
+    \item \textbf{Bộ nhớ trong:} 32GB DDR4 3200MHz
+    \item \textbf{Hệ điều hành:} Windows 11 64-bit
+    \item \textbf{Môi trường thực thi:} Python 3.12.0
+\end{itemize}
+
+Kiểm thử được thực hiện trên 7 kích thước lưới khác nhau, từ mức tiêu chuẩn của game cho đến mức rất lớn (250,000 ô). Bảng dưới đây thể hiện thời gian hoàn thành quá trình Flood Fill tương ứng:
+
+\begin{table}[H]
+\centering
+\caption{Kết quả Benchmark Iterative DFS (Trường hợp xấu nhất: 0 mìn)}
+\begin{tabular}{@{}ccc@{}}
+\toprule
+\textbf{Kích thước lưới} & \textbf{Tổng số ô ($N$)} & \textbf{Thời gian thực thi (ms)} \\ \midrule
+$5 \times 5$     & 25       & 0.0157 \\
+$9 \times 9$     & 81       & 0.0416 \\
+$16 \times 16$   & 256      & 0.1130 \\
+$50 \times 50$   & 2,500    & 1.3508 \\
+$100 \times 100$ & 10,000   & 6.0125 \\
+$200 \times 200$ & 40,000   & 24.0326 \\
+$500 \times 500$ & 250,000  & 165.7358 \\ 
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Phân tích và đánh giá}
+
+Từ số liệu trên, có thể rút ra hai điểm quan trọng:
+
+\begin{enumerate}
+    \item \textbf{Thời gian tăng tuyến tính theo $N$:}  
+    Khi số ô tăng gấp 4 lần (từ $10,000$ lên $40,000$), thời gian thực thi cũng tăng gần đúng 4 lần (từ $6.0125$ ms lên $24.0326$ ms). Điều này cho thấy thuật toán thực sự tuân theo xu hướng $O(N)$ như đã phân tích.  
+    Chi phí xử lý trung bình trên mỗi ô được giữ ở mức rất nhỏ, khoảng $6 \times 10^{-4}$ ms/ô.
+    
+    \item \textbf{Không bị giới hạn bởi đệ quy của Python:}  
+    Python mặc định giới hạn độ sâu đệ quy ở khoảng $1000$. Nếu dùng DFS đệ quy truyền thống, hệ thống sẽ sụp đổ ngay ở các lưới trung bình như $50 \times 50$.  
+    Tuy nhiên, nhờ triển khai DFS dạng lặp với Stack, hệ thống vẫn xử lý được lưới $500 \times 500$ (250,000 ô) chỉ trong khoảng $165$ ms mà không gặp lỗi tràn bộ nhớ hay sập chương trình.
+\end{enumerate}
+
+Tóm lại, dữ liệu thực nghiệm xác nhận rằng thiết kế của lớp \texttt{Board} là ổn định. Ở mức Khó tiêu chuẩn ($16 \times 16$), thao tác nặng nhất chỉ tốn chưa đến $0.12$ ms, hoàn toàn không ảnh hưởng đến tốc độ hiển thị 60 FPS của giao diện.
+
+Với nền tảng hiệu năng như vậy, hệ thống đủ nhẹ và đủ vững để tích hợp thêm các AI Agent phức tạp hơn trong tương lai mà không lo nghẽn tài nguyên.

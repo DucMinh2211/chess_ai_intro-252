@@ -43,8 +43,8 @@ def quiescence(board: chess.Board, alpha: float, beta: float, depth: int):
     moves = [m for m in board.legal_moves if board.is_capture(m)]
     # Sort by MVV-LVA
     moves.sort(key=lambda m: evaluate_move(board, m), reverse=True)
-
     for move in moves:
+
         board.push(move)
         # Negamax: -quiescence with flipped alpha/beta
         score = -quiescence(board, -beta, -alpha, depth - 1)

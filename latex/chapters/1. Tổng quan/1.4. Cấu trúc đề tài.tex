@@ -1,0 +1,59 @@
+\section{Cấu trúc đồ án chuyên ngành}
+Đồ án chuyên ngành sẽ bao gồm năm (5) chương, bao gồm cả chương này. Nội dung của mỗi chương như sau:
+
+\begin{itemize}
+    \item \textbf{Chương 1: Tổng quan.} 
+    
+    Trình bày sơ lược về bối cảnh, thử thách và bài toán thực tế, đồng thời đưa ra mục tiêu và phạm vi giải quyết.
+    
+    \item \textbf{Chương 2: Kiến thức cơ bản.} 
+    
+    Chương này đề cập tới các kiến thức lý thuyết nền tảng (Hệ thống gợi ý, Big Data, Containerization), các nguyên tắc cần được đảm bảo khi hiện thực và tiến hành so sánh, lựa chọn công nghệ sử dụng.
+    
+    \item \textbf{Chương 3: Phân tích bài toán và Giải pháp hạ tầng.} 
+    
+    Dựa trên yêu cầu bài toán gợi ý theo phiên, chương này đi sâu vào đặc tả dữ liệu, phân tích hiện trạng của hệ thống Florus cũ. Từ đó, đề xuất giải pháp chuyển đổi hạ tầng sang Kubernetes để giải quyết các vấn đề về khả năng mở rộng và vận hành tự động nhờ điều phối.
+    
+    \item \textbf{Chương 4: Thiết kế hệ thống với Florus Framework.} 
+    
+    Tiến hành thiết kế kiến trúc tổng thể theo mô hình Microservices, trong đó Florus đóng vai trò là framework xử lý dữ liệu trung tâm. Nội dung bao gồm thiết kế luồng dữ liệu, tổ chức cơ sở dữ liệu đa tầng (Redis, Neo4j) và hiện thực hóa việc tích hợp Florus vào hệ thống Thương mại điện tử.
+    
+    \item \textbf{Chương 5: Tổng kết.} 
+    
+    Trình bày các đánh giá về hệ thống, xác định kế hoạch cho giai đoạn \textit{Đồ án tốt nghiệp}.
+
+\end{itemize}
+
+
+\section{Cấu trúc đồ án tốt nghiệp}
+
+\begin{enumerate}
+    \item \textbf{Hoàn thiện hệ thống E-commerce Demo:}
+    \begin{itemize}
+        \item Xây dựng E-commerce Router và Frontend cơ bản.
+        \item Tích hợp SDK thu thập Clickstream events.
+        \item Kết nối với Florus Pipeline qua Kafka.
+    \end{itemize}
+
+    \item \textbf{Xây dựng và huấn luyện mô hình AI:}
+    \begin{itemize}
+        \item Thu thập hoặc sử dụng dataset chuẩn (VD: Yoochoose, Diginetica).
+        \item Huấn luyện mô hình Session-based Recommendation (GRU4Rec, SR-GNN, hoặc tương đương).
+        \item Tích hợp mô hình vào Serving Service.
+    \end{itemize}
+
+    \item \textbf{Triển khai Production-ready:}
+    \begin{itemize}
+        \item Thiết lập multi-node Kubernetes cluster (trên Cloud hoặc on-premise).
+        \item Cấu hình High Availability cho database và services.
+        \item Thiết lập CI/CD pipeline với GitOps (ArgoCD hoặc Flux).
+    \end{itemize}
+
+    \item \textbf{Đánh giá và tối ưu hóa:}
+    \begin{itemize}
+        \item Benchmark hiệu năng hệ thống (Latency, Throughput).
+        \item Đánh giá chất lượng gợi ý (Hit Rate, MRR, NDCG).
+        \item Tối ưu hóa dựa trên kết quả đánh giá.
+    \end{itemize}
+\end{enumerate}
+Cấu trúc của toàn đề tài sẽ được trình bày chi tiết hơn và hoàn thiện trong giai đoạn \textit{Đồ án tốt nghiệp}.

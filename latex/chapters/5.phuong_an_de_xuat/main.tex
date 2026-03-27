@@ -1,0 +1,9 @@
+\import{chapters/5.phuong_an_de_xuat/}{5.1.tex}
+\import{chapters/5.phuong_an_de_xuat/}{5.2.tex}
+\import{chapters/5.phuong_an_de_xuat/}{5.3.tex}
+
+\section{Kết chương}
+Tóm lại, Chương 5 đã biến toàn bộ phần lý thuyết trước đó thành một hệ thống phần mềm hoàn chỉnh và có thể vận hành thực tế. Nhờ áp dụng nguyên lý Phân tách Mối quan tâm, hệ thống đã tách rõ ràng phần xử lý logic đồ thị (Board) và phần hiển thị (Renderer). Hai phần này hoạt động độc lập, giúp mã nguồn rõ ràng, dễ kiểm soát và dễ mở rộng hơn.
+
+Việc không sử dụng đệ quy mà thay bằng DFS dạng lặp, thao tác trực tiếp trên cấu trúc Stack, là một lựa chọn quan trọng. Quyết định này giúp loại bỏ hoàn toàn nguy cơ tràn Call Stack của Python khi làm việc với ma trận lớn. Đồng thời, người lập trình có thể kiểm soát trực tiếp cách bộ nhớ được cấp phát và giải phóng trong suốt quá trình thuật toán chạy. Hiệu quả cụ thể của chúng sẽ được phân tích chi tiết trong Chương 6.
+

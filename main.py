@@ -54,7 +54,7 @@ def get_bot_move(fen: str, bot_type: str, params: dict):
         q_depth = int(params.get('q_depth', 4))
         move = alpha_beta_best_move(board, depth, q_depth)
     elif bot_type == 'mcts':
-        iters = int(params.get('iterations', 1000))
+        iters = int(params.get('iterations', 10000))
         rollout_depth = int(params.get('rollout_depth', 30))
         move = mcts(board, iterations=iters, rollout_depth=rollout_depth)
     else:

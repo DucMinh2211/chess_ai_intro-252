@@ -1,0 +1,14 @@
+\section{Cơ sở lý thuyết của DFS}
+
+DFS là thuật toán duyệt đồ thị theo nguyên tắc đi sâu theo từng nhánh trước, rồi mới quay lui khi không thể đi tiếp.
+
+Trong bài toán flood fill, DFS được mô tả qua các yếu tố sau:
+
+\textbf{Cấu trúc dữ liệu:}  
+Thuật toán sử dụng một stack. Đỉnh được đưa vào sau sẽ được xử lý trước.
+
+\textbf{Luật chuyển trạng thái:}  
+Một ô chỉ được đưa vào stack nếu nó hợp lệ: chưa mở, không bị đánh dấu, và không phải là mìn. Điều này giúp tránh lặp lại và đảm bảo thuật toán không mở sai ô.
+
+\textbf{Điều kiện dừng:}  
+Khi DFS gặp một ô có số lớn hơn 0 (tức là ô nằm ở viền vùng trống), thuật toán vẫn mở ô đó nhưng không lan tiếp sang các ô lân cận. Đây chính là cơ chế “cắt nhánh” giúp flood fill dừng đúng chỗ.

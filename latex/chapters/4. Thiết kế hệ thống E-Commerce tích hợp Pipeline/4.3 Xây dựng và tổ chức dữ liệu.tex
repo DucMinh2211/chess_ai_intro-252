@@ -1,0 +1,7 @@
+\section{Phân tích độ phức tạp}
+
+Theo lý thuyết, độ phức tạp của DFS phụ thuộc vào số đỉnh và số cạnh của đồ thị. Trong hệ thống này, mỗi ô chỉ được xử lý một lần nhờ có cơ chế đánh dấu đã thăm.
+
+Vì mỗi đỉnh có tối đa 8 lân cận (một hằng số), tổng số lần kiểm tra lân cận cũng tỷ lệ tuyến tính theo số đỉnh.
+
+Do đó, nếu gọi $N = R \times C$, cả thời gian chạy lẫn bộ nhớ sử dụng đều có thể chặn trên bởi $O(N)$. Điều này đảm bảo thuật toán vẫn hoạt động ổn định ngay cả khi kích thước bàn chơi tăng lên.

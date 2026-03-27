@@ -1,0 +1,148 @@
+% \newpage
+\section{Kế hoạch làm việc cho Đồ án tốt nghiệp}
+
+Dựa trên kết quả đạt được trong giai đoạn Đồ án Chuyên ngành và các hạn chế cần khắc phục, nhóm đề xuất kế hoạch chi tiết cho giai đoạn Đồ án Tốt nghiệp.
+
+% \subsection{Các mục tiêu cần hoàn thành}
+
+% \begin{enumerate}
+%     \item \textbf{Hoàn thiện hệ thống E-commerce Demo:}
+%     \begin{itemize}
+%         \item Xây dựng E-commerce Router và Frontend cơ bản.
+%         \item Tích hợp SDK thu thập Clickstream events.
+%         \item Kết nối với Florus Pipeline qua Kafka.
+%     \end{itemize}
+
+%     \item \textbf{Xây dựng và huấn luyện mô hình AI:}
+%     \begin{itemize}
+%         \item Thu thập hoặc sử dụng dataset chuẩn (VD: Yoochoose, Diginetica).
+%         \item Huấn luyện mô hình Session-based Recommendation (GRU4Rec, SR-GNN, hoặc tương đương).
+%         \item Tích hợp mô hình vào Serving Service.
+%     \end{itemize}
+
+%     \item \textbf{Triển khai Production-ready:}
+%     \begin{itemize}
+%         \item Thiết lập multi-node Kubernetes cluster (trên Cloud hoặc on-premise).
+%         \item Cấu hình High Availability cho database và services.
+%         \item Thiết lập CI/CD pipeline với GitOps (ArgoCD hoặc Flux).
+%     \end{itemize}
+
+%     \item \textbf{Đánh giá và tối ưu hóa:}
+%     \begin{itemize}
+%         \item Benchmark hiệu năng hệ thống (Latency, Throughput).
+%         \item Đánh giá chất lượng gợi ý (Hit Rate, MRR, NDCG).
+%         \item Tối ưu hóa dựa trên kết quả đánh giá.
+%     \end{itemize}
+% \end{enumerate}
+
+\subsection{Kế hoạch làm việc theo tuần}
+
+Kế hoạch làm việc cho Đồ án Tốt nghiệp bao gồm 5 giai đoạn kéo dài 15 tuần (không bao gồm hai tuần nghỉ Tết):
+
+\begin{enumerate}
+    \item \textbf{Giai đoạn 1 (Tuần 1-4): Xây dựng E-commerce Demo và Data Pipeline}
+    \begin{itemize}
+        \item Tuần 1-2: Phát triển E-commerce Router với SDK thu thập events.
+        \item Tuần 3-4: Tích hợp Kafka ingestion và cấu hình Stream Processing.
+    \end{itemize}
+
+    \item \textbf{Giai đoạn 2 (Tuần 5-6): Xây dựng Knowledge Graph và Popular Engine}
+    \begin{itemize}
+        \item Tuần 5: Thiết lập Neo4j và xây dựng Graph schema.
+        \item Tuần 6: Hiện thực Popular Engine với Redis Sorted Set.
+    \end{itemize}
+
+    \item \textbf{Giai đoạn 3 (Tuần 7-10): Huấn luyện và tích hợp AI Model}
+    \begin{itemize}
+        \item Tuần 7-8: Chuẩn bị dataset, tiền xử lý và feature engineering.
+        \item Tuần 9: Huấn luyện mô hình Session-based Recommendation.
+        \item Tuần 10: Tích hợp model vào Serving Service, kiểm thử end-to-end.
+    \end{itemize}
+
+    \item \textbf{Giai đoạn 4 (Tuần 11-13): Triển khai Production và Đánh giá}
+    \begin{itemize}
+        \item Tuần 11: Thiết lập multi-node cluster và CI/CD pipeline.
+        \item Tuần 12: Benchmark hiệu năng và stress testing.
+        \item Tuần 13: Đánh giá chất lượng gợi ý và tối ưu hóa.
+    \end{itemize}
+
+    \item \textbf{Giai đoạn 5 (Tuần 12-15): Hoàn thiện luận văn}
+    \begin{itemize}
+        \item Tuần 12-14: Viết báo cáo, tổng hợp kết quả thực nghiệm.
+        \item Tuần 15: Tuần dự trữ, chỉnh sửa và hoàn thiện.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Bảng phân công công việc dự kiến}
+
+\begin{table}[H]
+\centering
+\caption{Phân công công việc cho giai đoạn Đồ án Tốt nghiệp}
+\label{tab:task-assignment}
+\begin{tabular}{|l|p{8cm}|l|}
+\hline
+\textbf{Giai đoạn} & \textbf{Công việc chính} & \textbf{Tuần} \\
+\hline
+1 & Phát triển E-commerce Router, Kafka integration & 1-4 \\
+\hline
+2 & Neo4j Graph setup, Popular Engine & 5-6 \\
+\hline
+3 & AI Model training, Serving integration & 7-10 \\
+\hline
+4 & Production deployment, Benchmarking & 11-13 \\
+\hline
+5 & Luận văn, Documentation & 12-15 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Rủi ro và phương án dự phòng}
+
+\begin{table}[H]
+\centering
+\caption{Phân tích rủi ro và phương án dự phòng}
+\label{tab:risk-analysis}
+\begin{tabular}{|p{4cm}|p{3cm}|p{6cm}|}
+\hline
+\textbf{Rủi ro} & \textbf{Mức độ} & \textbf{Phương án dự phòng} \\
+\hline
+Thiếu tài nguyên Cloud & Trung bình & Sử dụng Minikube hoặc k3s trên máy local \\
+\hline
+Model không đạt yêu cầu & Cao & Sử dụng Rule-based fallback (Association Rules) \\
+\hline
+Tích hợp gặp lỗi & Trung bình & Ưu tiên kiểm thử từng module riêng lẻ \\
+\hline
+Thiếu thời gian & Cao & Tuần 15 dự trữ, giảm scope nếu cần \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Tiêu chí đánh giá thành công}
+
+Đồ án Tốt nghiệp được coi là thành công khi đạt được:
+
+\begin{enumerate}
+    \item \textbf{Về chức năng:}
+    \begin{itemize}
+        \item Hệ thống E-commerce hoạt động end-to-end từ click đến hiển thị gợi ý.
+        \item Cơ chế Hybrid (AI + Popular) xử lý được cả warm và cold users.
+    \end{itemize}
+
+    \item \textbf{Về hiệu năng:}
+    \begin{itemize}
+        \item Latency P99 $<100ms$ cho API gợi ý.
+        \item Throughput $\geq 1000$ requests/second.
+    \end{itemize}
+
+    \item \textbf{Về chất lượng gợi ý:}
+    \begin{itemize}
+        \item Hit Rate @20 $\geq 50\%$ trên test set.
+        \item MRR @20 $\geq 0.2$ trên test set.
+    \end{itemize}
+
+    \item \textbf{Về vận hành:}
+    \begin{itemize}
+        \item Triển khai thành công trên Kubernetes cluster.
+        \item CI/CD pipeline tự động hóa việc build và deploy.
+    \end{itemize}
+\end{enumerate}

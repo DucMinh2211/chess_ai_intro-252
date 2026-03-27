@@ -1,0 +1,7 @@
+\section{Phát biểu bài toán}
+
+Trong quá trình xây dựng môi trường Minesweeper, thách thức lớn nhất nằm ở cơ chế tự động mở rộng vùng an toàn.
+
+Cụ thể, khi người chơi mở một ô không có mìn và không có mìn ở các ô lân cận (ô có giá trị 0), hệ thống phải tự động mở tất cả các ô trống liên thông với nó, đồng thời hiển thị cả các ô có số nằm ở viền xung quanh vùng đó. Đây chính là bài toán “flood fill”.
+
+Vấn đề đặt ra là làm sao để thực hiện quá trình này một cách nhanh và tiết kiệm bộ nhớ, đặc biệt với những bàn chơi lớn như 16×16 (256 ô), mà không làm treo giao diện hoặc vượt quá giới hạn đệ quy.

@@ -1,0 +1,76 @@
+\section{Kỹ thuật khởi tạo mìn trì hoãn}
+
+\subsection{Động cơ thiết kế}
+Trong phiên bản Minesweeper cổ điển, mìn thường được đặt trước khi người chơi thực hiện nước đi đầu tiên. Điều này dẫn đến khả năng thua ngay ở bước đầu với xác suất $\frac{M}{RC}$, trong đó $R \times C$ là kích thước lưới và $M$ là số lượng mìn.
+
+Để đảm bảo tính công bằng và cải thiện trải nghiệm người dùng, hệ thống áp dụng kỹ thuật \textit{khởi tạo mìn trì hoãn}, trong đó việc sinh mìn chỉ diễn ra sau lần nhấp chuột đầu tiên. Cách tiếp cận này vẫn giữ được tính ngẫu nhiên toàn cục nhưng loại bỏ hoàn toàn khả năng thua ngay lập tức.
+
+\subsection{Mô tả phương pháp}
+Giả sử người chơi chọn ô đầu tiên tại vị trí $(safe_r, safe_c)$. Quá trình khởi tạo được thực hiện qua ba bước:
+
+\textbf{Bước 1: Xác định vùng an toàn.}  
+Một vùng an toàn cục bộ được tạo quanh ô đầu tiên, bao gồm chính ô được chọn và các ô lân cận (tối đa vùng $3 \times 3$). Các ô trong vùng này được đảm bảo không chứa mìn.
+
+\textbf{Bước 2: Lấy mẫu ngẫu nhiên không trùng lặp.}  
+Danh sách các ô ứng viên được tạo từ toàn bộ lưới sau khi loại bỏ vùng an toàn. Từ danh sách này, hệ thống sử dụng phép lấy mẫu ngẫu nhiên không hoàn lại (ví dụ \texttt{random.sample()}) để chọn $M$ vị trí đặt mìn. Điều này đảm bảo:
+\begin{itemize}
+    \item Không có mìn trùng vị trí
+    \item Phân phối ngẫu nhiên đồng đều trên không gian còn lại
+\end{itemize}
+
+\textbf{Bước 3: Tiền tính toán thông tin lân cận.}  
+Sau khi đặt mìn, hệ thống duyệt toàn bộ bàn cờ để tính trước ma trận số lượng mìn lân cận (\texttt{neighbour}). Nhờ bước tiền xử lý này, các thao tác truy vấn trong quá trình duyệt DFS sau đó chỉ tốn thời gian $\mathcal{O}(1)$.
+
+\subsection{Phân tích độ phức tạp}
+Giả sử lưới có kích thước $R \times C$.
+
+\begin{itemize}
+    \item Tạo danh sách ứng viên: $\mathcal{O}(RC)$
+    \item Lấy mẫu ngẫu nhiên $M$ phần tử: $\mathcal{O}(M)$
+    \item Tiền tính toán ma trận lân cận: $\mathcal{O}(RC)$
+\end{itemize}
+
+Do đó, tổng chi phí khởi tạo là:
+\[
+\mathcal{O}(RC)
+\]
+Chi phí này chỉ phát sinh một lần sau nước đi đầu tiên.
+
+\subsection{Tác động đến thuật toán DFS}
+Kỹ thuật khởi tạo trì hoãn không làm thay đổi bản chất của bài toán tìm kiếm. Sau khi quá trình khởi tạo hoàn tất, trạng thái bàn cờ trở thành một cấu hình tĩnh, và thuật toán DFS được áp dụng trên không gian trạng thái đã cố định.
+
+Do đó:
+\begin{itemize}
+    \item \textbf{Tính đúng đắn} của DFS được bảo toàn
+    \item \textbf{Tính đầy đủ} không bị ảnh hưởng
+    \item Không làm thay đổi cấu trúc không gian tìm kiếm
+\end{itemize}
+
+Nói cách khác, khởi tạo trì hoãn chỉ ảnh hưởng đến giai đoạn sinh trạng thái ban đầu, nhưng không can thiệp vào cơ chế duyệt của DFS.
+
+\subsection{So sánh với khởi tạo tức thời}
+Nếu mìn được đặt ngay từ đầu, xác suất thua tại bước đầu tiên là:
+\[
+P(\text{lose at first click}) = \frac{M}{RC}
+\]
+Trong khi đó, kỹ thuật trì hoãn đưa xác suất này về 0 mà vẫn giữ phân phối ngẫu nhiên đồng đều trên phần còn lại của lưới. Điều này giúp cân bằng giữa tính công bằng và tính ngẫu nhiên của trò chơi.
+
+\begin{algorithm}
+\caption{Khởi tạo mìn trì hoãn}
+\begin{algorithmic}[1]
+\Procedure{Initialize-Mines}{$safe_r, safe_c$}
+    \State safeZone $\gets$ cells in $3 \times 3$ region
+    \State candidates $\gets$ all cells \textbf{minus} safeZone
+    \State mines $\gets$ RandomSample(candidates, $M$)
+    \State ComputeNeighbourMatrix()
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Mô hình hóa bài toán dưới góc nhìn tìm kiếm}
+
+Bàn cờ Minesweeper có thể được mô hình hóa như một đồ thị lưới hai chiều với $N = R \times C$ đỉnh. Mỗi ô tương ứng với một đỉnh, và tồn tại cạnh giữa hai đỉnh nếu hai ô kề nhau theo 8 hướng lân cận.
+
+Do đó, bài toán flood fill tương đương với việc duyệt một thành phần liên thông trong đồ thị này. Hệ số phân nhánh tối đa của mỗi đỉnh là 8, nhưng trên thực tế nhỏ hơn do biên bảng và trạng thái đã thăm.
+
+Từ góc nhìn này, việc mở vùng các ô trống được xem như một bài toán duyệt đồ thị, trong đó DFS là một chiến lược tìm kiếm phù hợp.

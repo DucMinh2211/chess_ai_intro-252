@@ -1,0 +1,7 @@
+\section{Lựa chọn thuật toán}
+
+Dựa trên các phân tích trên, DFS là lựa chọn phù hợp hơn cho bài toán này, đặc biệt khi ưu tiên kiểm soát bộ nhớ và giữ hệ thống nhẹ.
+
+Tuy nhiên, DFS đệ quy lại mang rủi ro lớn trong Python do giới hạn call stack. Với các lưới lớn như 16×16, một chuỗi ô trống dài hoàn toàn có thể gây lỗi RecursionError. Vì vậy, bài tập không dùng DFS đệ quy mà triển khai DFS dạng lặp, với stack tường minh do chương trình quản lý.
+
+Cách tiếp cận này giữ lại ưu điểm bộ nhớ của DFS, đồng thời loại bỏ hoàn toàn rủi ro từ đệ quy. Nhờ đó, hệ thống đảm bảo độ phức tạp thời gian và không gian ở mức O(N) ngay cả trong những trường hợp xấu nhất, và vẫn đủ ổn định để tích hợp vào môi trường mô phỏng lớn hơn trong tương lai.

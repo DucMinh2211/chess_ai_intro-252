@@ -1,0 +1,108 @@
+\subsection{Florus - Framework xử lý dữ liệu thông minh}
+
+Florus là một nền tảng xử lý dữ liệu và học máy phân tán, được phát triển dựa trên kiến trúc Lakehouse \cite{vo2023florus, vo2024florus}. Hệ thống này đóng vai trò là ``xương sống'' cho việc thu thập, xử lý và phân tích dữ liệu trong đề tài, được kế thừa và tái sử dụng từ các nghiên cứu trước đó. Các phiên bản cải tiến của Florus đã được công bố với khả năng Low-Code và kiến trúc tinh chỉnh \cite{phan2024lowcode, nguyen2025airquality}.
+
+\subsubsection{Tổng quan về Florus}
+
+Florus được thiết kế để giải quyết toàn bộ vòng đời của dữ liệu và mô hình học máy (MLOps), từ giai đoạn thu thập dữ liệu thô đến triển khai mô hình phục vụ dự đoán. Các đặc điểm nổi bật bao gồm:
+
+\begin{itemize}
+    \item \textbf{Kiến trúc Lakehouse:} Kết hợp tính linh hoạt của Data Lake với khả năng quản lý cấu trúc của Data Warehouse thông qua Delta Lake.
+
+    \item \textbf{Microservices-based:} Hệ thống được phân rã thành các dịch vụ độc lập, dễ dàng bảo trì và mở rộng.
+
+    \item \textbf{End-to-end Pipeline:} Hỗ trợ đầy đủ quy trình từ Ingestion $\rightarrow$ Transformation $\rightarrow$ Training $\rightarrow$ Serving.
+
+    \item \textbf{Multi-source Support:} Thu thập dữ liệu từ nhiều nguồn khác nhau (Batch files, Streaming, Cloud Storage, IoT sensors).
+\end{itemize}
+
+\subsubsection{Kiến trúc các Microservices}
+
+Florus bao gồm 6 microservices chính, mỗi service đảm nhận một chức năng riêng biệt:
+
+\begin{enumerate}
+    \item \textbf{API Gateway (Port 5000):}
+    \begin{itemize}
+        \item Điểm vào duy nhất cho tất cả các request từ client.
+        \item Điều phối và chuyển tiếp request đến các service phù hợp.
+        \item Tích hợp xác thực và phân quyền.
+    \end{itemize}
+
+    \item \textbf{Auth Service (Port 5005):}
+    \begin{itemize}
+        \item Quản lý xác thực người dùng (JWT, OAuth2 với Google).
+        \item Quản lý Project và phân quyền truy cập dựa trên vai trò (RBAC).
+    \end{itemize}
+
+    \item \textbf{Ingestion Service (Port 5020):}
+    \begin{itemize}
+        \item Thu thập dữ liệu từ nhiều nguồn (File upload, Kafka streaming, Cloud storage).
+        \item Hỗ trợ cả Batch và Stream ingestion.
+        \item Tích hợp với Kafka Connect và Schema Registry.
+    \end{itemize}
+
+    \item \textbf{Delta Service (Port 5015):}
+    \begin{itemize}
+        \item Quản lý vòng đời các bảng Delta Lake (Bronze/Silver/Gold).
+        \item Thực hiện các phép biến đổi dữ liệu thông qua Apache Spark.
+        \item Cung cấp cơ chế caching để tăng tốc truy vấn.
+    \end{itemize}
+
+    \item \textbf{Model Service (Port 5010):}
+    \begin{itemize}
+        \item Quản lý quy trình huấn luyện mô hình học máy.
+        \item Tích hợp với MLflow để theo dõi thí nghiệm và quản lý phiên bản mô hình.
+        \item Hỗ trợ tối ưu hóa siêu tham số với Optuna.
+    \end{itemize}
+
+    \item \textbf{Serving Service (Port 5030):}
+    \begin{itemize}
+        \item Triển khai mô hình đã huấn luyện dưới dạng REST API.
+        \item Tự động đóng gói mô hình thành Docker Container.
+        \item Quản lý phiên bản và trạng thái của các Serving Endpoint.
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Công nghệ nền tảng}
+
+Florus được xây dựng trên nền tảng các công nghệ Big Data và Cloud-native:
+
+\begin{table}[H]
+\centering
+\caption{Stack công nghệ của Florus}
+\label{tab:florus-tech-stack}
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Thành phần} & \textbf{Công nghệ} & \textbf{Vai trò} \\
+\hline
+Backend Framework & Flask + Gunicorn & Xây dựng REST API cho các microservices \\
+\hline
+Data Processing & Apache Spark 3.4 & Xử lý dữ liệu phân tán quy mô lớn \\
+\hline
+Data Storage & Delta Lake 2.4 & Lưu trữ dữ liệu với ACID transactions \\
+\hline
+Object Storage & MinIO & Lưu trữ artifacts, files phi cấu trúc \\
+\hline
+Message Queue & Apache Kafka & Thu thập và xử lý dữ liệu streaming \\
+\hline
+ML Platform & MLflow 2.10 & Quản lý vòng đời MLOps \\
+\hline
+Metadata Store & MongoDB & Lưu trữ metadata và cấu hình hệ thống \\
+\hline
+Container Runtime & Docker & Đóng gói và triển khai services \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Vai trò trong đề tài}
+
+Trong phạm vi đề tài này, Florus được tái sử dụng và mở rộng để đóng vai trò là \textbf{Intelligent Data Pipeline} tích hợp vào hệ thống E-commerce:
+
+\begin{itemize}
+    \item Thu thập dữ liệu hành vi người dùng (Clickstream) từ E-commerce Router.
+    \item Xử lý và cập nhật đồ thị tri thức (Knowledge Graph) trong Neo4j.
+    \item Huấn luyện và triển khai mô hình Session-based Recommendation.
+    \item Cung cấp API gợi ý sản phẩm với độ trễ thấp.
+\end{itemize}
+
+Điểm khác biệt chính so với phiên bản gốc là việc \textbf{chuyển đổi từ Docker Compose sang Kubernetes}, cho phép hệ thống đạt được khả năng mở rộng và tự động hóa vận hành ở mức cao hơn.

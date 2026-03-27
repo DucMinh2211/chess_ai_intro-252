@@ -1,0 +1,20 @@
+\subsection{Kubernetes và Minikube}
+
+\subsubsection{Môi trường triển khai thực nghiệm: Minikube}
+Trong Giai đoạn 1, nhằm giải quyết bài toán cân bằng giữa hạn chế về tài nguyên phần cứng và yêu cầu về tính chính xác của kiến trúc, nhóm quyết định lựa chọn Minikube làm môi trường triển khai.
+
+Thay vì phụ thuộc ngay lập tức vào các hạ tầng Cloud đắt đỏ như AWS EKS hay GKE, Minikube cho phép thiết lập một cụm Kubernetes đơn điểm (1 Node) ngay trên máy cục bộ. Mặc dù hoạt động trên một node vật lý duy nhất, Minikube cung cấp sự đảm bảo quan trọng về tính tương đồng hành vi so với môi trường Production thật như của K8s: 
+\begin{itemize} 
+    \item \textbf{Tương thích API chuẩn:} Minikube hỗ trợ đầy đủ các API cốt lõi của Kubernetes, đảm bảo các tệp cấu hình viết cho môi trường này có thể chạy trên Cloud mà không cần chỉnh sửa. 
+    \item \textbf{Mô phỏng đầy đủ thành phần hệ thống:} Cho phép nhóm cấu hình và kiểm thử các thành phần phức tạp như \textit{Ingress Controller}, \textit{Persistent Volumes} và \textit{Network Policies} một cách chính xác trước khi mở rộng quy mô. 
+\end{itemize}
+
+\subsubsection{Cơ chế vận hành Big Data: Kubernetes Operator for Apache Spark} Một thách thức lớn trong việc đưa Big Data lên nền tảng Container là sự phức tạp trong việc quản lý trạng thái. Để giải quyết vấn đề này, đồ án tích hợp Spark Operator – một giải pháp cực kì tương thích với hệ sinh thái Kubernetes.
+
+Thay vì sử dụng phương thức \texttt{spark-submit} mang tính mệnh lệnh truyền thống, Spark Operator tận dụng cơ chế Custom Resource Definition (CRD) để mở rộng API của Kubernetes. Điều này cho phép định nghĩa các ứng dụng Spark (SparkApplications) hoàn toàn bằng ngôn ngữ khai báo YAML, mang lại các ưu điểm kỹ thuật sau:
+
+\begin{itemize} 
+    \item \textbf{Quản lý vòng đời tự động:} Spark Operator đóng vai trò như một bộ điều khiển. Khi nhận được yêu cầu từ tệp YAML, nó tự động khởi tạo Pod cho Driver, tính toán và cấp phát tài nguyên cho các Executors, đồng thời tự động dọn dẹp tài nguyên khi tác vụ hoàn tất hoặc thất bại.
+
+    \item \textbf{Đồng bộ với quy trình GitOps:} Việc chuyển đổi định nghĩa Job từ các câu lệnh dòng lệnh sang tệp cấu hình YAML cho phép nhóm áp dụng quy trình CI/CD và quản lý phiên bản cho các tác vụ xử lý dữ liệu. Mọi thay đổi về cấu hình xử lý dữ liệu đều được lưu vết, xem xét và triển khai tự động tương tự như mã nguồn phần mềm.
+\end{itemize}

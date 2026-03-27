@@ -1,0 +1,39 @@
+\begin{longtable}{|r|cc|cc|}
+\hline
+\multicolumn{1}{|c|}{\multirow{2}{*}{nPoints}} &
+  \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Executor\\ memory\end{tabular}} &
+  \begin{tabular}[c]{@{}c@{}}Driver\\ Memory\end{tabular} &
+  \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Executor\\ memory\end{tabular}} &
+  \begin{tabular}[c]{@{}c@{}}Driver\\ Memory\end{tabular} \\ \cline{2-5} 
+\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{1GB}        & 1GB       & \multicolumn{1}{c|}{1GB} & 2GB \\ \hline
+\endhead
+%
+10,000                  & \multicolumn{2}{c|}{1.6}                    & \multicolumn{2}{c|}{1.7}       \\ \hline
+100,000                 & \multicolumn{2}{c|}{3.1}                    & \multicolumn{2}{c|}{3}         \\ \hline
+1,000,000                & \multicolumn{2}{c|}{Failed} & \multicolumn{2}{c|}{10}        \\ \hline
+10,000,000               & \multicolumn{2}{l|}{}                       & \multicolumn{2}{c|}{Failed}          \\ \hline
+\caption{Kiểm thử bộ nhớ của Spark bằng count Pi 1}
+\label{tab:spark-pi1}\\
+\end{longtable}
+
+
+\begin{longtable}{|r|lc|cc|cl|}
+\hline
+\multicolumn{1}{|c|}{\multirow{2}{*}{nPoints}} &
+  \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Executor\\  memory\end{tabular}} &
+  \begin{tabular}[c]{@{}c@{}}Driver \\ Memory\end{tabular} &
+  \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Executor \\ memory\end{tabular}} &
+  \begin{tabular}[c]{@{}c@{}}Driver\\  Memory\end{tabular} &
+  \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Executor \\ memory\end{tabular}} &
+  \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Driver\\  Memory\end{tabular}} \\ \cline{2-7} 
+\multicolumn{1}{|c|}{} & \multicolumn{1}{c|}{2GB} & 1GB & \multicolumn{1}{c|}{2GB} & 2GB & \multicolumn{1}{c|}{8GB} & 4GB \\ \hline
+\endhead
+%
+10,000                  & \multicolumn{2}{c|}{1.7}          & \multicolumn{2}{c|}{1.6}       & \multicolumn{2}{c|}{1.6}       \\ \hline
+100,000                 & \multicolumn{2}{c|}{3.1}          & \multicolumn{2}{c|}{3.1}       & \multicolumn{2}{c|}{2.9}       \\ \hline
+1,000,000                & \multicolumn{2}{c|}{Failed}    & \multicolumn{2}{c|}{8.3}       & \multicolumn{2}{c|}{8.6}       \\ \hline
+10,000,000               & \multicolumn{2}{c|}{}          & \multicolumn{2}{c|}{Failed}          & \multicolumn{2}{c|}{Failed}    \\ \hline
+\caption{Kiểm thử bộ nhớ của Spark bằng count Pi 2}
+\label{tab:spark-pi2}\\
+\end{longtable}
+Lỗi được trả về: Failed (Out of Memory)

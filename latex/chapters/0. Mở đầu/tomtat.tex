@@ -1,0 +1,7 @@
+Báo cáo này nói về việc xây dựng một môi trường giả lập cho trò Minesweeper, với trọng tâm là dùng thuật toán DFS để xử lý cơ chế flood fill. Mục tiêu chính là làm cho việc mô phỏng hoạt động ổn định, dễ mở rộng và đủ nhanh để thử nghiệm các ý tưởng sau này.
+
+Hệ thống được thiết kế theo hướng tách rõ phần lõi và phần hiển thị. Toàn bộ logic xử lý bàn chơi được mô hình hóa như một lưới 2D và hoạt động độc lập với giao diện đồ họa. Nhờ vậy, việc chỉnh sửa thuật toán hoặc thay đổi UI không ảnh hưởng lẫn nhau.
+
+Để tránh lỗi tràn bộ nhớ khi dùng đệ quy trên các lưới lớn (như 16×16), DFS được viết lại theo dạng lặp, sử dụng Stack để quản lý các ô cần duyệt. Cách làm này giúp hệ thống chạy ổn định hơn và vẫn giữ được độ phức tạp O(N) trong trường hợp xấu nhất, nên tốc độ phản hồi gần như tức thì.
+
+Tuy nhiên, hệ thống hiện tại mới chỉ dừng ở mức mô phỏng môi trường - tức là xử lý đúng cơ chế của trò chơi - chứ chưa phải một AI có thể tự suy luận để giải Minesweeper. Vì vậy, bài tập này nên được xem như nền tảng ban đầu, làm bước đệm để sau này tích hợp các hướng nâng cao hơn như mô hình ràng buộc (Constraint Satisfaction Problem) hoặc suy luận xác suất.

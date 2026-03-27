@@ -1,5 +1,5 @@
-import chess
 import math
+import chess
 import random
 from model.evaluation import evaluate, evaluate_move
 
@@ -57,15 +57,30 @@ def heuristic_move(board):
         
     return best_move
 
+def random_move(board):
+    moves = list(board.legal_moves)
+    if not moves: return None
+    rmove = random.choice(moves)
+    return rmove
+
+def evaluate_mcts_move(board):
+
+    moves = list(board.legal_moves)
+    if not moves: return None
+    moves.sort(key=lambda m: evaluate_move(board, m), reverse=True)
+    
+    return moves[0]
+
 
 def simulate(board, rollout_depth: int):
     depth = 0
 
     while not board.is_game_over():
-        if depth >= rollout_depth:
             return evaluate(board)
+    if depth >= rollout_depth:
 
-        move = heuristic_move(board)
+
+        move = evaluate_mcts_move(board)
         board.push(move)
         depth += 1
 
@@ -82,7 +97,7 @@ def backpropagate(node, result):
         node = node.parent
 
 
-def mcts(board, iterations=1000, rollout_depth=100):
+def mcts(board, iterations=10000, rollout_depth=100):
     root = Node(board)
 
     for _ in range(iterations):
