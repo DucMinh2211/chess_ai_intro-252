@@ -1,6 +1,12 @@
 \documentclass[12pt, a4paper]{report}
-\usepackage{vntex}
-\usepackage[utf8]{inputenc}
+\usepackage{ifxetex}
+\ifxetex
+    \usepackage{fontspec}
+    \setmainfont{Noto Serif}
+\else
+    \usepackage{vntex}
+    \usepackage[utf8]{inputenc}
+\fi
 \usepackage{nomencl,etoolbox,ragged2e,siunitx}
 \usepackage{indentfirst, caption}
 
@@ -55,7 +61,6 @@
 
 % \renewcommand{\acronymname}{Danh mục viết tắt}
 \makenomenclature
-\usepackage[utf8]{inputenc}
 %\usepackage[francais]{babel}
 \usepackage{a4wide,amssymb,epsfig,latexsym,array,float,hhline,fancyhdr}
 \usepackage[normalem]{ulem}
@@ -237,9 +242,9 @@
 % \everymath{\color{blue}}%make in-line maths symbols blue to read/check easily
 
 \sloppy
-\captionsetup[figure]{labelfont={small,bf},textfont={small,it},belowskip=-1pt,aboveskip=-9pt}
+\captionsetup[figure]{labelfont={small,bf},textfont={small,it},belowskip=5pt,aboveskip=10pt}
 %space remove between caption, figure, and text
-\captionsetup[table]{labelfont={small,bf},textfont={small,it},belowskip=-1pt,aboveskip=7pt}
+\captionsetup[table]{labelfont={small,bf},textfont={small,it},belowskip=5pt,aboveskip=10pt}
 
 
 
@@ -520,7 +525,7 @@
                 \begin{center}
                     
                     \Large
-                    \textbf{MINESWEEPER}
+                    \textbf{CHESS}
                 \end{center}
             \end{changemargin}
             
@@ -634,17 +639,17 @@ Danh sách thành viên nhóm:
 \chapter{Giới thiệu vấn đề}
 \label{chap:overall}
 \thispagestyle{fancy}
-\textit{Chương này trình bày tổng quan về trò chơi Minesweeper dưới góc độ một bài toán rà soát không gian trạng thái trên đồ thị lưới 2D. Nội dung theo sau sẽ xác định rõ giới hạn phạm vi của Homework, phát biểu bài toán cần giải quyết, và liệt kê các mục tiêu để xây dựng môi trường giả lập tích hợp thuật toán DFS.}
+\textit{Chương này trình bày tổng quan về trò chơi Cờ vua dưới góc độ một bài toán tìm kiếm không gian trạng thái trên cây trò chơi. Nội dung theo sau sẽ xác định rõ bối cảnh, mục tiêu và phạm vi của dự án AI Cờ vua sử dụng Alpha-Beta và MCTS.}
 \import{chapters/1. Tổng quan/}{main.tex}
 %%%%% MARKUP END CHUONG 1 %%%%%%%%%%%%%
 %%%%% MARKUP BEGIN CHUONG 2 %%%%%%%%%%%%%
 
 \chapter{Động lực thực hiện}\label{chap:base-knowledge}
 \thispagestyle{fancy}
-\textit{Chương này tập trung vào lý do đằng sau các thiết kế. Mục tiêu không phải là viết lại một trò chơi có sẵn, mà là giải quyết các vấn đề kỹ thuật như tối ưu thuật toán, tránh giới hạn của ngôn ngữ lập trình và xây dựng một kiến trúc đủ rõ ràng để mở rộng sau này.}
+\textit{Chương này tập trung vào lý do đằng sau các thiết kế. Mục tiêu không phải là viết lại một trò chơi có sẵn, mà là giải quyết các vấn đề kỹ thuật như tối ưu hóa thuật toán tìm kiếm, tránh bùng nổ không gian trạng thái và xây dựng một kiến trúc engine đủ rõ ràng để so sánh hai phương pháp AI.}
 
 
-\import{chapters/2. Base-Knowledge/}{main.tex}
+\import{chapters/2. Dong luc/}{main.tex}
 
 
 %%%%% MARKUP END CHUONG 2 %%%%%%%%%%%%%
@@ -654,7 +659,7 @@ Danh sách thành viên nhóm:
 \label{chap:eval}
 \thispagestyle{fancy}
 
-\textit{Chương này không nhằm liệt kê lý thuyết, mà tập trung vào việc xem xét các cách tiếp cận phổ biến để xử lý bài toán flood fill trên lưới. Trọng tâm là so sánh hai chiến lược tìm kiếm cơ bản: BFS và DFS, từ đó làm rõ lý do lựa chọn DFS dạng lặp trong đồ án.}
+\textit{Chương này xem xét các hướng tiếp cận AI cho Cờ vua trong lịch sử và hiện tại. Trọng tâm là so sánh hai chiến lược tìm kiếm kinh điển: Duyệt cây có hệ thống (Alpha-Beta) và Mô phỏng xác suất (MCTS), từ đó làm rõ lý do lựa chọn chúng làm đối tượng nghiên cứu chính.}
 
 \import{chapters/3. Phân tích bài toán và dữ liệu/}{main.tex}
 
@@ -670,27 +675,27 @@ Danh sách thành viên nhóm:
 \chapter{Cơ sở lý thuyết}
 \label{chap:design}
 \thispagestyle{fancy}
-\textit{Chương này đặt lại trò chơi Minesweeper dưới góc nhìn toán học, để chuyển từ một trò chơi sang một mô hình có thể phân tích và chứng minh được. Trọng tâm là mô hình hóa bằng lý thuyết đồ thị và mô tả thuật toán DFS, làm nền cho phần phân tích sau này.}
+\textit{Chương này đặt bài toán Cờ vua dưới góc nhìn toán học và lý thuyết đồ thị. Trọng tâm là mô hình hóa cây trò chơi và mô tả chi tiết các thuật toán Alpha-Beta Pruning cùng Monte Carlo Tree Search, làm nền tảng cho phần triển khai thực tế.}
 
 \import{chapters/4. Thiết kế hệ thống E-Commerce tích hợp Pipeline/}{main.tex}
 
 \chapter{Phương án đề xuất}
 \label{chap:methodologies}
 \thispagestyle{fancy}
-\textit{Chương này mô tả cách hệ thống Minesweeper được xây dựng dựa trên nền tảng lý thuyết đã trình bày. Trọng tâm gồm ba phần: thiết kế kiến trúc tách biệt, kỹ thuật khởi tạo mìn trì hoãn, và cách triển khai thuật toán Flood Fill bằng DFS dạng lặp.}
+\textit{Chương này mô tả cách hệ thống AI Cờ vua được xây dựng dựa trên nền tảng lý thuyết đã trình bày. Trọng tâm gồm ba phần: thiết kế kiến trúc engine, biểu diễn bàn cờ (Board representation) và chi tiết cài đặt hai thuật toán AI bằng ngôn ngữ Python.}
 \import{chapters/5.phuong_an_de_xuat/}{main.tex}
 
 %%%%% MARKUP END CHUONG 5 %%%%%%%%%%%%%
 \chapter{Kết quả \& Phân tích}
 \label{chap:results}
 \thispagestyle{fancy}
-\textit{Chương này tập trung vào việc đánh giá những gì hệ thống đạt được sau khi áp dụng kiến trúc và thuật toán đã đề xuất. Trọng tâm không phải là giao diện, mà là phân tích độ phức tạp, phân tích khấu hao  trong suốt vòng đời trò chơi, và hiệu năng thực tế của hệ thống.}
+\textit{Chương này tập trung vào việc đánh giá hiệu năng của hai thuật toán AI sau khi triển khai. Trọng tâm là phân tích độ sâu tìm kiếm, số nút đã duyệt mỗi giây, thời gian đưa ra nước đi và so sánh chất lượng chiến thuật trong các thế trận thực tế.}
 \import{chapters/6.ket_qua/}{main.tex}
 
 \chapter{Thách thức \& Hạn chế}
 \label{chap:challenge}
 \thispagestyle{fancy}
-\textit{Chương này nhìn lại toàn bộ dự án. Thay vì chỉ tập trung vào kết quả đạt được, nội dung sẽ chỉ ra những khó khăn kỹ thuật trong quá trình triển khai và đánh giá rõ hệ thống hiện tại còn cách bao xa so với một mô hình AI hoàn chỉnh.}
+\textit{Chương này nhìn lại toàn bộ quá trình thực hiện dự án. Nội dung sẽ chỉ ra những khó khăn kỹ thuật trong việc tối ưu hóa hàm đánh giá, quản lý tài nguyên bộ nhớ và đánh giá rõ các giới hạn của engine AI hiện tại so với các engine chuyên nghiệp.}
 \import{chapters/7.han_che/}{main.tex}
 
 
@@ -721,14 +726,12 @@ Danh sách thành viên nhóm:
 \bibitem{russell2009ai}
 S. Russell and P. Norvig, \textit{Artificial Intelligence: A Modern Approach}, 3rd ed., Upper Saddle River, NJ: Prentice Hall, 2009.
 
-\bibitem{pygame_docs}
-Pygame Community, ``Pygame Documentation,'' Pygame-CE, 2024. [Online]. Truy cập tại: \url{https://pyga.me/docs/}.
+\bibitem{chess_rules}
+FIDE, ``FIDE Laws of Chess,'' World Chess Federation, 2024. [Online]. Truy cập tại: \url{https://www.fide.com/fide/handbook.html?id=208&view=category}.
 
 
-\bibitem{code_minesweeper}
-Nhóm 1 - Lớp L01, ``Minesweeper – Pygame Implementation,'' Mã nguồn dự án của nhóm, 2026. Truy cập tại: \url{https://drive.google.com/file/d/1LhJk8jxdH9E7tAZUkhjdNq2otrHATiV4/view?usp=sharing}
-
-
+\bibitem{code_chess_ai}
+Nhóm 1 - Lớp L01, ``Chess AI – Alpha-Beta and MCTS Implementation,'' Mã nguồn dự án của nhóm, 2026. 
 
 \end{thebibliography}
 

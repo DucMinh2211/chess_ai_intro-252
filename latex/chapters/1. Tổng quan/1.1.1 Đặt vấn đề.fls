@@ -1,0 +1,6 @@
+PWD /data/data/com.termux/files/home/projects/chess_ai_intro-252/latex/chapters/1. Tổng quan
+INPUT /data/data/com.termux/files/usr/share/texlive/2026.0/texmf-dist/web2c/texmf.cnf
+INPUT /data/data/com.termux/files/usr/share/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt
+INPUT /data/data/com.termux/files/home/projects/chess_ai_intro-252/latex/chapters/1. Tổng quan/1.1.1 Đặt vấn đề.tex
+OUTPUT 1.1.1 Đặt vấn đề.log
+INPUT /data/data/com.termux/files/usr/share/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm

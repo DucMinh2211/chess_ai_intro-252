@@ -156,3 +156,18 @@ Thumbs.db
 # IDEs
 .vscode/
 .idea/
+
+# LaTeX
+latex/*.aux
+latex/*.fdb_latexmk
+latex/*.fls
+latex/*.glo
+latex/*.idx
+latex/*.ist
+latex/*.log
+latex/*.out
+latex/*.toc
+latex/*.bbl
+latex/*.blg
+latex/*.synctex.gz
+latex/main.pdf

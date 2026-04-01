@@ -1,14 +1,20 @@
-\section{Bối cảnh bài toán}
+\section{Đặt vấn đề}
 
-Minesweeper là một trò chơi giải đố, diễn ra trên một bảng ô vuông kích thước R×C. Một số ô chứa mìn được đặt ẩn bên dưới, và người chơi sẽ mở từng ô để tìm vùng an toàn, dựa vào các con số cho biết có bao nhiêu mìn nằm xung quanh.
+Cờ vua là một trong những trò chơi trí tuệ lâu đời và phức tạp nhất thế giới, với không gian trạng thái khổng lồ (ước tính khoảng $10^{120}$ vị trí có thể xảy ra). Việc xây dựng một hệ thống trí tuệ nhân tạo (AI) có khả năng chơi cờ vua không chỉ đơn thuần là lập trình luật chơi, mà còn là bài toán tối ưu hóa việc tìm kiếm nước đi trong một cây trò chơi tăng trưởng theo hàm mũ.
 
-Nếu nhìn dưới góc độ cấu trúc dữ liệu, bàn chơi thực chất là một lưới 2D, nơi mỗi ô có thể xem như một “điểm” kết nối với tối đa 8 ô xung quanh nó. Khi vận hành trò chơi, hệ thống phải xử lý các thao tác mở ô, kiểm tra mìn và đặc biệt là cơ chế mở lan những vùng trống. Vì vậy, phía sau một trò chơi tưởng chừng đơn giản là cả một bài toán về duyệt đồ thị và quản lý trạng thái.
+Dưới góc độ kỹ thuật, mỗi trạng thái bàn cờ có thể coi là một nút trong cây tìm kiếm. Khó khăn lớn nhất là máy tính không thể duyệt hết toàn bộ các khả năng để tìm ra nước đi tối ưu tuyệt đối trong thời gian thực. Do đó, thách thức đặt ra là làm thế nào để thu hẹp không gian tìm kiếm mà không bỏ lỡ các nước đi quan trọng. Điều này dẫn đến việc áp dụng các thuật toán như:
+\begin{itemize}
+    \item \textbf{Alpha-Beta Pruning}: Cải tiến từ thuật toán Minimax để cắt tỉa các nhánh không triển vọng, giúp tăng độ sâu tìm kiếm.
+    \item \textbf{Monte Carlo Tree Search (MCTS)}: Sử dụng mô phỏng xác suất để đánh giá các nước đi trong những tình huống mà hàm đánh giá tĩnh khó đưa ra kết quả chính xác.
+\end{itemize}
+
+Việc nghiên cứu và triển khai song song hai thuật toán này nhằm so sánh hiệu quả giữa cách tiếp cận duyệt cây có hệ thống và mô phỏng thống kê, từ đó xây dựng một AI cờ vua hoạt động ổn định và có chiều sâu chiến thuật.
 
 \begin{center}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.25\linewidth]{../../images/ai/ms.png}
+    \includegraphics[width=0.6\linewidth]{../../images/ai/chess-problem.png}
     \vspace{0.5cm}
-    \caption{Hình ảnh của game Minesweeper}
+    \caption{Bài toán tìm kiếm và tối ưu hóa trong Cờ vua}
 \end{figure}
 \end{center}

@@ -1,0 +1,8 @@
+PWD /data/data/com.termux/files/home/projects/chess_ai_intro-252/latex/chapters/2. Dong luc
+INPUT /data/data/com.termux/files/usr/share/texlive/2026.0/texmf-dist/web2c/texmf.cnf
+INPUT /data/data/com.termux/files/usr/share/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt
+INPUT /data/data/com.termux/files/home/projects/chess_ai_intro-252/latex/chapters/2. Dong luc/2.1 Dong luc.tex
+OUTPUT 2.1 Dong luc.log
+INPUT /data/data/com.termux/files/usr/share/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm
+OUTPUT 2.1 Dong luc.pdf
+INPUT /data/data/com.termux/files/usr/share/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map

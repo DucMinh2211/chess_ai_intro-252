@@ -1,7 +1,11 @@
-\section{Phát biểu bài toán}
+\section{Các phương pháp tiếp cận AI trong Cờ vua}
 
-Trong quá trình xây dựng môi trường Minesweeper, thách thức lớn nhất nằm ở cơ chế tự động mở rộng vùng an toàn.
+Để giải quyết bài toán tìm kiếm nước đi trong Cờ vua, dự án tập trung nghiên cứu và triển khai hai hướng tiếp cận chính, đại diện cho hai trường phái thuật toán khác nhau trong trí tuệ nhân tạo cho trò chơi đối kháng.
 
-Cụ thể, khi người chơi mở một ô không có mìn và không có mìn ở các ô lân cận (ô có giá trị 0), hệ thống phải tự động mở tất cả các ô trống liên thông với nó, đồng thời hiển thị cả các ô có số nằm ở viền xung quanh vùng đó. Đây chính là bài toán “flood fill”.
+\subsection{Tiếp cận theo hướng duyệt cây có hệ thống (Alpha-Beta Pruning)}
+Phương pháp này dựa trên thuật toán Minimax truyền thống nhưng được tối ưu hóa bằng kỹ thuật cắt tỉa Alpha-Beta. Thách thức lớn nhất ở đây là việc xây dựng một hàm đánh giá (Heuristic function) đủ tốt để ước lượng giá trị của các thế trận trung gian mà không cần duyệt đến tận cùng ván đấu. Bài toán đặt ra là phải cân bằng giữa độ sâu tìm kiếm và độ phức tạp của hàm đánh giá để AI có thể phản hồi trong thời gian thực.
 
-Vấn đề đặt ra là làm sao để thực hiện quá trình này một cách nhanh và tiết kiệm bộ nhớ, đặc biệt với những bàn chơi lớn như 16×16 (256 ô), mà không làm treo giao diện hoặc vượt quá giới hạn đệ quy.
+\subsection{Tiếp cận theo hướng mô phỏng xác suất (Monte Carlo Tree Search)}
+Khác với Alpha-Beta, MCTS không đòi hỏi quá nhiều kiến thức chuyên môn về cờ vua (như các bảng điểm vị trí phức tạp). Thay vào đó, nó giải quyết bài toán bằng cách thực hiện hàng ngàn lượt mô phỏng ngẫu nhiên (rollouts) để thống kê tỷ lệ thắng của từng nước đi. Vấn đề cốt lõi của phương pháp này là việc áp dụng công thức UCB1 để giải quyết bài toán đánh đổi giữa việc khai thác các nước đi tốt đã biết và khám phá các vùng không gian mới trong cây trò chơi.
+
+Việc kết hợp và so sánh hai phương pháp này giúp chúng ta hiểu rõ hơn về tính hiệu quả của AI trong các kịch bản thực tế của trò chơi cờ vua.
