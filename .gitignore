@@ -31,6 +31,7 @@ MANIFEST
 #  and lib/ directories that PyInstaller runs from.
 *.manifest
 *.spec
+!buildozer.spec
 
 # Installer logs
 pip-log.txt
