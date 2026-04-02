@@ -87,10 +87,15 @@ def get_game_status(fen: str):
     return {'game_over': False, 'result': ''}
 
 if __name__ == "__main__":
+    url = "http://localhost:8000"
     print("--- Chess AI Backend Started ---")
-    print("WSL2 Mode: Server is running at http://localhost:8000")
-    print("Please open the URL above in your Windows browser.")
-    print("--------------------------------")
+    print(f"Web interface: {url}")
     
-    # mode=None prevents Eel from trying to open a native browser window
-    eel.start('index.html', mode=None, host='localhost', port=8000)
+    try:
+        # Try to launch browser normally
+        eel.start('index.html', size=(1000, 700))
+    except (SystemExit, Exception):
+        # Fallback for WSL2/No-Browser environments
+        print("No browser found or launch failed. Running in server mode...")
+        print("Please open the URL above manually.")
+        eel.start('index.html', mode=None, host='localhost', port=8000)
