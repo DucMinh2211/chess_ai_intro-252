@@ -153,6 +153,7 @@ async function conductGame(side, botType, params) {
 
     while (true) {
         if (isResigned) {
+            eel.log_session_stats()(); // Log AI performance on resignation
             document.getElementById('resign-btn').style.display = 'none';
             document.getElementById('game-back-btn').style.display = 'block';
             return { result: side === 'white' ? 'black' : 'white' };
