@@ -87,11 +87,29 @@ function getPlayerMove(legalMoves) {
     return new Promise((resolve) => {
         let fromSquare = null;
         const squares = document.querySelectorAll("#chessboard .square");
+        const resignBtn = document.getElementById('resign-btn');
+        
+        const cleanup = () => {
+            squares.forEach(s => s.onclick = null);
+            resignBtn.removeEventListener('click', onResign);
+        };
+
+        const onResign = () => {
+            cleanup();
+            resolve(null);
+        };
+
+        resignBtn.addEventListener('click', onResign);
+
         squares.forEach(sq => {
             sq.onclick = function() {
                 const clicked = this.dataset.square;
                 if (fromSquare === null && legalMoves[clicked]) { fromSquare = clicked; highlight(fromSquare, legalMoves[fromSquare]); }
-                else if (fromSquare && legalMoves[fromSquare]?.includes(clicked)) { clearHi(); squares.forEach(s => s.onclick = null); resolve({ from: fromSquare, to: clicked }); }
+                else if (fromSquare && legalMoves[fromSquare]?.includes(clicked)) { 
+                    clearHi(); 
+                    cleanup();
+                    resolve({ from: fromSquare, to: clicked }); 
+                }
                 else { clearHi(); fromSquare = null; }
             };
         });
@@ -151,6 +169,7 @@ async function conductGame(side, botType, params) {
             let move = null, result = null;
             if (turn === 'player') {
                 move = await getPlayerMove(await eel.get_legal_moves(currentFen)());
+                if (!move) continue; // Might be resigned
                 result = await eel.apply_move(currentFen, move.from, move.to)();
                 turn = 'bot';
             } else {
@@ -208,6 +227,13 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-offline').onclick = () => { 
         document.getElementById('sidebar-menu').style.display = 'none'; 
         document.getElementById('sidebar-offline').style.display = 'flex'; 
+        
+        // Reset settings visibility for new session
+        document.getElementById('alphabeta-settings').style.display = 'none'; 
+        document.getElementById('mcts-settings').style.display = 'none'; 
+        document.getElementById('side-picker').style.display = 'none'; 
+        document.getElementById('start-btn').style.display = 'none';
+
         renderChoices('bot-list', BOT_LIST, 'bot', (v) => { 
             document.getElementById('alphabeta-settings').style.display = v === 'alphabeta' ? '' : 'none'; 
             document.getElementById('mcts-settings').style.display = v === 'mcts' ? '' : 'none'; 
@@ -219,6 +245,8 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('start-btn').onclick = () => { 
         const bot = document.querySelector('#bot-list .selected input')?.value;
         const selectedSide = document.querySelector('#side-list .selected input')?.value;
+        if (!bot || !selectedSide) return;
+
         const actualSide = getPlayerSide(selectedSide);
         
         const params = {
@@ -237,6 +265,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const toMenu = () => { 
         document.getElementById('result-overlay').style.display = 'none'; 
         document.getElementById('sidebar-game').style.display = 'none'; 
+        document.getElementById('sidebar-offline').style.display = 'none'; 
         document.getElementById('sidebar-menu').style.display = 'flex'; 
         createBoard(); renderBoard(STARTING_FEN); 
     };
