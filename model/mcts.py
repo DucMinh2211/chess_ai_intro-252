@@ -20,42 +20,35 @@ def uct(node):
     if node.visits == 0:
         return float('inf')
 
-    exploit = node.value / node.visits
-    explore = C * math.sqrt(math.log(node.parent.visits) / node.visits)
+    exploit = math.tanh(node.value / (node.visits * 1000))
 
-    heuristic = evaluate(node.board) * 0.01
-    print("heuristic", heuristic)
-
-    return exploit + explore + heuristic
+    explore = C * math.sqrt(math.log(node.parent.visits + 1) / node.visits)
+    return exploit + explore
 
 
 def select(node):
     while node.children:
+        unvisited = [c for c in node.children if c.visits == 0]
+        if unvisited:
+            return random.choice(unvisited)
         node = max(node.children, key=uct)
     return node
 
 
 def expand(node):
+    if node.children:
+        return node  
+    
     moves = list(node.board.legal_moves)
+    if not moves:
+        return node
+    
     for move in moves:
         b = node.board.copy()
         b.push(move)
         node.children.append(Node(b, node))
-    return random.choice(node.children) if node.children else node
-
-
-def heuristic_move(board):
-    moves = list(board.legal_moves)
-    if not moves: return None
-
-    # Pick the best move according to evaluate_move (captures/promotions)
-    best_move = max(moves, key=lambda m: evaluate_move(board, m))
     
-    # If the best move is not a capture/promotion, pick randomly to maintain some exploration
-    if evaluate_move(board, best_move) == 0:
-        return random.choice(moves)
-        
-    return best_move
+    return random.choice(node.children)
 
 def random_move(board):
     moves = list(board.legal_moves)
@@ -63,51 +56,57 @@ def random_move(board):
     rmove = random.choice(moves)
     return rmove
 
-def evaluate_mcts_move(board):
-
-    moves = list(board.legal_moves)
-    if not moves: return None
-    moves.sort(key=lambda m: evaluate_move(board, m), reverse=True)
-    
-    return moves[0]
-
 
 def simulate(board, rollout_depth: int):
+    mover = not board.turn
+
     depth = 0
-
-    while not board.is_game_over():
-            return evaluate(board)
-    if depth >= rollout_depth:
-
-
-        move = evaluate_mcts_move(board)
+    while not board.is_game_over() and depth < rollout_depth:
+        move = random_move(board)
+        if move is None:
+            break
         board.push(move)
         depth += 1
 
-    if board.is_checkmate():
-        return -99999 if board.turn else 99999
-
-    return 0
+    raw = evaluate(board)  # White-positive
+    raw = max(-2000, min(2000, raw))
+    return raw if mover == chess.WHITE else -raw
 
 
 def backpropagate(node, result):
     while node:
         node.visits += 1
         node.value += result
+        result = - result
         node = node.parent
 
 
-def mcts(board, iterations=10000, rollout_depth=100):
+def mcts(board, iterations=10000, rollout_depth=30):
     root = Node(board)
 
-    for _ in range(iterations):
+    print(f"MCTS starting: {iterations} iterations, rollout depth {rollout_depth}")
+
+    for i in range(iterations):
+        if i % 1000 == 0 and i > 0:
+            print(f"  Iteration {i}/{iterations}...")
+
         node = select(root)
         node = expand(node)
         result = simulate(node.board.copy(), rollout_depth)
         backpropagate(node, result)
 
     if not root.children:
+        print("MCTS: No legal moves found!")
         return None
 
-    best = max(root.children, key=lambda n: n.visits)
+    sorted_children = sorted(root.children, key=lambda n: n.visits, reverse=True)
+
+    print("\nMCTS Results:")
+    for child in sorted_children[:5]:
+        move = child.board.peek()
+        avg_val = child.value / child.visits if child.visits > 0 else 0
+        print(f"  Move {move}: {child.visits} visits, avg value: {avg_val:.2f}")
+
+    best = max(root.children, key=lambda n: n.value / n.visits if n.visits > 0 else float('-inf'))
+    print(f"\nBest move: {best.board.peek()} with {best.visits} visits\n")
     return best.board.peek()
