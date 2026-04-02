@@ -9,17 +9,17 @@
     - [x] 1.3 Phạm vi đề tài
     - [x] 1.4 Cấu trúc báo cáo
 - [x] **Chương 2: Động lực thực hiện (Motivations)**
-- [ ] **Chương 3: Nghiên cứu liên quan (Related Work)**
-    - [ ] Phân tích các Engine cờ vua hiện nay (Stockfish, AlphaZero).
-    - [ ] So sánh sơ bộ Alpha-Beta và MCTS trong các tài liệu trước.
-- [ ] **Chương 4: Cơ sở lý thuyết (Theoretical Foundations)**
-    - [ ] Lý thuyết cây trò chơi (Game Tree).
-    - [ ] Chi tiết thuật toán Alpha-Beta Pruning.
-    - [ ] Chi tiết thuật toán MCTS (Selection, Expansion, Simulation, Backprop).
-- [ ] **Chương 5: Phương án đề xuất (Methodologies)**
-    - [ ] Biểu diễn bàn cờ (Board Representation).
-    - [ ] Thiết kế hàm Heuristic cho Alpha-Beta.
-    - [ ] Cài đặt tham số cho MCTS.
+- [x] **Chương 3: Nghiên cứu liên quan (Related Work)**
+    - [x] Phân tích các Engine cờ vua hiện nay (Stockfish, AlphaZero).
+    - [x] So sánh sơ bộ Alpha-Beta và MCTS trong các tài liệu trước.
+- [x] **Chương 4: Cơ sở lý thuyết (Theoretical Foundations)**
+    - [x] Lý thuyết cây trò chơi (Game Tree).
+    - [x] Chi tiết thuật toán Alpha-Beta Pruning.
+    - [x] Chi tiết thuật toán MCTS (Selection, Expansion, Simulation, Backprop).
+- [x] **Chương 5: Phương án đề xuất (Methodologies)**
+    - [x] Biểu diễn bàn cờ (Board Representation).
+    - [x] Thiết kế hàm Heuristic cho Alpha-Beta.
+    - [x] Cài đặt tham số cho MCTS.
 - [ ] **Chương 6: Kết quả & Phân tích (Results & Discussion)**
     - [ ] Biểu đồ so sánh thời gian/độ sâu.
     - [ ] Phân tích chất lượng nước đi.
@@ -32,12 +32,12 @@
 - [x] **Mục lục (Table of Contents)**
 - [x] **Danh sách hình ảnh (List of Figures)**
 - [x] **Danh sách bảng biểu (List of Tables)**
-- [ ] **Đánh số trang (Page numbers)**
+- [x] **Đánh số trang (Page numbers)**
 - [ ] **Định dạng văn bản (Formatting):**
-    - [ ] Chỉnh Margin về 2.54 cm (Tất cả các cạnh).
-    - [ ] Chỉnh Line spacing về 1.5.
+    - [x] Chỉnh Margin về 2.54 cm (Tất cả các cạnh).
+    - [x] Chỉnh Line spacing về 1.5.
     - [ ] Cấu hình cỡ chữ Tiêu đề: Chương (16), Mục lớn (14), Mục nhỏ (13).
-    - [ ] Đảm bảo Font tương đương Times New Roman.
+    - [x] Đảm bảo Font tương đương Times New Roman.
 
 ## 3. Hình ảnh minh họa (Bonuses)
 - [x] Ảnh minh họa cây trò chơi (Chương 2).

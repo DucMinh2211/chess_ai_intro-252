@@ -1,0 +1,78 @@
+\section{Lý thuyết cây trò chơi (Game Tree)}
+
+Trong lý thuyết trò chơi, một trò chơi có thông tin đầy đủ (perfect information) và đối kháng (zero-sum) như cờ vua có thể được biểu diễn dưới dạng một cây trò chơi. 
+
+\begin{itemize}
+    \item \textbf{Nút (Node):} Mỗi nút đại diện cho một trạng thái của bàn cờ.
+    \item \textbf{Cạnh (Edge):} Mỗi cạnh đại diện cho một nước đi hợp lệ từ trạng thái này sang trạng thái khác.
+    \item \textbf{Nút gốc (Root):} Trạng thái hiện tại của bàn cờ.
+    \item \textbf{Nút lá (Leaf):} Trạng thái kết thúc trò chơi (thắng, thua, hòa) hoặc trạng thái tại độ sâu giới hạn của việc tìm kiếm.
+\end{itemize}
+
+Mục tiêu của AI là tìm kiếm trong cây này để chọn ra nước đi dẫn đến kết quả tốt nhất cho mình, giả định rằng đối thủ cũng chơi tối ưu.
+
+\section{Thuật toán Alpha-Beta Pruning}
+
+Alpha-Beta Pruning là một thuật toán tối ưu hóa cho thuật toán Minimax truyền thống. Nó giúp giảm đáng kể số lượng nút cần duyệt bằng cách loại bỏ các nhánh không thể ảnh hưởng đến kết quả cuối cùng.
+
+\subsection{Nguyên lý hoạt động}
+Thuật toán duy trì hai giá trị $\alpha$ và $\beta$:
+\begin{itemize}
+    \item $\alpha$: Giá trị tối đa mà người chơi Max có thể đảm bảo được tại thời điểm hiện tại.
+    \item $\beta$: Giá trị tối thiểu mà người chơi Min có thể đảm bảo được tại thời điểm hiện tại.
+\end{itemize}
+
+Nếu tại bất kỳ thời điểm nào $\beta \le \alpha$, nhánh đó sẽ bị cắt tỉa vì người chơi trước đó sẽ không bao giờ chọn nhánh dẫn đến kết quả này.
+
+\subsection{Giả mã thuật toán}
+\begin{algorithm}[H]
+\caption{Alpha-Beta Pruning}
+\begin{algorithmic}[1]
+\Function{AlphaBeta}{node, depth, $\alpha$, $\beta$, maximizingPlayer}
+    \If{depth == 0 or node is terminal}
+        \State \Return heuristic value of node
+    \EndIf
+    \If{maximizingPlayer}
+        \State $v \gets -\infty$
+        \For{each child of node}
+            \State $v \gets \max(v, \text{AlphaBeta}(child, depth - 1, \alpha, \beta, \text{False}))$
+            \State $\alpha \gets \max(\alpha, v)$
+            \If{$\beta \le \alpha$}
+                \State \textbf{break} \Comment{Cắt tỉa}
+            \EndIf
+        \EndFor
+        \State \Return $v$
+    \Else
+        \State $v \gets \infty$
+        \For{each child of node}
+            \State $v \gets \min(v, \text{AlphaBeta}(child, depth - 1, \alpha, \beta, \text{True}))$
+            \State $\beta \gets \min(\beta, v)$
+            \If{$\beta \le \alpha$}
+                \State \textbf{break} \Comment{Cắt tỉa}
+            \EndIf
+        \EndFor
+        \State \Return $v$
+    \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\section{Thuật toán Monte Carlo Tree Search (MCTS)}
+
+MCTS là một thuật toán tìm kiếm mang tính xác suất, không yêu cầu hàm đánh giá heuristic quá mạnh. Nó xây dựng cây trò chơi một cách bất đối xứng dựa trên kết quả của các mô phỏng (simulations).
+
+MCTS gồm 4 giai đoạn chính được lặp lại liên tục:
+
+\begin{enumerate}
+    \item \textbf{Selection (Chọn lọc):} Bắt đầu từ gốc, thuật toán chọn các nút con dựa trên công thức UCB1 (Upper Confidence Bound) cho đến khi gặp một nút chưa được mở rộng hoàn toàn.
+    \[ UCB1 = \bar{X}_j + C \sqrt{\frac{\ln n}{n_j}} \]
+    Trong đó $\bar{X}_j$ là giá trị trung bình, $n_j$ là số lần duyệt nút con $j$, $n$ là tổng số lần duyệt nút cha, và $C$ là tham số thăm dò (exploration parameter).
+    
+    \item \textbf{Expansion (Mở rộng):} Thêm một hoặc nhiều nút con mới vào cây từ nút hiện tại.
+    
+    \item \textbf{Simulation (Mô phỏng/Play-out):} Thực hiện một ván chơi giả lập từ nút mới cho đến khi kết thúc (thường bằng các nước đi ngẫu nhiên).
+    
+    \item \textbf{Backpropagation (Lan truyền ngược):} Cập nhật kết quả thắng/thua của simulation ngược lên các nút tổ tiên trong cây.
+\end{enumerate}
+
+MCTS có ưu điểm lớn là khả năng "tự học" các thế trận thông qua hàng ngàn simulation, thay vì dựa hoàn toàn vào các quy tắc cứng nhắc của con người.
