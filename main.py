@@ -36,8 +36,9 @@ def apply_move(fen: str, from_sq: str, to_sq: str, promotion=None):
     
     move = chess.Move.from_uci(move_uci)
     if move in board.legal_moves:
-        san_move = board.san(move) # Get SAN before pushing
+        san_move = board.san(move)
         board.push(move)
+        print(f"Move played: {san_move}")
         return {'fen': board.fen(), 'san': san_move}
     return {'fen': fen, 'san': ''}
 
@@ -46,6 +47,7 @@ def get_bot_move(fen: str, bot_type: str, params: dict):
     board = chess.Board(fen)
     move = None
     
+    print(f"AI ({bot_type}) is thinking...", end=" ", flush=True)
     if bot_type == 'random':
         moves = list(board.legal_moves)
         move = random.choice(moves)
@@ -58,9 +60,14 @@ def get_bot_move(fen: str, bot_type: str, params: dict):
         rollout_depth = int(params.get('rollout_depth', 30))
         move = mcts(board, iterations=iters, rollout_depth=rollout_depth)
     else:
+        print("Error!")
         raise Exception('Unknown Bot type')
 
-    if not move: raise Exception('Bot could not find a move')
+    if not move: 
+        print("Failed!")
+        raise Exception('Bot could not find a move')
+    
+    print(f"Done. Selected: {board.san(move)}")
     return {
         'from': chess.square_name(move.from_square),
         'to': chess.square_name(move.to_square),
@@ -71,18 +78,19 @@ def get_bot_move(fen: str, bot_type: str, params: dict):
 def get_game_status(fen: str):
     board = chess.Board(fen)
     if board.is_checkmate():
-        return {'game_over': True, 'result': 'black' if board.turn == chess.WHITE else 'white'}
+        res = 'black' if board.turn == chess.WHITE else 'white'
+        print(f"Game Over: Checkmate! Winner: {res}")
+        return {'game_over': True, 'result': res}
     if board.is_game_over():
+        print(f"Game Over: Draw! ({board.outcome().termination.name})")
         return {'game_over': True, 'result': 'draw'}
     return {'game_over': False, 'result': ''}
 
 if __name__ == "__main__":
-    print("Chess AI starting...")
-    print("If no browser window opens automatically, please visit: http://localhost:8000")
-    try:
-        # Standard launch (tries to find Chrome/Chromium)
-        eel.start('index.html', size=(1000, 700), cmdline_args=['--no-sandbox'])
-    except Exception as e:
-        print(f"Native browser launch failed ({e}). Falling back to browser mode...")
-        # Fallback for WSL/headless: opens in the default system browser (Windows or Linux)
-        eel.start('index.html', size=(1000, 700), mode='browser')
+    print("--- Chess AI Backend Started ---")
+    print("WSL2 Mode: Server is running at http://localhost:8000")
+    print("Please open the URL above in your Windows browser.")
+    print("--------------------------------")
+    
+    # mode=None prevents Eel from trying to open a native browser window
+    eel.start('index.html', mode=None, host='localhost', port=8000)
