@@ -1,3 +1,4 @@
+from model.alpha_beta import clear_transposition_table
 import eel
 from model.alpha_beta import *
 from model.mcts import *
@@ -19,7 +20,7 @@ def sync_board(fen: str):
     if game_board.fen().split(' ')[0] != fen.split(' ')[0]:
         if fen == chess.STARTING_FEN:
             game_board = chess.Board()
-            alpha_beta_clear_transposition_table() # Reset AI memory for new game
+            clear_transposition_table() # Reset AI memory for new game
         else:
             game_board = chess.Board(fen)
 

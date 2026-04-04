@@ -18,8 +18,6 @@ Việc so sánh Alpha-Beta và MCTS trong dự án này phơi bày ranh giới g
 
 \section{Đánh giá hiệu quả của Hybrid MCTS+AB}
 
-Sự ra đời của bot Hybrid đã giải quyết được các điểm yếu cố hữu của hai thuật toán đơn lẻ khi hoạt động độc lập.
-
 \subsection{Khả năng chống sai lầm (Blunder Prevention)}
 MCTS thuần túy thường dễ mắc sai lầm ngớ ngẩn do không mô phỏng trúng các nhánh chiếu bí ngắn hạn. Bot Hybrid, thông qua việc sử dụng Alpha-Beta làm "bộ lọc" (screening), đã loại bỏ hoàn toàn các nước đi tự sát. Ngay cả khi MCTS chưa chạy xong số lượt iterations, các nước đi tệ nhất đã bị Alpha-Beta gán điểm số âm cực lớn, ngăn chặn AI chọn chúng.
 
@@ -34,3 +32,26 @@ Việc tích hợp Transposition Table cho Alpha-Beta mang lại hiệu quả v�
 
 \subsection{Tác động của Quiescence Search}
 Quiescence Search đã giúp loại bỏ hoàn toàn các nước đi "mù quáng" của AI ở ranh giới độ sâu. Thực nghiệm cho thấy AI biết cách "nhẫn nhịn" hoặc "quyết liệt" ăn quân một cách hợp lý hơn, thay vì chỉ dừng lại ở việc đếm quân số một cách hời hợt tại nút lá.
+
+\subsection{Bảng kết quả Benchmark}
+
+\begin{table}[H]
+\centering
+\caption{Kết quả Benchmark thuật toán Hybrid MCTS-AlphaBeta trên Chess.com \& VS AlphaBeta}
+\label{tab:hybridmcts_benchmark}
+\begin{tabularx}{\textwidth}{|c|l|X|c|c|c|}
+\hline
+\textbf{STT} & \textbf{Cấu hình Bot} & \centering \textbf{Đối thủ (Elo)} & \textbf{Kết quả} & \textbf{Thời gian/Move (s)} & \textbf{Số nước} \\ \hline
+1  & Iter=3000, TopK=6 & Beginner (700)  & THẮNG  & ~14s & 60 \\ \hline
+2  & Iter=3000, TopK=6 & Intermediate (1000)  &  THUA &  ~30s & 40 \\ \hline
+4 & Iter=3000, TopK=6 & AlphaBeta(D=3,QD=2) & THUA(2 trận) & ~33s \\ \hline
+6 & Iter=5000, TopK=6 & AlphaBeta(D=4, QD=2) & THUA(2 trận) & ~47s \\ \hline
+8 & Iter=3000, TopK=6 & AlphaBeta(D=2, QD=0) & THUA(2 trận) & ~30s \\ \hline
+\end{tabularx}
+\end{table}
+
+\subsection{Nhận xét}
+
+Dựa trên bảng kết quả cập nhật, mô hình Hybrid MCTS-AlphaBeta đã cho thấy sự tiến bộ nhất định so với phiên bản MCTS thuần túy ở khả năng dứt điểm. Việc đánh bại đối thủ 700 Elo thay vì nhận kết quả hòa bế tắc chứng tỏ cơ chế Alpha-Beta được tích hợp đã giúp engine nhìn ra các đòn phối hợp và chiếu bí tốt hơn. Dù vậy, ván đấu kéo dài tới 60 nước (thay vì dứt điểm nhanh) gợi ý rằng quá trình hiện thực hóa ưu thế ở giai đoạn tàn cuộc vẫn còn khá cồng kềnh, thuật toán chưa tối ưu được đường đi ngắn nhất đến chiến thắng.
+
+Tuy nhiên, khi đối đầu với mức Elo cao hơn (1000) hoặc engine Alpha-Beta truyền thống, mô hình Hybrid lại bộc lộ sự kém hiệu quả nghiêm trọng. Việc để thua trắng trước Alpha-Beta, kể cả ở cấu hình cực thấp (Depth 2, không có Quiescence), cho thấy điểm yếu chí mạng: cơ chế lọc cành TopK=6 của MCTS rất có thể đã loại bỏ mất những nước đi chiến thuật quan trọng trước khi Alpha-Beta kịp tính toán sâu hơn. Đồng thời, thời gian suy nghĩ quá lâu (lên tới 30 - 47 giây cho một nước đi) minh chứng cho việc hệ thống đang bị quá tải tài nguyên khi phải gồng gánh cả hai thuật toán. Kết quả là nó đánh mất tốc độ, bỏ sót chiến thuật và hoàn toàn lép vế trước sự sắc bén, toàn diện của Alpha-Beta nguyên bản.

@@ -76,13 +76,26 @@ Ván đấu số 12 (PGN bên dưới) là minh chứng rõ nhất cho khả nă
 \section{Phân tích chiến thuật của MCTS}
 
 MCTS mang lại một phong cách chơi hoàn toàn khác biệt, mang tính "trực giác" và đôi khi gây bất ngờ.
+\subsection{Bảng kết quả Benchmark}
 
-\subsection{Ưu thế về không gian và sự linh hoạt}
-MCTS không bị bó buộc bởi một độ sâu cố định. Trong những thế trận phức tạp mà không có nước đi ăn quân rõ ràng, MCTS có xu hướng chọn những nước đi cải thiện vị trí dần dần (positional improvement).
-\begin{itemize}
-    \item \textbf{Tính sáng tạo:} Đôi khi AI đưa ra những nước đi mà hàm Heuristic tĩnh sẽ đánh giá thấp, nhưng kết quả mô phỏng lại cho thấy tỷ lệ thắng cao.
-    \item \textbf{Khả năng tàn cuộc:} Trong tàn cuộc, khi số lượng nước đi hợp lệ ít đi, các cuộc simulation của MCTS trở nên cực kỳ chính xác, giúp nó tìm ra những đường thắng lắt léo mà Alpha-Beta có thể bỏ lỡ nếu không duyệt đủ sâu.
-\end{itemize}
+Dưới đây là bảng tổng hợp kết quả thi đấu của engine sử dụng MCTS:
 
-\subsection{Rủi ro từ sự ngẫu nhiên}
-Tuy nhiên, MCTS vẫn có xác suất mắc sai lầm lớn (blunders) nếu số lượng iterations không đủ để phủ hết các nhánh hiểm hóc. Chỉ cần một nhánh dẫn đến chiếu bí mà không được mô phỏng đủ nhiều, AI có thể tự tin đi vào nhánh đó và nhận thất bại ngay lập tức.
+\begin{table}[H]
+\centering
+\caption{Kết quả Benchmark thuật toán  MCTS trên Chess.com \& VS AlphaBeta}
+\label{tab:mcts_benchmark}
+\begin{tabularx}{\textwidth}{|c|l|X|c|c|c|}
+\hline
+\textbf{STT} & \textbf{Cấu hình Bot} & \centering \textbf{Đối thủ (Elo)} & \textbf{Kết quả} & \textbf{Thời gian/Move (s)} & \textbf{Số nước} \\ \hline
+1  & Iter=1000, Depth=5 & Beginner (250)  & HÒA (Hơn về chất cờ nhưng không dứt điểm ) & ~30s & >50 \\ \hline
+2  & Iter=5000, Depth=5 & Intermediate (850)  &  Thua &  ~45s & >50 \\ \hline
+23 & Iter=300, Depth=20 & AlphaBeta(D=2,QD=2) & THUA(20 trận) & ~40s \\ \hline
+\end{tabularx}
+\end{table}
+
+\subsection{Nhận xét}
+Dựa trên bảng kết quả benchmark, có thể thấy engine MCTS đang bộc lộ rõ những giới hạn đặc trưng của một thuật toán chưa được tối ưu hóa toàn diện. Khi đối đầu với người chơi mới (Beginner 250 Elo), bot với thiết lập 1000 vòng lặp thể hiện được khả năng đánh giá thế trận khá tốt để giành ưu thế vật chất, nhưng lại vấp phải điểm yếu chí mạng của MCTS thuần túy: thiếu khả năng nhận diện mục tiêu cuối cùng (chiếu bí), dẫn đến việc vờn quanh vô nghĩa và kết thúc bằng những trận hòa dù ván đấu kéo dài hơn 50 nước. Khi nâng lên 5000 vòng lặp trước đối thủ trung bình (Intermediate 850 Elo), bot hoàn toàn bế tắc và nhận thất bại.
+
+Sự yếu kém về tính toán chiến thuật cục bộ càng bị khoét sâu khi đối đầu với engine truyền thống: bot thua trắng 20/20 trận trước thuật toán Alpha-Beta ở cấu hình rất cơ bản (Depth 2, Quiescence 2). Mức thiết lập 300 vòng lặp là quá nhỏ để MCTS có thể va chạm và "học" được các bẫy bắt quân trong cây tìm kiếm, khiến nó trở nên mù lòa trước các đòn chiến thuật nhanh. Nhìn chung, rào cản lớn nhất của engine này đang nằm ở hiệu suất thực thi; việc mất từ 30 đến 45 giây cho một nước đi với số lượng mô phỏng ít ỏi (dưới 5000) chứng tỏ tốc độ chạy rollout và sinh nước đi đang quá chậm, ngăn cản MCTS phát huy được thế mạnh đào sâu vào các nhánh cờ tiềm năng.
+
+
