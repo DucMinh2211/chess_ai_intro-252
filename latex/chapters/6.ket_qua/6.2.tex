@@ -1,18 +1,23 @@
-\section{Phân tích tổng hợp}
+\section{Đánh giá sự đánh đổi giữa Tri thức và Mô phỏng}
 
-Một lần click có thể khiến thuật toán mở ra rất nhiều ô, tạo cảm giác chi phí tính toán tăng đột ngột. Tuy nhiên, nếu xét trên toàn bộ một ván chơi, thuật toán lại rất ổn định.
+Việc so sánh Alpha-Beta và MCTS trong dự án này phơi bày ranh giới giữa hai triết lý AI cổ điển và hiện đại.
 
-Tổng số ô an toàn cần mở để thắng là $N - k$. Mỗi ô chỉ được mở và đánh dấu \texttt{revealed = True} đúng một lần duy nhất trong suốt ván chơi. Vì vậy, tổng công sức của tất cả các lần gọi \_dfs\_reveal luôn nhỏ hơn hoặc bằng $N$.
+\begin{table}[H]
+    \centering
+    \caption{Phân tích sự khác biệt về hiệu quả thực thi}
+    \label{tab:final_comparison}
+    \begin{tabularx}{\textwidth}{|l|X|X|}
+        \hline
+        \textbf{Khía cạnh} & \textbf{Alpha-Beta (Tri thức)} & \textbf{MCTS (Mô phỏng)} \\ \hline
+        \textbf{Điểm mạnh} & Tính toán chính xác tuyệt đối các đòn phối hợp ngắn hạn. & Tìm ra các nước đi mang tính chiến lược dài hạn. \\ \hline
+        \textbf{Điểm yếu} & Hiệu ứng đường chân trời, dễ bị bẫy ở lớp $d+1$. & Dễ mắc sai lầm ngớ ngẩn nếu không đủ iterations. \\ \hline
+        \textbf{Sự phụ thuộc} & Phụ thuộc 100\% vào độ sâu và hàm Heuristic. & Phụ thuộc vào chất lượng simulation và UCB1. \\ \hline
+        \textbf{Ứng dụng} & Tốt nhất trong Khai cuộc và Trung cuộc. & Tốt nhất trong Tàn cuộc hoặc thế trận mở. \\ \hline
+    \end{tabularx}
+\end{table}
 
-Chi phí tổng thể của trò chơi có thể biểu diễn như sau:
+\subsection{Tác động của Transposition Table}
+Việc tích hợp Transposition Table cho Alpha-Beta mang lại hiệu quả vượt trội. Trong các ván đấu thực tế, tỷ lệ trùng lặp thế trận có thể lên tới 20-30\%. Nhờ bộ nhớ đệm này, AI có thể tiết kiệm thời gian tái tính toán và dồn tài nguyên để duyệt sâu thêm 1 lớp (ply), điều này đôi khi tạo ra sự khác biệt giữa một nước đi trung bình và một nước đi thắng ván.
 
-\[
-\text{Total Time} = O(N)_{\text{init}} 
-+ O(N)_{\text{DFS total}} 
-+ O(m \times N)_{\text{win checks}}
-\]
-
-Trong đó $m$ là số lần click của người chơi ($m \le N$).
-
-Nhờ tiền tính toán lân cận với chi phí $O(N)$ và giới hạn tổng công sức DFS ở mức $O(N)$, chi phí trung bình cho mỗi lần click tiến dần về $O(1)$. Điều này giúp độ trễ xử lý gần như bằng 0 trong trải nghiệm thực tế.
-
+\subsection{Tác động của Quiescence Search}
+Quiescence Search đã giúp loại bỏ hoàn toàn các nước đi "mù quáng" của AI ở ranh giới độ sâu. Thực nghiệm cho thấy AI biết cách "nhẫn nhịn" hoặc "quyết liệt" ăn quân một cách hợp lý hơn, thay vì chỉ dừng lại ở việc đếm quân số một cách hời hợt tại nút lá.

@@ -1,11 +1,31 @@
 \section{Biểu diễn bàn cờ (Board Representation)}
 
-Hệ thống sử dụng thư viện \texttt{python-chess} để quản lý trạng thái bàn cờ. Đây là một thư viện mạnh mẽ, hỗ trợ đầy đủ các quy tắc cờ vua (nhập thành, bắt tốt qua đường, phong cấp) và cung cấp các công cụ cần thiết cho việc sinh nước đi hợp lệ.
+Việc chọn cách biểu diễn dữ liệu bàn cờ là yếu tố sống còn đối với hiệu năng của AI. Trong dự án này, chúng tôi sử dụng thư viện \texttt{python-chess} làm lõi xử lý logic.
 
+\subsection{Kỹ thuật Bitboards}
+Thư viện \texttt{python-chess} sử dụng kỹ thuật Bitboards bên dưới. Mỗi loại quân cờ của mỗi màu (ví dụ: Tốt trắng, Mã đen...) được lưu trữ trong một biến nguyên 64-bit (\texttt{uint64}). Mỗi bit tương ứng với một ô trên bàn cờ. Điều này cho phép thực hiện các phép toán logic cực nhanh:
 \begin{itemize}
-    \item \textbf{Trạng thái bàn cờ:} Được lưu trữ dưới dạng một đối tượng \texttt{chess.Board}. Thư viện này sử dụng kỹ thuật \textit{Bitboards} bên dưới để tối ưu hóa hiệu năng tính toán.
-    \item \textbf{Nước đi (Moves):} Được biểu diễn bằng tọa độ ô đi và ô đến (ví dụ: \texttt{e2e4}).
-    \item \textbf{Lịch sử và Hash:} Hỗ trợ kiểm tra lặp lại trạng thái (threefold repetition) thông qua các giá trị Zobrist hashing.
+    \item \textbf{Tìm nước đi hợp lệ:} Sử dụng các phép toán AND, OR, SHIFT để tính toán tầm kiểm soát của quân cờ.
+    \item \textbf{Cập nhật trạng thái:} Thay đổi vị trí quân cờ chỉ bằng một phép XOR.
 \end{itemize}
 
-Việc sử dụng thư viện chuẩn giúp nhóm tập trung hoàn toàn vào việc thiết kế thuật toán AI mà không cần lo lắng về tính đúng đắn của các quy tắc cờ vua phức tạp.
+\subsection{Hash bàn cờ (Zobrist Hashing)}
+Để phục vụ cho \textbf{Transposition Table}, mỗi trạng thái bàn cờ duy nhất được ánh xạ thành một số nguyên 64-bit thông qua thuật toán Zobrist Hashing. Khi AI duyệt qua một thế trận đã từng gặp trước đó (dù thông qua các thứ tự nước đi khác nhau), nó có thể tra cứu ngay kết quả đánh giá trong bộ nhớ đệm mà không cần tính toán lại từ đầu.
+
+\section{Kiến trúc hệ thống và Giao diện}
+
+Hệ thống được thiết kế theo mô hình Client-Server thu nhỏ để đảm bảo tính hiện đại và khả năng mở rộng.
+
+\subsection{Backend (Python + Eel)}
+Lớp xử lý trung tâm được viết bằng Python, chịu trách nhiệm thực thi các thuật toán AI nặng nề. Chúng tôi sử dụng thư viện \textbf{Eel} để tạo cầu nối (bridge) giữa Python và giao diện Web. 
+\begin{itemize}
+    \item \textbf{Đa luồng (Asynchronous calls):} Các lệnh gọi từ giao diện đến AI được thực hiện bất đồng bộ, giúp trình duyệt không bị treo (freeze) trong khi AI đang suy nghĩ.
+    \item \textbf{API Export:} Các hàm như \texttt{get\_bot\_move} được "expose" để JavaScript có thể gọi trực tiếp.
+\end{itemize}
+
+\subsection{Frontend (HTML/CSS/JS)}
+Giao diện người dùng được xây dựng bằng công nghệ Web thuần túy, mang lại trải nghiệm mượt mà và trực quan.
+\begin{itemize}
+    \item \textbf{Rendering:} Bàn cờ được vẽ động bằng JavaScript, hỗ trợ highlight nước đi cuối cùng và các nước đi gợi ý.
+    \item \textbf{Tương tác:} Người chơi có thể kéo thả hoặc click để thực hiện nước đi. Hệ thống sẽ tự động gửi yêu cầu kiểm tra tính hợp lệ đến Backend trước khi thực hiện.
+\end{itemize}

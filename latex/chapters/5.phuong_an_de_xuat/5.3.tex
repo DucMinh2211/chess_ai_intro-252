@@ -1,16 +1,20 @@
-\section{Cài đặt tham số cho MCTS}
+\section{Cài đặt và Hiệu chỉnh tham số cho MCTS}
 
-Thuật toán Monte Carlo Tree Search (MCTS) trong hệ thống được cấu hình để hoạt động linh hoạt thông qua các tham số điều khiển.
+Thuật toán Monte Carlo Tree Search yêu cầu việc cân bằng khéo léo các tham số để không bị sa đà vào các nhánh nước đi yếu.
 
+\subsection{Cấu hình hằng số thăm dò (C)}
+Giá trị $C$ trong công thức UCB1 quyết định mức độ AI "khám phá" các nước đi mới. Chúng tôi chọn $C = \sqrt{2} \approx 1.41$.
 \begin{itemize}
-    \item \textbf{Exploration Parameter (C):} Được đặt là $C = \sqrt{2} \approx 1.414$, đây là giá trị tối ưu về mặt lý thuyết để cân bằng giữa việc thăm dò (exploration) các nhánh mới và khai thác (exploitation) các nhánh đã biết có triển vọng.
-    \item \textbf{Iterations (Số vòng lặp):} AI sẽ thực hiện từ 1,000 đến 10,000 simulation cho mỗi lượt đi tùy thuộc vào giới hạn thời gian (time limit) được đặt. 
-    \item \textbf{Rollout Depth (Độ sâu mô phỏng):} Giới hạn tối đa cho mỗi simulation là 100 nước đi để tránh lặp vô tận và đảm bảo thời gian phản hồi. Khi đạt giới hạn này, AI sẽ sử dụng hàm đánh giá heuristic để ước lượng giá trị của trạng thái hiện tại.
+    \item Nếu $C$ quá lớn: AI sẽ dành quá nhiều thời gian cho các nước đi ngẫu nhiên, dẫn đến chất lượng nước đi kém.
+    \item Nếu $C$ quá nhỏ: AI chỉ tập trung vào một vài nhánh tốt đã biết, dễ bị rơi vào bẫy nếu nhánh đó thực chất có một sai lầm ở sâu bên dưới.
 \end{itemize}
 
-\subsection{Smart Rollouts}
-Thay vì thực hiện các nước đi hoàn toàn ngẫu nhiên trong giai đoạn simulation, chúng tôi sử dụng \textit{Smart Rollouts}:
+\subsection{Số lượng Iterations và Thời gian suy nghĩ}
+Mỗi lượt đi, AI sẽ thực hiện từ 5,000 đến 20,000 vòng lặp (iterations). Số lượng này phụ thuộc vào tài nguyên CPU và giới hạn thời gian (time limit) được người dùng cài đặt trên giao diện. Một vòng lặp bao gồm đầy đủ 4 giai đoạn từ Chọn lọc đến Truyền ngược kết quả.
+
+\subsection{Kỹ thuật Smart Rollouts}
+Thay vì thực hiện giai đoạn Simulation bằng cách đi ngẫu nhiên hoàn toàn (vốn làm MCTS rất yếu trong cờ vua), chúng tôi tích hợp tri thức nhẹ:
 \begin{itemize}
-    \item Ưu tiên các nước đi ăn quân hoặc phong cấp (dựa trên hàm đánh giá MVV-LVA).
-    \item Điều này giúp simulation phản ánh chính xác hơn diễn biến thực tế của ván cờ, từ đó nâng cao chất lượng đánh giá tại nút gốc.
+    \item AI sẽ ưu tiên các nước đi ăn quân hoặc chiếu Vua trong quá trình simulation.
+    \item Nếu ván đấu mô phỏng quá dài (vượt quá 60 nước), chúng tôi sử dụng hàm Heuristic của Alpha-Beta để ước lượng kết quả thay vì tiếp tục đi ngẫu nhiên. Điều này giúp giảm nhiễu và tăng tốc độ hội tụ của thuật toán.
 \end{itemize}

@@ -1,31 +1,30 @@
-\section{Thiết kế hàm Heuristic cho Alpha-Beta}
+\section{Thiết kế hàm Heuristic đa thành phần}
 
-Hàm đánh giá thế trận (Heuristic) đóng vai trò quyết định đến sức mạnh của Alpha-Beta Pruning. Chúng tôi đã thiết kế một hàm đánh giá đa thành phần:
-
-\begin{equation}
-    f(n) = \sum w_i \times V_i + \sum PST(\text{piece, square})
-\end{equation}
+Sức mạnh của Alpha-Beta Pruning nằm ở khả năng ước lượng chính xác thế trận tại các nút lá. Hàm đánh giá của chúng tôi tính toán tổng điểm dựa trên ba yếu tố chủ chốt.
 
 \subsection{Giá trị quân cờ (Material Weight)}
-Mỗi loại quân được gán một trọng số cơ bản dựa trên sức mạnh tương đối:
+Đây là yếu tố cơ bản nhất. Mỗi quân cờ được gán một giá trị số học phản ánh sức mạnh chiến thuật của nó:
 \begin{itemize}
-    \item Pawn: 100, Knight: 320, Bishop: 330, Rook: 500, Queen: 900.
-    \item King: 20000 (giá trị tượng trưng để ưu tiên bảo vệ vua).
+    \item \textbf{Pawn (Tốt):} 100 điểm.
+    \item \textbf{Knight (Mã):} 320 điểm.
+    \item \textbf{Bishop (Tượng):} 330 điểm (thường cao hơn Mã một chút vì tầm hoạt động xa).
+    \item \textbf{Rook (Xe):} 500 điểm.
+    \item \textbf{Queen (Hậu):} 900 điểm.
+    \item \textbf{King (Vua):} 20,000 điểm (giá trị vô hạn để tránh việc AI đổi Vua lấy các quân khác).
 \end{itemize}
 
-\subsection{Bảng vị trí quân cờ (Piece-Square Tables - PST)}
-Cùng một quân cờ nhưng đứng ở các vị trí khác nhau sẽ có giá trị khác nhau. Ví dụ:
+\subsection{Bảng điểm vị trí (Piece-Square Tables - PST)}
+Cùng một quân cờ nhưng ở các vị trí khác nhau sẽ đóng góp giá trị khác nhau cho thế trận. Chúng tôi sử dụng các ma trận $8 \times 8$ để cộng thêm điểm thưởng (bonus) hoặc trừ điểm phạt (penalty).
 \begin{itemize}
-    \item Mã (Knight) mạnh hơn khi ở trung tâm bàn cờ.
-    \item Tốt (Pawn) có giá trị cao hơn khi tiến gần hàng cuối để phong cấp.
+    \item \textbf{Mã (Knight):} Bị trừ điểm nặng khi ở 4 góc bàn cờ (nơi tầm kiểm soát thấp nhất) và được cộng điểm cao khi ở trung tâm.
+    \item \textbf{Tốt (Pawn):} Được cộng điểm khi tiến dần về phía hàng cuối (chuẩn bị phong cấp) và được thưởng thêm nếu bảo vệ được trung tâm.
+    \item \textbf{Vua (King):} Trong trung cuộc, Vua bị phạt điểm nếu rời xa các hàng bảo vệ (King Safety). Tuy nhiên, hàm đánh giá sẽ tự động chuyển sang bảng \textbf{KING\_END} trong tàn cuộc để khuyến khích Vua chủ động ra trung tâm hỗ trợ quân mình.
 \end{itemize}
-
-\subsection{Đánh giá tàn cuộc (Endgame Evaluation)}
-Thuật toán tự động nhận diện giai đoạn tàn cuộc (khi hai bên đã đổi hết hậu hoặc quân nặng) để thay đổi chiến thuật cho quân Vua. Trong trung cuộc, Vua cần được ẩn nấp an toàn ở góc (King Safety), nhưng trong tàn cuộc, Vua cần chủ động ra trung tâm để hỗ trợ tốt và tấn công (Active King).
 
 \subsection{Sắp xếp nước đi (Move Ordering)}
-Để tăng hiệu quả cắt tỉa của Alpha-Beta, các nước đi được sắp xếp theo độ ưu tiên:
+Để tối ưu hóa việc cắt tỉa Alpha-Beta, chúng tôi thực hiện sắp xếp danh sách nước đi trước khi duyệt:
 \begin{itemize}
-    \item Các nước đi ăn quân (Captures) được xét trước theo nguyên lý MVV-LVA (Most Valuable Victim - Least Valuable Attacker).
-    \item Các nước đi phong cấp (Promotions) cũng được ưu tiên cao.
+    \item \textbf{MVV-LVA:} Các nước đi ăn quân được xếp lên đầu, ưu tiên quân giá trị thấp ăn quân giá trị cao (ví dụ: Tốt ăn Hậu).
+    \item \textbf{Promotions:} Các nước đi phong cấp luôn được ưu tiên cao vì chúng thay đổi cục diện ván đấu ngay lập tức.
 \end{itemize}
+Việc sắp xếp tốt có thể giúp thuật toán Alpha-Beta duyệt sâu hơn 1-2 lớp trong cùng một khoảng thời gian so với việc duyệt ngẫu nhiên.

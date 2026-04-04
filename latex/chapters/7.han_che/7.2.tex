@@ -1,11 +1,16 @@
-\section{Hạn chế cốt lõi về AI}
+\section{Hạn chế cốt lõi của hệ thống AI hiện tại}
 
-Mặc dù hệ thống đã được tối ưu tốt về cấu trúc dữ liệu và thuật toán, nếu đánh giá theo tiêu chuẩn của AI, vẫn tồn tại một hạn chế quan trọng: hệ thống chưa có một tác tử thông minh thực sự.
+Mặc dù hệ thống đã hoạt động ổn định, vẫn tồn tại những rào cản ngăn cản nó trở thành một engine chuyên nghiệp.
 
-Thuật toán DFS trong bài tập đóng vai trò là cơ chế của môi trường. Nó tự động mở các ô an toàn theo luật có sẵn, nhưng không có khả năng suy luận, học hỏi hay tự đưa ra quyết định chiến lược để tìm mìn.
+\subsection{Thiếu sự hỗ trợ từ Deep Learning}
+Hàm Heuristic của chúng tôi hoàn toàn là "tĩnh" và "tuyến tính". Trong thực tế, giá trị của một quân cờ phụ thuộc vào sự tương tác phi tuyến tính phức tạp với các quân cờ khác (ví dụ: một quân Mã bị khóa hoàn toàn sẽ có giá trị bằng 0 dù nó vẫn đứng trên bàn cờ). Việc thiếu một mạng thần kinh để đánh giá thế trận (như NNUE) khiến AI dễ bị đánh lừa trong các thế trận đóng (closed positions).
 
-Nói cách khác, hệ thống hiện tại mới chỉ là một môi trường với State Machine. Người chơi vẫn là “tác tử” thực sự đưa ra quyết định.
+\subsection{Vấn đề về bộ nhớ của MCTS}
+MCTS xây dựng cây tìm kiếm trong bộ nhớ RAM. Với hàng chục ngàn iterations, cây này có thể phình to rất nhanh. 
+\begin{itemize}
+    \item \textbf{Quản lý tài nguyên:} Chúng tôi chưa triển khai cơ chế cắt tỉa cây (tree pruning) cho MCTS, dẫn đến việc tiêu tốn RAM đáng kể nếu chạy trong thời gian dài.
+    \item \textbf{Hiệu ứng phân tán:} MCTS hiện tại đang chạy tuần tự. Việc không tận dụng được sức mạnh đa nhân (Multi-core) của CPU hiện đại làm giảm đi 80-90\% sức mạnh thực tế mà thuật toán này có thể đạt được.
+\end{itemize}
 
-Hệ thống chưa tích hợp các phương pháp nâng cao như mô hình thỏa mãn ràng buộc CSP để suy luận chắc chắn các ô an toàn, hay các kỹ thuật suy luận xác suất để đánh giá rủi ro khi buộc phải đoán.
-
-Đây chính là ranh giới giữa một hệ thống mô phỏng thuật toán và một hệ thống AI hoàn chỉnh.
+\subsection{Sự thiếu hụt dữ liệu khai cuộc (Opening Book)}
+Cả Alpha-Beta và MCTS đều phải tự tính toán ngay từ nước đi đầu tiên. Điều này khiến AI tốn tài nguyên cho những giai đoạn mà lẽ ra có thể tra cứu nhanh từ cơ sở dữ liệu ván đấu của các đại kiện tướng. Thiếu Opening Book khiến AI đôi khi chọn những khai cuộc không tối ưu về mặt lý thuyết.

@@ -118,12 +118,23 @@ def is_endgame(board: chess.Board) -> bool:
     return True
 
 def evaluate(board: chess.Board) -> int:
-    if board.is_checkmate():
-        return -99999 if board.turn else 99999
-    if board.is_stalemate() or board.is_insufficient_material():
+    # Material calculation for draw penalty
+    mat_w = sum(len(board.pieces(pt, chess.WHITE)) * PIECE_VALUES[pt] for pt in PIECE_VALUES)
+    mat_b = sum(len(board.pieces(pt, chess.BLACK)) * PIECE_VALUES[pt] for pt in PIECE_VALUES)
+    diff = mat_w - mat_b
+
+    outcome = board.outcome(claim_draw=True)
+    if outcome:
+        if outcome.winner is chess.WHITE: return 99999
+        if outcome.winner is chess.BLACK: return -99999
+
+        # PHẠT HÒA NẶNG: Nếu đang thắng thế (> 1 quân nhẹ) mà để hòa thì bị trừ điểm cực nặng
+        if diff > 200: return -500 # Trắng đang thắng mà để hòa -> Phạt (trả về điểm xấu cho Trắng)
+        if diff < -200: return 500 # Đen đang thắng mà để hòa -> Phạt (trả về điểm xấu cho Đen)
         return 0
 
     score = 0
+
     endgame = is_endgame(board)
 
     for square in chess.SQUARES:

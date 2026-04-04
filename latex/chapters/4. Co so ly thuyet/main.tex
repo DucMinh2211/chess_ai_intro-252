@@ -1,78 +1,40 @@
 \section{Lý thuyết cây trò chơi (Game Tree)}
 
-Trong lý thuyết trò chơi, một trò chơi có thông tin đầy đủ (perfect information) và đối kháng (zero-sum) như cờ vua có thể được biểu diễn dưới dạng một cây trò chơi. 
+Cờ vua thuộc loại trò chơi thông tin đầy đủ (perfect information), đối kháng (zero-sum) và không có yếu tố ngẫu nhiên. Trạng thái của trò chơi tại bất kỳ thời điểm nào có thể được biểu diễn chính xác dưới dạng một cây trò chơi.
 
+\subsection{Kích thước không gian trạng thái}
+Hệ số nhánh trung bình của cờ vua là khoảng $b \approx 35$, và độ dài trung bình của một ván cờ là $d \approx 80$ lớp nước đi (ply). Điều này dẫn đến tổng số nút trong cây trò chơi đầy đủ là khoảng $35^{80} \approx 10^{123}$. Đây là con số Shannon nổi tiếng, chứng minh rằng không thể có bất kỳ máy tính nào có thể giải quyết cờ vua bằng phương pháp vét cạn. Thách thức cốt lõi của AI là phải tìm ra các lát cắt tối ưu trong cây khổng lồ này để đưa ra quyết định trong vài giây.
+
+\section{Thuật toán Alpha-Beta Pruning (Biến thể Negamax)}
+
+Trong dự án này, chúng tôi triển khai biến thể \textbf{Negamax} của thuật toán Alpha-Beta. Đây là một cách tối ưu hóa mã nguồn dựa trên nhận định: trong trò chơi zero-sum, $\max(a, b) = -\min(-a, -b)$. Thay vì viết hai khối mã riêng biệt cho người chơi Max và Min, chúng ta chỉ cần một khối mã duy nhất xử lý giá trị tương đối so với người chơi đang thực hiện nước đi.
+
+\subsection{Cơ chế cắt tỉa Alpha và Beta}
+Thuật toán hoạt động dựa trên việc duy trì hai ranh giới logic:
 \begin{itemize}
-    \item \textbf{Nút (Node):} Mỗi nút đại diện cho một trạng thái của bàn cờ.
-    \item \textbf{Cạnh (Edge):} Mỗi cạnh đại diện cho một nước đi hợp lệ từ trạng thái này sang trạng thái khác.
-    \item \textbf{Nút gốc (Root):} Trạng thái hiện tại của bàn cờ.
-    \item \textbf{Nút lá (Leaf):} Trạng thái kết thúc trò chơi (thắng, thua, hòa) hoặc trạng thái tại độ sâu giới hạn của việc tìm kiếm.
+    \item \textbf{Alpha ($\alpha$):} Điểm số tối thiểu mà người chơi hiện tại chắc chắn đạt được.
+    \item \textbf{Beta ($\beta$):} Điểm số tối đa mà đối thủ sẽ cho phép người chơi hiện tại đạt được.
 \end{itemize}
+Nếu tại một nút bất kỳ, giá trị tìm thấy lớn hơn hoặc bằng $\beta$, chúng ta có thể dừng duyệt các nước đi còn lại của nút đó (cắt tỉa Beta). Lý do là vì đối thủ chắc chắn sẽ chọn một nhánh khác trước đó để tránh tình huống này xảy ra.
 
-Mục tiêu của AI là tìm kiếm trong cây này để chọn ra nước đi dẫn đến kết quả tốt nhất cho mình, giả định rằng đối thủ cũng chơi tối ưu.
-
-\section{Thuật toán Alpha-Beta Pruning}
-
-Alpha-Beta Pruning là một thuật toán tối ưu hóa cho thuật toán Minimax truyền thống. Nó giúp giảm đáng kể số lượng nút cần duyệt bằng cách loại bỏ các nhánh không thể ảnh hưởng đến kết quả cuối cùng.
-
-\subsection{Nguyên lý hoạt động}
-Thuật toán duy trì hai giá trị $\alpha$ và $\beta$:
-\begin{itemize}
-    \item $\alpha$: Giá trị tối đa mà người chơi Max có thể đảm bảo được tại thời điểm hiện tại.
-    \item $\beta$: Giá trị tối thiểu mà người chơi Min có thể đảm bảo được tại thời điểm hiện tại.
-\end{itemize}
-
-Nếu tại bất kỳ thời điểm nào $\beta \le \alpha$, nhánh đó sẽ bị cắt tỉa vì người chơi trước đó sẽ không bao giờ chọn nhánh dẫn đến kết quả này.
-
-\subsection{Giả mã thuật toán}
-\begin{algorithm}[H]
-\caption{Alpha-Beta Pruning}
-\begin{algorithmic}[1]
-\Function{AlphaBeta}{node, depth, $\alpha$, $\beta$, maximizingPlayer}
-    \If{depth == 0 or node is terminal}
-        \State \Return heuristic value of node
-    \EndIf
-    \If{maximizingPlayer}
-        \State $v \gets -\infty$
-        \For{each child of node}
-            \State $v \gets \max(v, \text{AlphaBeta}(child, depth - 1, \alpha, \beta, \text{False}))$
-            \State $\alpha \gets \max(\alpha, v)$
-            \If{$\beta \le \alpha$}
-                \State \textbf{break} \Comment{Cắt tỉa}
-            \EndIf
-        \EndFor
-        \State \Return $v$
-    \Else
-        \State $v \gets \infty$
-        \For{each child of node}
-            \State $v \gets \min(v, \text{AlphaBeta}(child, depth - 1, \alpha, \beta, \text{True}))$
-            \State $\beta \gets \min(\beta, v)$
-            \If{$\beta \le \alpha$}
-                \State \textbf{break} \Comment{Cắt tỉa}
-            \EndIf
-        \EndFor
-        \State \Return $v$
-    \EndIf
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
+\subsection{Quiescence Search (Tìm kiếm tĩnh)}
+Vấn đề lớn nhất của Alpha-Beta là "hiệu ứng đường chân trời" (Horizon Effect). Nếu thuật toán dừng lại ở độ sâu $d$, nó có thể đánh giá sai một vị trí đang trong chuỗi ăn quân chưa kết thúc. Để giải quyết, Quiescence Search tiếp tục duyệt cây vượt quá độ sâu $d$, nhưng chỉ xét các nước đi ăn quân (captures) cho đến khi thế trận thực sự "tĩnh". Điều này ngăn chặn việc AI đưa ra những nước đi ngớ ngẩn chỉ vì nó không nhìn thấy nước ăn lại của đối thủ ở lớp $d+1$.
 
 \section{Thuật toán Monte Carlo Tree Search (MCTS)}
 
-MCTS là một thuật toán tìm kiếm mang tính xác suất, không yêu cầu hàm đánh giá heuristic quá mạnh. Nó xây dựng cây trò chơi một cách bất đối xứng dựa trên kết quả của các mô phỏng (simulations).
+Khác với Alpha-Beta duyệt sâu theo chiều dọc, MCTS xây dựng cây trò chơi theo hướng mở rộng các nhánh mang lại tỷ lệ thắng cao thông qua thống kê.
 
-MCTS gồm 4 giai đoạn chính được lặp lại liên tục:
-
+\subsection{Bốn giai đoạn của MCTS}
 \begin{enumerate}
-    \item \textbf{Selection (Chọn lọc):} Bắt đầu từ gốc, thuật toán chọn các nút con dựa trên công thức UCB1 (Upper Confidence Bound) cho đến khi gặp một nút chưa được mở rộng hoàn toàn.
-    \[ UCB1 = \bar{X}_j + C \sqrt{\frac{\ln n}{n_j}} \]
-    Trong đó $\bar{X}_j$ là giá trị trung bình, $n_j$ là số lần duyệt nút con $j$, $n$ là tổng số lần duyệt nút cha, và $C$ là tham số thăm dò (exploration parameter).
+    \item \textbf{Selection (Chọn lọc):} Sử dụng công thức UCB1 (Upper Confidence Bound for Trees) để chọn nút con từ gốc. Công thức này cân bằng giữa \textit{Exploitation} (khai thác nước đi tốt đã biết) và \textit{Exploration} (thăm dò nước đi mới chưa duyệt nhiều).
+    \[ UCB1 = \frac{w_i}{n_i} + c \sqrt{\frac{\ln N_i}{n_i}} \]
+    Trong đó $w_i$ là số ván thắng, $n_i$ là số lần duyệt nút con, $N_i$ là số lần duyệt nút cha và $c$ là hằng số thăm dò ($\approx 1.41$).
     
-    \item \textbf{Expansion (Mở rộng):} Thêm một hoặc nhiều nút con mới vào cây từ nút hiện tại.
+    \item \textbf{Expansion (Mở rộng):} Nếu một nút chưa được duyệt hết các nước đi hợp lệ, một nút con mới sẽ được tạo ra và thêm vào cây.
     
-    \item \textbf{Simulation (Mô phỏng/Play-out):} Thực hiện một ván chơi giả lập từ nút mới cho đến khi kết thúc (thường bằng các nước đi ngẫu nhiên).
+    \item \textbf{Simulation (Mô phỏng):} Thực hiện một ván chơi giả lập từ nút mới. Trong dự án này, chúng tôi sử dụng \textit{Smart Rollouts} - thay vì đi ngẫu nhiên hoàn toàn, AI sẽ ưu tiên các nước ăn quân đơn giản để mô phỏng chính xác hơn.
     
-    \item \textbf{Backpropagation (Lan truyền ngược):} Cập nhật kết quả thắng/thua của simulation ngược lên các nút tổ tiên trong cây.
+    \item \textbf{Backpropagation (Truyền ngược):} Kết quả của simulation (thắng/thua/hòa) được cập nhật ngược lên toàn bộ các nút tổ tiên, thay đổi giá trị trung bình $w_i/n_i$ của chúng.
 \end{enumerate}
 
-MCTS có ưu điểm lớn là khả năng "tự học" các thế trận thông qua hàng ngàn simulation, thay vì dựa hoàn toàn vào các quy tắc cứng nhắc của con người.
+MCTS có ưu điểm là không cần hàm Heuristic quá tinh vi, vì nó "tự học" giá trị của một vị trí thông qua hàng ngàn kết quả thực tế của các ván đấu giả lập.

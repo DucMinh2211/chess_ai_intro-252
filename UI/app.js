@@ -164,7 +164,7 @@ async function conductGame(side, botType, params) {
                 playSound('game-over'); 
                 document.getElementById('resign-btn').style.display = 'none';
                 document.getElementById('game-back-btn').style.display = 'block';
-                return { result: status.result }; 
+                return { result: status.result, reason: status.reason }; 
             }
 
             let move = null, result = null;
@@ -205,11 +205,20 @@ function renderHistory(history) {
     list.scrollTop = list.scrollHeight;
 }
 
-function showPopup(res, side) {
+function showPopup(res, side, reason) {
     if (res === 'error') return;
     document.getElementById('result-overlay').style.display = 'flex';
     document.getElementById('result-title').textContent = res === 'draw' ? 'Draw!' : (res === side ? 'Victory!' : 'Defeated');
-    document.getElementById('result-message').textContent = res === 'draw' ? 'No moves left.' : (res === side ? 'Checkmate! Well played.' : 'AI is too strong.');
+    
+    let message = reason || '';
+    if (res === 'draw') {
+        message = reason ? `Reason: ${reason}` : 'No moves left.';
+    } else if (res === side) {
+        message = 'Checkmate! Well played.';
+    } else {
+        message = 'AI is too strong.';
+    }
+    document.getElementById('result-message').textContent = message;
 }
 
 function renderChoices(targetId, list, name, onSelect) {
@@ -259,7 +268,7 @@ window.addEventListener('DOMContentLoaded', () => {
         };
 
         document.getElementById('sidebar-offline').style.display = 'none';
-        conductGame(actualSide, bot, params).then(data => showPopup(data.result, actualSide));
+        conductGame(actualSide, bot, params).then(data => showPopup(data.result, actualSide, data.reason));
     };
 
     document.getElementById('btn-back').onclick = () => { document.getElementById('sidebar-offline').style.display = 'none'; document.getElementById('sidebar-menu').style.display = 'flex'; };

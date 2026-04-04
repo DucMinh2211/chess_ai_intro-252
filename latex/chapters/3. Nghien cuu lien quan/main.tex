@@ -1,38 +1,45 @@
-\section{Phân tích các Engine cờ vua hiện nay}
+\section{Lịch sử phát triển của Chess Engine}
 
-Lịch sử phát triển của các công cụ chơi cờ vua (Chess Engines) đã chứng kiến hai bước ngoặt lớn về mặt công nghệ: từ các hệ thống dựa trên luật và tìm kiếm vét cạn (Brute-force) sang các hệ thống dựa trên học máy sâu (Deep Learning).
+Việc xây dựng một hệ thống chơi cờ vua tự động đã là mục tiêu của trí tuệ nhân tạo ngay từ những ngày đầu thành lập. Lịch sử này có thể chia làm ba giai đoạn chính: giai đoạn sơ khai dựa trên các quy tắc cứng, giai đoạn thống trị của thuật toán tìm kiếm (Search-based), và kỷ nguyên của học máy sâu (Learning-based).
 
-\subsection{Stockfish - Đỉnh cao của tìm kiếm truyền thống}
-Stockfish là một engine cờ vua mã nguồn mở, hiện đang giữ vị trí hàng đầu trong hầu hết các bảng xếp hạng engine. Stockfish dựa trên thuật toán tìm kiếm Alpha-Beta Pruning kết hợp với các kỹ thuật tối ưu hóa cực kỳ phức tạp như:
+\subsection{Sự kiện Deep Blue và bước ngoặt lịch sử}
+Vào năm 1997, sự kiện siêu máy tính Deep Blue của IBM đánh bại nhà vô địch thế giới Garry Kasparov đã đánh dấu một cột mốc quan trọng. Deep Blue không sử dụng các mạng thần kinh phức tạp như hiện nay mà dựa trên sức mạnh tính toán thuần túy (Brute-force) kết hợp với các chip tùy chỉnh chuyên dụng để duyệt hàng trăm triệu nước đi mỗi giây. Thành công của nó khẳng định rằng việc kết hợp giữa thuật toán cắt tỉa Alpha-Beta và tri thức chuyên gia (Heuristic) có thể vượt qua trí tuệ con người trong các không gian trạng thái bị giới hạn bởi luật lệ.
+
+\section{Phân tích các Engine cờ vua hiện đại}
+
+Ngày nay, các engine cờ vua không còn chỉ dựa vào sức mạnh phần cứng mà tập trung vào sự tinh tế của thuật toán và cách biểu diễn tri thức.
+
+\subsection{Stockfish - Sự kết hợp giữa truyền thống và hiện đại}
+Stockfish là đại diện tiêu biểu nhất cho trường phái duyệt cây có hệ thống. Nó sử dụng thuật toán Alpha-Beta nhưng được nâng cấp bởi hàng loạt kỹ thuật tối ưu hóa:
 \begin{itemize}
-    \item \textbf{Bitboards:} Cách biểu diễn bàn cờ hiệu quả bằng các số nguyên 64-bit.
-    \item \textbf{Transposition Tables:} Lưu trữ các trạng thái đã đánh giá để tránh tính toán lại.
-    \item \textbf{NNUE (Efficiently Updatable Neural Networks):} Một mạng thần kinh nông được tích hợp để thay thế hàm đánh giá heuristic truyền thống, giúp Stockfish kết hợp sức mạnh của tìm kiếm sâu với khả năng đánh giá thế trận hiện đại.
+    \item \textbf{Bitboards:} Toàn bộ bàn cờ được biểu diễn dưới dạng các số nguyên 64-bit, cho phép sử dụng các phép toán bitwise cực nhanh để tính toán nước đi hợp lệ và kiểm soát không gian.
+    \item \textbf{NNUE (Efficiently Updatable Neural Networks):} Đây là một cuộc cách mạng trong thế giới engine. Thay vì dùng hàm đánh giá tĩnh do con người viết, Stockfish tích hợp một mạng thần kinh nông được huấn luyện trên hàng tỷ vị trí. Mạng này cực kỳ nhẹ và có thể cập nhật nhanh chóng sau mỗi nước đi, giúp AI hiểu thế trận sâu sắc hơn nhiều so với các công thức toán học truyền thống.
 \end{itemize}
 
-\subsection{AlphaZero - Kỷ nguyên của học tăng cường}
-Được phát triển bởi Google DeepMind, AlphaZero đã làm thay đổi hoàn toàn cách tiếp cận AI trong cờ vua. Thay vì sử dụng các hàm đánh giá do con người thiết kế, AlphaZero học hoàn toàn thông qua tự chơi (Self-play). 
+\subsection{AlphaZero và sự trỗi dậy của MCTS}
+AlphaZero của DeepMind đã làm cả thế giới kinh ngạc khi học chơi cờ từ con số 0 chỉ trong 4 giờ tự chơi. Nó không sử dụng Alpha-Beta mà sử dụng Monte Carlo Tree Search (MCTS) kết hợp với mạng thần kinh tích chập sâu (CNN).
 \begin{itemize}
-    \item \textbf{Monte Carlo Tree Search (MCTS):} Khác với Stockfish, AlphaZero sử dụng MCTS kết hợp với mạng thần kinh sâu để hướng dẫn quá trình tìm kiếm.
-    \item \textbf{Deep Neural Networks:} Sử dụng một mạng thần kinh duy nhất để dự đoán cả xác suất nước đi (policy) và giá trị của thế trận (value).
+    \item \textbf{Policy và Value Network:} MCTS trong AlphaZero không chạy ngẫu nhiên. Mạng thần kinh sẽ dự đoán xác suất các nước đi tốt (Policy) để thu hẹp chiều rộng của cây tìm kiếm và ước lượng giá trị thế trận (Value) để thay thế cho giai đoạn Simulation dài hơi.
+    \item \textbf{Tính trực quan:} Cách chơi của AlphaZero được các đại kiện tướng đánh giá là mang tính "trực giác" và "người" hơn nhiều so với Stockfish, mở ra một hướng đi mới cho việc áp dụng MCTS vào các trò chơi phức tạp.
 \end{itemize}
 
-\section{So sánh sơ bộ Alpha-Beta và MCTS trong các tài liệu trước}
+\section{So sánh các đặc tính kỹ thuật cốt lõi}
 
-Việc lựa chọn giữa Alpha-Beta và MCTS phụ thuộc vào đặc thù của bài toán và tài nguyên tính toán.
+Việc lựa chọn giữa Alpha-Beta và MCTS không chỉ là chọn một thuật toán, mà là chọn một triết lý xử lý dữ liệu.
 
 \begin{table}[H]
     \centering
-    \caption{So sánh đặc tính của Alpha-Beta và MCTS}
-    \label{tab:comparison_ab_mcts}
-    \begin{tabular}{|l|p{6cm}|p{6cm}|}
+    \caption{So sánh chuyên sâu đặc tính của Alpha-Beta và MCTS}
+    \label{tab:deep_comparison}
+    \begin{tabularx}{\textwidth}{|l|X|X|}
         \hline
-        \textbf{Đặc tính} & \textbf{Alpha-Beta Pruning} & \textbf{Monte Carlo Tree Search} \\ \hline
-        \textbf{Cơ chế} & Duyệt cây có hệ thống, cắt tỉa các nhánh không triển vọng. & Mô phỏng ngẫu nhiên (playouts) và chọn lọc các nước đi tốt. \\ \hline
-        \textbf{Hàm đánh giá} & Cần hàm Heuristic rất chi tiết và chính xác. & Có thể hoạt động tốt ngay cả khi hàm đánh giá yếu (nhờ simulations). \\ \hline
-        \textbf{Độ sâu} & Ưu tiên duyệt sâu đều khắp các nhánh (sau khi cắt tỉa). & Ưu tiên duyệt sâu vào các nhánh có xác suất thắng cao. \\ \hline
-        \textbf{Không gian} & Phù hợp với các trò chơi có hệ số nhánh (branching factor) nhỏ. & Phù hợp với các trò chơi có hệ số nhánh lớn (như Go). \\ \hline
-    \end{tabular}
+        \textbf{Tiêu chí} & \textbf{Alpha-Beta Pruning} & \textbf{Monte Carlo Tree Search} \\ \hline
+        \textbf{Cơ chế cốt lõi} & Duyệt DFS, đảm bảo tìm ra nước đi tốt nhất trong giới hạn độ sâu. & Duyệt bất đối xứng dựa trên thống kê xác suất thắng. \\ \hline
+        \textbf{Độ phức tạp} & Tăng theo hàm mũ với độ sâu ($O(b^d)$). & Tăng tuyến tính với số lượng simulations. \\ \hline
+        \textbf{Hàm đánh giá} & Cần độ chính xác tuyệt đối (Domain knowledge). & Có thể hoạt động với hàm đánh giá yếu hoặc ngẫu nhiên. \\ \hline
+        \textbf{Tính ổn định} & Rất cao, không thay đổi kết quả nếu không thay đổi độ sâu. & Mang tính xác suất, có thể thay đổi sau mỗi lần chạy. \\ \hline
+        \textbf{Khả năng song song} & Khó triển khai hiệu quả (do phụ thuộc dữ liệu alpha/beta). & Rất dễ song song hóa (mỗi simulation độc lập). \\ \hline
+    \end{tabularx}
 \end{table}
 
-Trong cờ vua, truyền thống vẫn ưu tiên Alpha-Beta do hệ số nhánh trung bình ($\approx 35$) là đủ nhỏ để các kỹ thuật cắt tỉa hoạt động hiệu quả. Tuy nhiên, MCTS đang dần khẳng định vị thế khi kết hợp với Deep Learning, mang lại cách chơi "giống con người" hơn và khả năng đánh giá thế trận dài hạn tốt hơn.
+Trong dự án này, việc triển khai cả hai thuật toán giúp chúng ta hiểu rõ hơn về sự đánh đổi giữa tính chính xác tuyệt đối của Alpha-Beta và khả năng mở rộng không giới hạn của MCTS trong các tình huống mà tri thức con người (Heuristic) khó lòng bao quát hết.

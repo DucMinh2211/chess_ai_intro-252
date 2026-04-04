@@ -1,20 +1,22 @@
-\section{Thách thức trong hiện thực hóa kỹ thuật}
+\section{Khó khăn trong việc tinh chỉnh hàm Heuristic}
 
-Khi chuyển từ lý thuyết đồ thị sang mã nguồn thực tế, dự án gặp hai thách thức lớn.
+Thiết kế hàm Heuristic cho Alpha-Beta Pruning là một quá trình thử sai (trial-and-error) đầy thách thức. 
 
-\textbf{Cơ chế “safe-click” và khởi tạo trì hoãn:}
+\subsection{Sự cân bằng giữa vật chất và vị trí}
+Một vấn đề nan giải là việc gán trọng số cho Material so với PST. Nếu Material quá cao, AI sẽ trở nên cực kỳ "tham lam", sẵn sàng phá hỏng cấu trúc tốt của mình để ăn một quân tốt của đối thủ. Ngược lại, nếu PST quá cao, AI có thể bỏ lỡ các cơ hội ăn quân quan trọng chỉ để giữ quân ở các ô trung tâm. 
+\begin{itemize}
+    \item \textbf{Giải pháp:} Chúng tôi phải thực hiện hàng trăm ván đấu thử nghiệm giữa các phiên bản AI khác nhau (A/B Testing) để tìm ra bộ thông số cân bằng nhất.
+    \item \textbf{Kết quả:} Bộ thông số hiện tại cho phép AI chơi ổn định, nhưng vẫn còn khoảng cách xa so với tri thức của một kiện tướng thực thụ.
+\end{itemize}
 
-Theo luật chơi, lần nhấp chuột đầu tiên phải luôn an toàn và tốt nhất là rơi vào ô có trọng số lân cận bằng 0. Điều này tạo ra một vấn đề: hệ thống không thể đặt mìn trước khi biết người chơi sẽ nhấp vào ô nào.
+\subsection{Vấn đề thiếu hình phạt độ sâu chiếu bí (Mate Distance Penalty)}
+Trong quá trình thử nghiệm ban đầu, nhóm nhận thấy một hành vi kỳ lạ của AI khi đã ở thế thắng tuyệt đối: AI liên tục di chuyển quân Vua qua lại giữa hai ô thay vì thực hiện nước chiếu bí kết thúc ván đấu ngay lập tức.
 
-Để giải quyết, hệ thống phải áp dụng cơ chế khởi tạo trì hoãn. Nghĩa là chỉ khi người chơi click lần đầu, chương trình mới bắt đầu sinh mìn. Ô được chọn và vùng lân cận $3 \times 3$ xung quanh nó sẽ bị loại khỏi danh sách đặt mìn. Sau đó hệ thống mới tạo danh sách ứng viên và thực hiện chọn ngẫu nhiên trong thời gian thực.
+Nguyên nhân kỹ thuật nằm ở việc hàm đánh giá gán một điểm số cố định (ví dụ: 99,999) cho mọi trạng thái chiếu bí. Đối với Alpha-Beta, chiếu bí ở độ sâu 1 hay độ sâu 5 đều mang lại giá trị như nhau. Do đó, AI không có động lực để chọn con đường ngắn nhất. Nó trở nên "nhẩn nhơ" vì tin rằng kết quả cuối cùng vẫn là chiến thắng. Để khắc phục, nhóm đã phải điều chỉnh hàm Negamax để cộng/trừ thêm giá trị độ sâu còn lại vào điểm chiếu bí, từ đó ép AI ưu tiên các nước đi dẫn đến chiến thắng nhanh nhất.
 
-Cách làm này giúp đảm bảo luật chơi, nhưng đồng thời khiến luồng khởi tạo phức tạp hơn và không còn đơn giản như một quá trình thiết lập tĩnh ban đầu.
-
-\textbf{Giới hạn đệ quy của Python:}
-
-Trong lý thuyết, DFS thường được trình bày dưới dạng đệ quy. Tuy nhiên, khi áp dụng vào lưới lớn ($16 \times 16$), nếu xuất hiện một vùng trống liên thông dài, số lần gọi hàm lồng nhau có thể lên đến hàng trăm tầng.
-
-Điều này vượt quá giới hạn Call Stack mặc định của Python và dẫn đến lỗi \texttt{RecursionError}. Vì vậy, dự án buộc phải chuyển sang cách cài đặt DFS dạng lặp, tự quản lý Stack bằng cấu trúc \texttt{list}. 
-
-Giải pháp này giúp hệ thống an toàn hơn và chủ động hơn trong việc kiểm soát bộ nhớ.
-
+\subsection{Giới hạn của ngôn ngữ Python}
+Python, dù mạnh mẽ về thư viện, lại là một ngôn ngữ thông dịch (interpreted) với tốc độ thực thi chậm hơn đáng kể so với C++ hay Rust. 
+\begin{itemize}
+    \item \textbf{Nodes Per Second (NPS):} Trong khi Stockfish có thể duyệt hàng chục triệu nút mỗi giây, AI của chúng tôi chỉ đạt ngưỡng vài nghìn đến vài chục nghìn NPS. 
+    \item \textbf{Hệ quả:} Điều này giới hạn độ sâu thực tế của Alpha-Beta ở mức 4-5 lớp trong thời gian suy nghĩ 5 giây. Để đạt đến trình độ cao hơn, việc chuyển đổi mã nguồn sang các ngôn ngữ biên dịch là điều bắt buộc.
+\end{itemize}

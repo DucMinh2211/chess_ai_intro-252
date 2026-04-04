@@ -1,32 +1,19 @@
-\section{Hướng phát triển trong tương lai}
+\section{Tầm nhìn và Hướng phát triển chuyên sâu}
 
-Bước tiếp theo không còn nằm ở tối ưu cấu trúc dữ liệu, mà ở việc xây dựng một AI Agent có thể tự chơi trò chơi.
+Để nâng tầm engine này lên mức độ chuyên nghiệp, nhóm đề xuất ba hướng phát triển trọng tâm cho giai đoạn tiếp theo.
 
-Nhờ thiết kế lớp Board độc lập, các thuật toán AI trong tương lai có thể gọi trực tiếp các hàm như \texttt{reveal(r, c)} hoặc \texttt{toggle\_flag(r, c)} mà không cần phụ thuộc vào giao diện đồ họa.
-
-Lộ trình phát triển có thể chia làm hai giai đoạn:
-
-\textbf{Giai đoạn 1: Suy luận tất định bằng Constraint Satisfaction Problem}
-
-Mỗi ô viền số $V$ với giá trị $n$ tạo ra một ràng buộc: tổng số mìn trong các ô lân cận chưa mở bằng $n - f$ (trong đó $f$ là số cờ đã cắm đúng).
-
-Tác tử CSP có thể:
+\subsection{Chuyển đổi sang kiến trúc Song song (Parallelization)}
+Cờ vua là bài toán cực kỳ phù hợp để tính toán song song. 
 \begin{itemize}
-    \item Nếu số ô chưa mở đúng bằng số mìn còn thiếu $\Rightarrow$ đánh dấu tất cả là mìn.
-    \item Nếu số cờ xung quanh đã đủ bằng $n$ $\Rightarrow$ mở tất cả các ô còn lại.
+    \item \textbf{Lazy SMP:} Triển khai thuật toán Alpha-Beta chạy trên nhiều luồng (threads), chia sẻ chung một Transposition Table khổng lồ.
+    \item \textbf{Root Parallelization:} Đối với MCTS, thực hiện chạy các simulations trên hàng chục nhân CPU cùng lúc để tăng số lượng iterations lên hàng triệu chỉ trong vài giây.
 \end{itemize}
 
-Tác tử sẽ liên tục quét bảng và áp dụng các luật suy luận này cho đến khi không còn nước đi chắc chắn.
-
-\textbf{Giai đoạn 2: Suy luận xác suất}
-
-Khi không còn kết luận chắc chắn, tác tử phải đưa ra quyết định dựa trên xác suất.
-
-Hệ thống sẽ:
+\subsection{Tích hợp Mạng thần kinh sâu (Deep Neural Networks)}
+Thay vì sử dụng các công thức Material + PST đơn giản, AI sẽ được tích hợp một mạng NNUE. 
 \begin{itemize}
-    \item Liệt kê các cấu hình mìn khả thi thỏa mãn các ràng buộc hiện tại.
-    \item Tính xác suất mỗi ô chứa mìn.
-    \item Chọn mở ô có xác suất rủi ro thấp nhất.
+    \item \textbf{Tự học:} Mạng này sẽ được huấn luyện thông qua hàng triệu ván đấu tự chơi (Reinforcement Learning) để tự rút ra các đặc điểm thế trận quan trọng mà con người không thể lượng hóa được.
 \end{itemize}
 
-Nếu triển khai được hai giai đoạn này trên nền tảng lớp Board hiện có, dự án sẽ chuyển từ một bài tập về DFS sang một hệ thống AI có khả năng tự suy luận và tự ra quyết định trong không gian trạng thái phức tạp.
+\subsection{Tối ưu hóa mức hệ thống}
+Viết lại lõi tính toán (Move generation và Evaluation) bằng ngôn ngữ C++ và gọi qua Python bằng các thư viện như \texttt{PyBind11}. Điều này có thể tăng tốc độ tính toán lên 50-100 lần, cho phép AI đạt đến độ sâu tìm kiếm tương đương các engine hàng đầu thế giới.

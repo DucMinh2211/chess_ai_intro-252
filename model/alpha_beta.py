@@ -2,12 +2,20 @@ import chess
 from model.evaluation import evaluate, evaluate_move
 
 # Transposition Table to store evaluated positions
-# Key: Zobrist hash (or board FEN), Value: (depth, score, flag)
-# flag: 0 = exact, 1 = alpha (upper bound), 2 = beta (lower bound)
 transposition_table = {}
 
+def alpha_beta_clear_transposition_table():
+    global transposition_table
+    transposition_table = {}
+    print("AI Transposition Table cleared.")
+
+def get_position_key(board):
+    """Simplified FEN excluding move counters for better cache hits."""
+    parts = board.fen().split(' ')
+    return " ".join(parts[:4])
+
 def get_transposition(board, depth, alpha, beta):
-    key = board.fen()
+    key = get_position_key(board)
     if key in transposition_table:
         entry_depth, entry_score, entry_flag = transposition_table[key]
         if entry_depth >= depth:
@@ -20,15 +28,10 @@ def get_transposition(board, depth, alpha, beta):
     return None
 
 def store_transposition(board, depth, score, flag):
-    key = board.fen()
+    key = get_position_key(board)
     transposition_table[key] = (depth, score, flag)
 
 def quiescence(board: chess.Board, alpha: float, beta: float, depth: int):
-    """
-    Search all captures until a "quiet" position is reached.
-    Uses Negamax style: score is relative to the side to move.
-    """
-    # Base evaluation from the perspective of the side to move
     stand_pat = evaluate(board) if board.turn == chess.WHITE else -evaluate(board)
     
     if stand_pat >= beta:
@@ -39,14 +42,10 @@ def quiescence(board: chess.Board, alpha: float, beta: float, depth: int):
     if depth <= 0:
         return stand_pat
 
-    # Only look at captures
     moves = [m for m in board.legal_moves if board.is_capture(m)]
-    # Sort by MVV-LVA
     moves.sort(key=lambda m: evaluate_move(board, m), reverse=True)
     for move in moves:
-
         board.push(move)
-        # Negamax: -quiescence with flipped alpha/beta
         score = -quiescence(board, -beta, -alpha, depth - 1)
         board.pop()
 
@@ -58,9 +57,6 @@ def quiescence(board: chess.Board, alpha: float, beta: float, depth: int):
     return alpha
 
 def negamax(board: chess.Board, depth: int, alpha: float, beta: float, q_depth: int):
-    """
-    Negamax implementation of Alpha-Beta Pruning.
-    """
     alpha_orig = alpha
     
     # Check Transposition Table
@@ -70,6 +66,9 @@ def negamax(board: chess.Board, depth: int, alpha: float, beta: float, q_depth: 
 
     if board.is_game_over():
         score = evaluate(board)
+        # Reward finding mates EARLIER (where remaining depth is higher)
+        if score > 90000: score += depth
+        elif score < -90000: score -= depth
         return score if board.turn == chess.WHITE else -score
     
     if depth == 0:
@@ -77,7 +76,7 @@ def negamax(board: chess.Board, depth: int, alpha: float, beta: float, q_depth: 
 
     best_value = -float('inf')
     moves = list(board.legal_moves)
-    # Better move ordering: captures and promotions first
+    # Move ordering is critical
     moves.sort(key=lambda m: evaluate_move(board, m), reverse=True)
 
     for move in moves:
@@ -85,7 +84,9 @@ def negamax(board: chess.Board, depth: int, alpha: float, beta: float, q_depth: 
         value = -negamax(board, depth - 1, -beta, -alpha, q_depth)
         board.pop()
         
-        best_value = max(best_value, value)
+        if value > best_value:
+            best_value = value
+        
         alpha = max(alpha, value)
         if alpha >= beta:
             break
@@ -103,9 +104,6 @@ def negamax(board: chess.Board, depth: int, alpha: float, beta: float, q_depth: 
     return best_value
 
 def alpha_beta_best_move(board: chess.Board, depth: int, q_depth: int = 4):
-    """
-    Entry point for bot move selection using Negamax.
-    """
     best_move = None
     best_value = -float('inf')
     
@@ -117,6 +115,7 @@ def alpha_beta_best_move(board: chess.Board, depth: int, q_depth: int = 4):
     
     for move in moves:
         board.push(move)
+        # Negamax root call
         value = -negamax(board, depth - 1, -beta, -alpha, q_depth)
         board.pop()
 

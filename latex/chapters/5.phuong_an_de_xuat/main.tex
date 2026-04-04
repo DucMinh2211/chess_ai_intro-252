@@ -3,7 +3,7 @@
 \import{chapters/5.phuong_an_de_xuat/}{5.3.tex}
 
 \section{Kết chương}
-Tóm lại, Chương 5 đã biến toàn bộ phần lý thuyết trước đó thành một hệ thống phần mềm hoàn chỉnh và có thể vận hành thực tế. Nhờ áp dụng nguyên lý Phân tách Mối quan tâm, hệ thống đã tách rõ ràng phần xử lý logic đồ thị (Board) và phần hiển thị (Renderer). Hai phần này hoạt động độc lập, giúp mã nguồn rõ ràng, dễ kiểm soát và dễ mở rộng hơn.
+Tóm lại, Chương 5 đã hiện thực hóa các lý thuyết đã trình bày bằng việc xây dựng một hệ thống engine Cờ vua hoàn chỉnh. Hệ thống đã tách biệt rõ ràng giữa logic trò chơi (python-chess) và hai bộ não AI (Alpha-Beta và MCTS). 
 
-Việc không sử dụng đệ quy mà thay bằng DFS dạng lặp, thao tác trực tiếp trên cấu trúc Stack, là một lựa chọn quan trọng. Quyết định này giúp loại bỏ hoàn toàn nguy cơ tràn Call Stack của Python khi làm việc với ma trận lớn. Đồng thời, người lập trình có thể kiểm soát trực tiếp cách bộ nhớ được cấp phát và giải phóng trong suốt quá trình thuật toán chạy. Hiệu quả cụ thể của chúng sẽ được phân tích chi tiết trong Chương 6.
+Việc tích hợp hàm Heuristic đa thành phần cho Alpha-Beta và cơ chế Smart Rollouts cho MCTS là những lựa chọn then chốt giúp AI có được sức mạnh chiến thuật. Hiệu quả thực tế và sự so sánh chi tiết về chất lượng nước đi giữa hai phương pháp này sẽ được trình bày trong Chương 6.
 

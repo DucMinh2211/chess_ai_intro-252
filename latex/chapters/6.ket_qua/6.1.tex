@@ -1,29 +1,27 @@
-\section{Phân tích độ phức tạp}
+\section{Phân tích chiến thuật của Alpha-Beta Pruning}
 
-Kết quả quan trọng nhất của đồ án là chứng minh rằng thuật toán DFS giải quyết bài toán Flood Fill với chi phí tài nguyên ở mức tuyến tính.
+Thông qua thực nghiệm thi đấu, AI sử dụng Alpha-Beta thể hiện một phong cách chơi "kỷ luật" và "chặt chẽ".
 
-Giả sử $N = R \times C$ là tổng số ô của bảng và $k$ là số lượng mìn.
+\subsection{Khả năng khai thác sai lầm}
+Nhờ duyệt sâu đều khắp các nhánh (sau khi đã cắt tỉa), Alpha-Beta cực kỳ nhạy bén trong việc trừng phạt các sai lầm chiến thuật của đối thủ. Chỉ cần đối thủ hở một quân cờ trong phạm vi 3-4 nước đi, AI sẽ tìm thấy chuỗi nước đi tối ưu để ăn quân đó.
+\begin{itemize}
+    \item \textbf{Độ chính xác:} Rất cao trong các tình huống có lời giải cụ thể (tactical puzzles).
+    \item \textbf{Tính thẩm mỹ:} Nước đi mang tính "máy móc" và cực kỳ "sách vở". Do phụ thuộc vào hàm đánh giá tĩnh (Evaluation function) và bảng điểm vị trí (PST), AI luôn ưu tiên các nước đi phát triển quân chuẩn mực ngay từ khai cuộc, ví dụ như đưa quân Mã ra các ô trung tâm hoặc chiếm lĩnh các hàng quan trọng, thay vì có những sáng tạo bất ngờ.
+\end{itemize}
 
-\textbf{Độ phức tạp thời gian:}
+\subsection{Vấn đề về chiều sâu và thời gian}
+Một hạn chế lộ rõ là khi độ sâu tăng lên, thời gian suy nghĩ tăng theo hàm mũ. Với độ sâu 5, AI có thể tốn 5-10 giây cho một nước đi trên máy tính cá nhân. Điều này khiến nó gặp khó khăn trong các ván cờ chớp (Blitz) nếu không được tối ưu hóa phần cứng.
 
-Trong trường hợp xấu nhất, khi toàn bộ bảng không có mìn, lần click đầu tiên sẽ khiến hàm \_dfs\_reveal duyệt qua toàn bộ bảng. Tuy nhiên, nhờ việc kiểm tra trạng thái \texttt{revealed[cr][cc]}, mỗi ô chỉ được lấy ra khỏi Ngăn xếp (pop) và xử lý đúng một lần duy nhất. Vì vậy, thời gian thực thi bị giới hạn ở mức $O(N)$.
+\section{Phân tích chiến thuật của MCTS}
 
-\textbf{Độ phức tạp không gian:}
+MCTS mang lại một phong cách chơi hoàn toàn khác biệt, mang tính "trực giác" và đôi khi gây bất ngờ.
 
-Thuật toán Iterative DFS sử dụng một Ngăn xếp. Trong trường hợp lớn nhất, kích thước của Ngăn xếp không vượt quá số ô chưa thăm, tức là không vượt quá $N$. Kết hợp với 4 ma trận trạng thái kích thước $R \times C$, tổng chi phí bộ nhớ của hệ thống được đảm bảo ở mức $O(N)$.
+\subsection{Ưu thế về không gian và sự linh hoạt}
+MCTS không bị bó buộc bởi một độ sâu cố định. Trong những thế trận phức tạp mà không có nước đi ăn quân rõ ràng, MCTS có xu hướng chọn những nước đi cải thiện vị trí dần dần (positional improvement).
+\begin{itemize}
+    \item \textbf{Tính sáng tạo:} Đôi khi AI đưa ra những nước đi mà hàm Heuristic tĩnh sẽ đánh giá thấp, nhưng kết quả mô phỏng lại cho thấy tỷ lệ thắng cao.
+    \item \textbf{Khả năng tàn cuộc:} Trong tàn cuộc, khi số lượng nước đi hợp lệ ít đi, các cuộc simulation của MCTS trở nên cực kỳ chính xác, giúp nó tìm ra những đường thắng lắt léo mà Alpha-Beta có thể bỏ lỡ nếu không duyệt đủ sâu.
+\end{itemize}
 
-\begin{table}[H]
-\centering
-\caption{Đánh giá tài nguyên thao tác DFS trong trường hợp xấu nhất}
-\label{tab:dfs_worstcase}
-
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-Cấp độ & Cỡ lưới & Tổng số đỉnh (N) & Cỡ ma trận & Chiều sâu stack tối đa \\
-\hline
-Dễ & $5 \times 5$ & 25 & 100 & 25 đỉnh \\
-Trung bình & $9 \times 9$ & 81 & 324 & 81 đỉnh \\
-Khó & $16 \times 16$ & 256 & 1024 & 256 đỉnh \\
-\hline
-\end{tabular}
-\end{table}
+\subsection{Rủi ro từ sự ngẫu nhiên}
+Tuy nhiên, MCTS vẫn có xác suất mắc sai lầm lớn (blunders) nếu số lượng iterations không đủ để phủ hết các nhánh hiểm hóc. Chỉ cần một nhánh dẫn đến chiếu bí mà không được mô phỏng đủ nhiều, AI có thể tự tin đi vào nhánh đó và nhận thất bại ngay lập tức.
