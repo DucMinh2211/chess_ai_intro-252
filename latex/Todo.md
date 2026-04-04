@@ -20,9 +20,9 @@
     - [x] Biểu diễn bàn cờ (Board Representation).
     - [x] Thiết kế hàm Heuristic cho Alpha-Beta.
     - [x] Cài đặt tham số cho MCTS.
-- [ ] **Chương 6: Kết quả & Phân tích (Results & Discussion)**
-    - [ ] Biểu đồ so sánh thời gian/độ sâu.
-    - [ ] Phân tích chất lượng nước đi.
+- [x] **Chương 6: Kết quả & Phân tích (Results & Discussion)**
+    - [x] Biểu đồ so sánh thời gian/độ sâu (Dưới dạng bảng Benchmark).
+    - [x] Phân tích chất lượng nước đi.
 - [ ] **Chương 7: Thách thức & Hạn chế (Challenges & Limitations)**
 - [ ] **Chương 8: Kết luận & Hướng phát triển (Conclusion)**
 - [ ] **Tài liệu tham khảo (References)** (Cần chuẩn hóa lại theo IEEE/APA).
@@ -41,6 +41,7 @@
 
 ## 3. Hình ảnh minh họa (Bonuses)
 - [x] Ảnh minh họa cây trò chơi (Chương 2).
-- [ ] Sơ đồ khối thuật toán Alpha-Beta (Chương 4/5).
+- [x] Sơ đồ khối thuật toán Alpha-Beta (Chương 4/5).
+- [x] Sơ đồ khối hàm đánh giá Heuristic (Chương 5).
 - [ ] Sơ đồ khối thuật toán MCTS (Chương 4/5).
-- [ ] Ảnh chụp màn hình giao diện Web (Chương 5/6).
+- [x] Ảnh chụp màn hình giao diện Web (Chương 5/6).

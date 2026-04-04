@@ -21,6 +21,13 @@ Cùng một quân cờ nhưng ở các vị trí khác nhau sẽ đóng góp gi�
     \item \textbf{Vua (King):} Trong trung cuộc, Vua bị phạt điểm nếu rời xa các hàng bảo vệ (King Safety). Tuy nhiên, hàm đánh giá sẽ tự động chuyển sang bảng \textbf{KING\_END} trong tàn cuộc để khuyến khích Vua chủ động ra trung tâm hỗ trợ quân mình.
 \end{itemize}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{../../images/ai/evaluation-logic-flow.png}
+    \caption{Sơ đồ luồng logic của hàm đánh giá thế trận (Heuristic Evaluation)}
+    \label{fig:evaluation_flow}
+\end{figure}
+
 \subsection{Sắp xếp nước đi (Move Ordering)}
 Để tối ưu hóa việc cắt tỉa Alpha-Beta, chúng tôi thực hiện sắp xếp danh sách nước đi trước khi duyệt:
 \begin{itemize}
