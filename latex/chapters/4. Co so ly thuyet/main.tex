@@ -118,6 +118,9 @@ Khác với Alpha-Beta duyệt sâu theo chiều dọc, MCTS xây dựng cây tr
     \item \textbf{Backpropagation (Truyền ngược):} Kết quả của simulation (thắng/thua/hòa) được cập nhật ngược lên toàn bộ các nút tổ tiên, thay đổi giá trị trung bình $w_i/n_i$ của chúng.
 \end{enumerate}
 
+\textbf{Sơ đồ luồng thuật toán MCTS: } \href{https://drive.google.com/file/d/1dWdhr5YxImuhE4qjHy9S6u2ekVSK3WdT/view?usp=sharing}{Link drive}
+
+
 \section{Phương pháp kết hợp Hybrid MCTS+AB}
 
 Mặc dù MCTS mạnh mẽ trong việc khám phá không gian trạng thái, nó thường gặp khó khăn trong cờ vua do "bẫy" chiến thuật sâu (tactical blunders). Ngược lại, Alpha-Beta cực kỳ chính xác trong tính toán ngắn hạn. Phương pháp Hybrid kết hợp hai thuật toán này thông qua cơ chế \textbf{Alpha-Beta Seeding}:

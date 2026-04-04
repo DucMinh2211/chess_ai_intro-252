@@ -172,3 +172,6 @@ latex/*.bbl
 latex/*.blg
 latex/*.synctex.gz
 latex/main.pdf
+
+
+benchmark/
