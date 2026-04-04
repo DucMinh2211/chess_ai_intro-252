@@ -1,6 +1,6 @@
-\section{Lý thuyết cây trò chơi (Game Tree)}
+\section{Lý thuyết Game Tree}
 
-Cờ vua thuộc loại trò chơi thông tin đầy đủ (perfect information), đối kháng (zero-sum) và không có yếu tố ngẫu nhiên. Trạng thái của trò chơi tại bất kỳ thời điểm nào có thể được biểu diễn chính xác dưới dạng một cây trò chơi.
+Cờ vua thuộc loại trò chơi thông tin đầy đủ, đối kháng và không có yếu tố ngẫu nhiên. Trạng thái của trò chơi tại bất kỳ thời điểm nào có thể được biểu diễn chính xác dưới dạng một cây trò chơi.
 
 \subsection{Kích thước không gian trạng thái}
 Hệ số nhánh trung bình của cờ vua là khoảng $b \approx 35$, và độ dài trung bình của một ván cờ là $d \approx 80$ lớp nước đi (ply). Điều này dẫn đến tổng số nút trong cây trò chơi đầy đủ là khoảng $35^{80} \approx 10^{123}$. Đây là con số Shannon nổi tiếng, chứng minh rằng không thể có bất kỳ máy tính nào có thể giải quyết cờ vua bằng phương pháp vét cạn. Thách thức cốt lõi của AI là phải tìm ra các lát cắt tối ưu trong cây khổng lồ này để đưa ra quyết định trong vài giây.
@@ -15,6 +15,8 @@ Thuật toán hoạt động dựa trên việc duy trì hai ranh giới logic:
     \item \textbf{Alpha ($\alpha$):} Điểm số tối thiểu mà người chơi hiện tại chắc chắn đạt được.
     \item \textbf{Beta ($\beta$):} Điểm số tối đa mà đối thủ sẽ cho phép người chơi hiện tại đạt được.
 \end{itemize}
+
+Để tối ưu hiệu suất, thuật toán sử dụng Transposition Table để lưu trữ các vị trí đã được đánh giá.\footnote{Breuker, D. M., Uiterwijk, J. W. H. M., \& van den Herik, H. J. (1994). Replacement Schemes for Transposition Tables. \textit{ICCA Journal}, 17(4), 183–193.}
 
 \begin{algorithm}[H]
 \caption{Negamax với Transposition Table}
@@ -50,8 +52,8 @@ Thuật toán hoạt động dựa trên việc duy trì hai ranh giới logic:
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Quiescence Search (Tìm kiếm tĩnh)}
-Vấn đề lớn nhất của Alpha-Beta là "hiệu ứng đường chân trời" (Horizon Effect). Nếu thuật toán dừng lại ở độ sâu $d$, nó có thể đánh giá sai một vị trí đang trong chuỗi ăn quân chưa kết thúc. Để giải quyết, Quiescence Search tiếp tục duyệt cây vượt quá độ sâu $d$, nhưng chỉ xét các nước đi ăn quân (captures) cho đến khi thế trận thực sự "tĩnh".
+\subsection{Quiescence Search}
+Vấn đề lớn nhất của Alpha-Beta là "hiệu ứng đường chân trời". Nếu thuật toán dừng lại ở độ sâu $d$, nó có thể đánh giá sai một vị trí đang trong chuỗi ăn quân chưa kết thúc. Để giải quyết, Quiescence Search tiếp tục duyệt cây vượt quá độ sâu $d$, nhưng chỉ xét các nước đi ăn quân cho đến khi thế trận thực sự "tĩnh".\footnote{Marsland, T. A., \& Schaeffer, J. (1990). \textit{Computers, Chess, and Cognition}. Springer-Verlag.}
 
 \begin{algorithm}[H]
 \caption{Quiescence Search}
@@ -73,9 +75,9 @@ Vấn đề lớn nhất của Alpha-Beta là "hiệu ứng đường chân tr�
 \end{algorithmic}
 \end{algorithm}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.85\linewidth]{../../images/ai/alphabeta-logic-flow.png}
+    \includegraphics[width=0.75\linewidth]{../../images/ai/alphabeta-logic-flow.png}
     \caption{Sơ đồ luồng thuật toán Alpha-Beta Pruning (Negamax \& Quiescence Search)}
     \label{fig:alphabeta_flow}
 \end{figure}
@@ -107,15 +109,15 @@ Khác với Alpha-Beta duyệt sâu theo chiều dọc, MCTS xây dựng cây tr
 
 \subsection{Bốn giai đoạn của MCTS}
 \begin{enumerate}
-    \item \textbf{Selection (Chọn lọc):} Sử dụng công thức UCB1 (Upper Confidence Bound for Trees) để chọn nút con từ gốc. Công thức này cân bằng giữa \textit{Exploitation} (khai thác nước đi tốt đã biết) và \textit{Exploration} (thăm dò nước đi mới chưa duyệt nhiều).
+    \item \textbf{Selection:} Sử dụng công thức UCB1 để chọn nút con từ gốc. Công thức này cân bằng giữa khai thác nước đi tốt đã biết và thăm dò nước đi mới chưa duyệt nhiều.
     \[ UCB1 = \frac{w_i}{n_i} + c \sqrt{\frac{\ln N_i}{n_i}} \]
     Trong đó $w_i$ là số ván thắng, $n_i$ là số lần duyệt nút con, $N_i$ là số lần duyệt nút cha và $c$ là hằng số thăm dò ($\approx 1.41$).
     
-    \item \textbf{Expansion (Mở rộng):} Nếu một nút chưa được duyệt hết các nước đi hợp lệ, một nút con mới sẽ được tạo ra và thêm vào cây.
+    \item \textbf{Expansion:} Nếu một nút chưa được duyệt hết các nước đi hợp lệ, một nút con mới sẽ được tạo ra và thêm vào cây.
     
-    \item \textbf{Simulation (Mô phỏng):} Thực hiện một ván chơi giả lập từ nút mới. Trong dự án này, chúng tôi sử dụng \textit{Smart Rollouts} - thay vì đi ngẫu nhiên hoàn toàn, AI sẽ ưu tiên các nước ăn quân đơn giản để mô phỏng chính xác hơn.
+    \item \textbf{Simulation:} Thực hiện một ván chơi giả lập từ nút mới. Trong dự án này, chúng tôi sử dụng Smart Rollouts - thay vì đi ngẫu nhiên hoàn toàn, AI sẽ ưu tiên các nước ăn quân đơn giản để mô phỏng chính xác hơn.
     
-    \item \textbf{Backpropagation (Truyền ngược):} Kết quả của simulation (thắng/thua/hòa) được cập nhật ngược lên toàn bộ các nút tổ tiên, thay đổi giá trị trung bình $w_i/n_i$ của chúng.
+    \item \textbf{Backpropagation:} Kết quả của simulation được cập nhật ngược lên toàn bộ các nút tổ tiên, thay đổi giá trị trung bình $w_i/n_i$ của chúng.
 \end{enumerate}
 
 \textbf{Sơ đồ luồng thuật toán MCTS: } \href{https://drive.google.com/file/d/1dWdhr5YxImuhE4qjHy9S6u2ekVSK3WdT/view?usp=sharing}{Link drive}
