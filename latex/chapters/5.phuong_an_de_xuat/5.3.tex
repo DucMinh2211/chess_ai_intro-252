@@ -18,3 +18,48 @@ Thay vì thực hiện giai đoạn Simulation bằng cách đi ngẫu nhiên ho
     \item AI sẽ ưu tiên các nước đi ăn quân hoặc chiếu Vua trong quá trình simulation.
     \item Nếu ván đấu mô phỏng quá dài (vượt quá 60 nước), chúng tôi sử dụng hàm Heuristic của Alpha-Beta để ước lượng kết quả thay vì tiếp tục đi ngẫu nhiên. Điều này giúp giảm nhiễu và tăng tốc độ hội tụ của thuật toán.
 \end{itemize}
+
+\section{Triển khai thuật toán Hybrid MCTS+AB}
+
+Bộ não AI thứ ba được triển khai là sự kết hợp (Hybrid) giữa Alpha-Beta và MCTS để tận dụng ưu điểm của cả hai trường phái.
+
+\subsection{Cơ chế Alpha-Beta Seeding}
+Thay vì khởi tạo cây MCTS với các nút có giá trị bằng không, chúng tôi sử dụng Alpha-Beta ở độ sâu $d=3$ để "quét" (screen) toàn bộ các nước đi hợp lệ. 
+
+\begin{algorithm}[H]
+\caption{Hybrid MCTS+AB (AB-MCTS)}
+\begin{algorithmic}[1]
+\Function{AB-MCTS}{board, iterations, top\_k}
+    \State $candidates \gets \Call{AlphaBetaScreen}{board, top\_k}$
+    \State $root \gets \text{Node}(board)$
+    \For{$(move, score) \in candidates$}
+        \State $child \gets \text{Expand}(root, move)$
+        \State $p \gets \text{Sigmoid}(score)$
+        \State $child.visits \gets \gamma$ \Comment{Virtual visits}
+        \State $child.value \gets \gamma \times p$ \Comment{Virtual wins}
+    \EndFor
+    \State $root.visits \gets \sum child.visits$
+    \State $root.value \gets \sum child.value$
+    
+    \For{$i = 1$ \textbf{to} $iterations$}
+        \State $node \gets \Call{Selection}{root}$
+        \State $node \gets \Call{Expansion}{node}$
+        \State $reward \gets \Call{Simulation}{node.board}$
+        \State \Call{Backpropagation}{node, reward}
+    \EndFor
+    \State \Return $\text{child of root with max visits}$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+\begin{itemize}
+    \item \textbf{Virtual Visits ($\gamma$):} Các nước đi được Alpha-Beta đánh giá cao sẽ được gán sẵn một số lượt truy cập ảo (mặc định $\gamma = 12$).
+    \item \textbf{Win Probability Seeding:} Điểm số centipawn từ Alpha-Beta được chuyển đổi sang xác suất thắng thông qua hàm Sigmoid ($P = 1 / (1 + e^{-cp/400})$). Các nút con được khởi tạo với giá trị tích lũy (Virtual Wins) tương ứng với xác suất này.
+\end{itemize}
+
+\subsection{Tối ưu hóa chiến thuật tàn cuộc (Endgame Tuning)}
+Trong tàn cuộc (khi tổng số quân cờ $\le 12$), AI tự động điều chỉnh các tham số:
+\begin{itemize}
+    \item Giảm tham số $K$ (Top-K Screening) xuống còn 4-6 để tập trung tài nguyên vào các nhánh dứt điểm.
+    \item Tăng tỷ lệ tham lam (Greedy Move) trong giai đoạn Simulation để mô phỏng các chuỗi chiếu bí chính xác hơn, thay vì đi ngẫu nhiên.
+\end{itemize}

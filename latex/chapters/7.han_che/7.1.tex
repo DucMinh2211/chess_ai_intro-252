@@ -14,6 +14,16 @@ Trong quá trình thử nghiệm ban đầu, nhóm nhận thấy một hành vi 
 
 Nguyên nhân kỹ thuật nằm ở việc hàm đánh giá gán một điểm số cố định (ví dụ: 99,999) cho mọi trạng thái chiếu bí. Đối với Alpha-Beta, chiếu bí ở độ sâu 1 hay độ sâu 5 đều mang lại giá trị như nhau. Do đó, AI không có động lực để chọn con đường ngắn nhất. Nó trở nên "nhẩn nhơ" vì tin rằng kết quả cuối cùng vẫn là chiến thắng. Để khắc phục, nhóm đã phải điều chỉnh hàm Negamax để cộng/trừ thêm giá trị độ sâu còn lại vào điểm chiếu bí, từ đó ép AI ưu tiên các nước đi dẫn đến chiến thắng nhanh nhất.
 
+\subsection{Thách thức trong quản lý lịch sử và lỗi bộ nhớ đệm (Transposition Table)}
+Một vấn đề nghiêm trọng khác nảy sinh trong quá trình thực nghiệm là hiện tượng AI tự đưa mình vào thế hòa do lặp lại nước đi (Threefold Repetition) dù đang dẫn trước đối thủ rất nhiều về quân số. Qua phân tích, nhóm đã xác định được hai nguyên nhân kỹ thuật cốt lõi:
+
+\begin{itemize}
+    \item \textbf{Sự mất mát lịch sử trạng thái:} Do kiến trúc ban đầu truyền dữ liệu giữa giao diện và AI thông qua chuỗi FEN (Forsyth-Edwards Notation), mỗi lần AI được gọi, nó sẽ khởi tạo một đối tượng bàn cờ mới. Chuỗi FEN chỉ lưu trữ trạng thái hiện tại mà không bao gồm lịch sử các nước đi trước đó. Điều này khiến các hàm kiểm tra hòa do lặp lại nước đi của thư viện \texttt{chess} không thể hoạt động chính xác, làm AI mất đi "ký ức" về việc mình đã đứng ở vị trí này bao nhiêu lần.
+    \item \textbf{Lỗi ghi đè kết quả trong Transposition Table:} Bộ nhớ đệm thế trận (Transposition Table) được thiết kế để tăng tốc tìm kiếm bằng cách lưu lại điểm số của các vị trí đã duyệt. Tuy nhiên, nếu AI lưu một kết quả "thắng thế" của một vị trí ở nước thứ 20, và sau đó quay lại chính vị trí đó ở nước thứ 60 (lúc này sẽ dẫn đến hòa do lặp lại), AI có thể truy xuất nhầm điểm số thắng trong quá khứ từ bộ nhớ đệm thay vì nhận diện trạng thái hòa hiện tại.
+\end{itemize}
+
+\textbf{Giải pháp:} Nhóm đã phải tái cấu trúc lại hệ thống để duy trì một đối tượng bàn cờ toàn cục (Global Board) lưu trữ trọn vẹn lịch sử ván đấu. Đồng thời, logic tìm kiếm được điều chỉnh để ưu tiên kiểm tra các điều kiện kết thúc ván đấu (Game Over) trước khi thực hiện tra cứu bộ nhớ đệm, đảm bảo tính đúng đắn của luật chơi trong mọi tình huống.
+
 \subsection{Giới hạn của ngôn ngữ Python}
 Python, dù mạnh mẽ về thư viện, lại là một ngôn ngữ thông dịch (interpreted) với tốc độ thực thi chậm hơn đáng kể so với C++ hay Rust. 
 \begin{itemize}

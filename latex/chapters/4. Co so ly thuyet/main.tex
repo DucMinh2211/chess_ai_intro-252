@@ -15,14 +15,88 @@ Thuật toán hoạt động dựa trên việc duy trì hai ranh giới logic:
     \item \textbf{Alpha ($\alpha$):} Điểm số tối thiểu mà người chơi hiện tại chắc chắn đạt được.
     \item \textbf{Beta ($\beta$):} Điểm số tối đa mà đối thủ sẽ cho phép người chơi hiện tại đạt được.
 \end{itemize}
-Nếu tại một nút bất kỳ, giá trị tìm thấy lớn hơn hoặc bằng $\beta$, chúng ta có thể dừng duyệt các nước đi còn lại của nút đó (cắt tỉa Beta). Lý do là vì đối thủ chắc chắn sẽ chọn một nhánh khác trước đó để tránh tình huống này xảy ra.
+
+\begin{algorithm}[H]
+\caption{Negamax với Transposition Table}
+\begin{algorithmic}[1]
+\Function{Negamax}{board, depth, $\alpha$, $\beta$}
+    \State $orig\_ \alpha \gets \alpha$
+    \State $entry \gets \text{TT.lookup}(board.hash)$
+    \If{$entry$ is valid \textbf{and} $entry.depth \ge depth$}
+        \If{$entry.type = \text{EXACT}$} \State \Return $entry.value$
+        \ElsIf{$entry.type = \text{LOWER}$} \State $\alpha \gets \max(\alpha, entry.value)$
+        \ElsIf{$entry.type = \text{UPPER}$} \State $\beta \gets \min(\beta, entry.value)$
+        \EndIf
+        \If{$\alpha \ge \beta$} \State \Return $entry.value$ \EndIf
+    \EndIf
+
+    \If{$depth = 0$ \textbf{or} board.is\_over()}
+        \State \Return \Call{Quiescence}{board, $\alpha$, $\beta$}
+    \EndIf
+
+    \State $best\_val \gets -\infty$
+    \For{$move \in \text{SortMoves}(board.legal\_moves)$}
+        \State board.push(move)
+        \State $val \gets -\Call{Negamax}{board, depth-1, -\beta, -\alpha}$
+        \State board.pop()
+        \State $best\_val \gets \max(best\_val, val)$
+        \State $\alpha \gets \max(\alpha, val)$
+        \If{$\alpha \ge \beta$} \textbf{break} \EndIf
+    \EndFor
+
+    \State $\text{TT.store}(board.hash, best\_val, depth, \text{GetType}(best\_val, orig\_ \alpha, \beta))$
+    \State \Return $best\_val$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Quiescence Search (Tìm kiếm tĩnh)}
-Vấn đề lớn nhất của Alpha-Beta là "hiệu ứng đường chân trời" (Horizon Effect). Nếu thuật toán dừng lại ở độ sâu $d$, nó có thể đánh giá sai một vị trí đang trong chuỗi ăn quân chưa kết thúc. Để giải quyết, Quiescence Search tiếp tục duyệt cây vượt quá độ sâu $d$, nhưng chỉ xét các nước đi ăn quân (captures) cho đến khi thế trận thực sự "tĩnh". Điều này ngăn chặn việc AI đưa ra những nước đi ngớ ngẩn chỉ vì nó không nhìn thấy nước ăn lại của đối thủ ở lớp $d+1$.
+Vấn đề lớn nhất của Alpha-Beta là "hiệu ứng đường chân trời" (Horizon Effect). Nếu thuật toán dừng lại ở độ sâu $d$, nó có thể đánh giá sai một vị trí đang trong chuỗi ăn quân chưa kết thúc. Để giải quyết, Quiescence Search tiếp tục duyệt cây vượt quá độ sâu $d$, nhưng chỉ xét các nước đi ăn quân (captures) cho đến khi thế trận thực sự "tĩnh".
+
+\begin{algorithm}[H]
+\caption{Quiescence Search}
+\begin{algorithmic}[1]
+\Function{Quiescence}{board, $\alpha$, $\beta$}
+    \State $stand\_pat \gets \text{Evaluate}(board)$
+    \If{$stand\_pat \ge \beta$} \State \Return $stand\_pat$ \EndIf
+    \State $\alpha \gets \max(\alpha, stand\_pat)$
+    
+    \For{$move \in board.legal\_captures()$}
+        \State board.push(move)
+        \State $score \gets -\Call{Quiescence}{board, -\beta, -\alpha}$
+        \State board.pop()
+        \If{$score \ge \beta$} \State \Return $score$ \EndIf
+        \State $\alpha \gets \max(\alpha, score)$
+    \EndFor
+    \State \Return $\alpha$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 \section{Thuật toán Monte Carlo Tree Search (MCTS)}
 
 Khác với Alpha-Beta duyệt sâu theo chiều dọc, MCTS xây dựng cây trò chơi theo hướng mở rộng các nhánh mang lại tỷ lệ thắng cao thông qua thống kê.
+
+\begin{algorithm}[H]
+\caption{Monte Carlo Tree Search}
+\begin{algorithmic}[1]
+\Function{MCTS}{root\_node, iterations}
+    \For{$i = 1$ \textbf{to} $iterations$}
+        \State $node \gets \Call{Selection}{root\_node}$
+        \State $node \gets \Call{Expansion}{node}$
+        \State $reward \gets \Call{Simulation}{node.board}$
+        \State \Call{Backpropagation}{node, reward}
+    \EndFor
+    \State \Return $\text{child of root\_node with max visits}$
+\EndFunction
+\Function{Selection}{node}
+    \While{$node.has\_children()$}
+        \State $node \gets \arg\max_{c \in node.children} \left( \frac{w_c}{n_c} + C \sqrt{\frac{\ln n_{node}}{n_c}} \right)$
+    \EndWhile
+    \State \Return $node$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Bốn giai đoạn của MCTS}
 \begin{enumerate}
@@ -36,5 +110,15 @@ Khác với Alpha-Beta duyệt sâu theo chiều dọc, MCTS xây dựng cây tr
     
     \item \textbf{Backpropagation (Truyền ngược):} Kết quả của simulation (thắng/thua/hòa) được cập nhật ngược lên toàn bộ các nút tổ tiên, thay đổi giá trị trung bình $w_i/n_i$ của chúng.
 \end{enumerate}
+
+\section{Phương pháp kết hợp Hybrid MCTS+AB}
+
+Mặc dù MCTS mạnh mẽ trong việc khám phá không gian trạng thái, nó thường gặp khó khăn trong cờ vua do "bẫy" chiến thuật sâu (tactical blunders). Ngược lại, Alpha-Beta cực kỳ chính xác trong tính toán ngắn hạn. Phương pháp Hybrid kết hợp hai thuật toán này thông qua cơ chế \textbf{Alpha-Beta Seeding}:
+
+\begin{itemize}
+    \item \textbf{Sàng lọc (AB Screening):} Trước khi bắt đầu MCTS, thuật toán sử dụng Alpha-Beta ở độ sâu thấp để đánh giá và chọn ra top $K$ nước đi tiềm năng nhất.
+    \item \textbf{Khởi tạo trọng số (Heuristic Seeding):} Thay vì bắt đầu với các nút con có giá trị 0, các nút thuộc top $K$ được gán số lượt truy cập ảo (Virtual Visits) và tỷ lệ thắng ảo dựa trên điểm số Alpha-Beta. Điều này giúp MCTS tập trung tài nguyên mô phỏng vào các vùng không gian "có triển vọng" ngay từ iteration đầu tiên.
+    \item \textbf{Tối ưu hóa tàn cuộc:} Trong giai đoạn tàn cuộc, tham số $K$ được thu hẹp và độ sâu Alpha-Beta được tăng cường để đảm bảo AI tìm thấy các chuỗi nước đi chiếu bí chính xác.
+\end{itemize}
 
 MCTS có ưu điểm là không cần hàm Heuristic quá tinh vi, vì nó "tự học" giá trị của một vị trí thông qua hàng ngàn kết quả thực tế của các ván đấu giả lập.

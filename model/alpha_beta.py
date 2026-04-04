@@ -4,7 +4,7 @@ from model.evaluation import evaluate, evaluate_move
 # Transposition Table to store evaluated positions
 transposition_table = {}
 
-def alpha_beta_clear_transposition_table():
+def clear_transposition_table():
     global transposition_table
     transposition_table = {}
     print("AI Transposition Table cleared.")
@@ -57,26 +57,33 @@ def quiescence(board: chess.Board, alpha: float, beta: float, depth: int):
     return alpha
 
 def negamax(board: chess.Board, depth: int, alpha: float, beta: float, q_depth: int):
+    # 1. CRITICAL: Check for game over (including repetitions) BEFORE cache lookup
+    # This prevents AI from using a "winning" score from history for a position that is now a draw.
+    if board.is_game_over():
+        score = evaluate(board)
+        # Mate distance scoring: prefer faster mates
+        if score > 90000: score += depth
+        elif score < -90000: score -= depth
+        return score if board.turn == chess.WHITE else -score
+
+    # 2. Treat 2-fold repetition as draw during search to avoid loops
+    if board.is_repetition(2):
+        score = evaluate(board) # This will return the draw penalty if winning
+        return score if board.turn == chess.WHITE else -score
+
     alpha_orig = alpha
     
-    # Check Transposition Table
+    # 3. Check Transposition Table
     cached_score = get_transposition(board, depth, alpha, beta)
     if cached_score is not None:
         return cached_score
 
-    if board.is_game_over():
-        score = evaluate(board)
-        # Reward finding mates EARLIER (where remaining depth is higher)
-        if score > 90000: score += depth
-        elif score < -90000: score -= depth
-        return score if board.turn == chess.WHITE else -score
-    
     if depth == 0:
         return quiescence(board, alpha, beta, q_depth)
 
     best_value = -float('inf')
     moves = list(board.legal_moves)
-    # Move ordering is critical
+    # Move ordering: captures and promotions first
     moves.sort(key=lambda m: evaluate_move(board, m), reverse=True)
 
     for move in moves:
@@ -115,7 +122,6 @@ def alpha_beta_best_move(board: chess.Board, depth: int, q_depth: int = 4):
     
     for move in moves:
         board.push(move)
-        # Negamax root call
         value = -negamax(board, depth - 1, -beta, -alpha, q_depth)
         board.pop()
 

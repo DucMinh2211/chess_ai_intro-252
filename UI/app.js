@@ -8,7 +8,8 @@ const FEN_TO_FILEPATH = {
 const BOT_LIST = [
     { value: "random", label: "Random Move", icon: "./assets/icon/random.png" },
     { value: "alphabeta", label: "Alpha-Beta Pruning", icon: "./assets/icon/alphabeta.png" },
-    { value: "mcts", label: "Monte Carlo Tree Search", icon: "./assets/icon/mcts.png"}
+    { value: "mcts", label: "Monte Carlo Tree Search", icon: "./assets/icon/mcts.png"},
+    { value: "mcts_alphabeta", label: "Hybrid MCTS+AB", icon: "./assets/icon/mcts.png"}
 ];
 
 const SIDE_LIST = [
@@ -247,6 +248,7 @@ window.addEventListener('DOMContentLoaded', () => {
         renderChoices('bot-list', BOT_LIST, 'bot', (v) => { 
             document.getElementById('alphabeta-settings').style.display = v === 'alphabeta' ? '' : 'none'; 
             document.getElementById('mcts-settings').style.display = v === 'mcts' ? '' : 'none'; 
+            document.getElementById('hybrid-settings').style.display = v === 'mcts_alphabeta' ? '' : 'none'; 
             document.getElementById('side-picker').style.display = ''; 
             renderChoices('side-list', SIDE_LIST, 'side', () => document.getElementById('start-btn').style.display = ''); 
         }); 
@@ -263,8 +265,9 @@ window.addEventListener('DOMContentLoaded', () => {
             bot: bot,
             depth: parseInt(document.getElementById('depth-range').value),
             q_depth: parseInt(document.getElementById('q-depth-range').value),
-            iterations: parseInt(document.getElementById('iter-range').value),
-            rollout_depth: parseInt(document.getElementById('rollout-range').value)
+            iterations: bot === 'mcts' ? parseInt(document.getElementById('iter-range').value) : parseInt(document.getElementById('hybrid-iter-range').value),
+            rollout_depth: parseInt(document.getElementById('rollout-range').value),
+            top_k: parseInt(document.getElementById('topk-range').value)
         };
 
         document.getElementById('sidebar-offline').style.display = 'none';
@@ -289,7 +292,9 @@ window.addEventListener('DOMContentLoaded', () => {
         { id: 'depth-range', val: 'depth-value' },
         { id: 'q-depth-range', val: 'q-depth-value' },
         { id: 'iter-range', val: 'iter-value' },
-        { id: 'rollout-range', val: 'rollout-value' }
+        { id: 'rollout-range', val: 'rollout-value' },
+        { id: 'hybrid-iter-range', val: 'hybrid-iter-value' },
+        { id: 'topk-range', val: 'topk-value' }
     ];
     sliders.forEach(s => {
         const el = document.getElementById(s.id);

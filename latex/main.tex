@@ -37,8 +37,8 @@
 % \DeclareFieldFormat{urldate}{\mkbibparens{\bibstring{urlseen}\space#1}}
 
 
-\newcommand{\DimensUnits}[2]{\hfill\makebox[8em]{#1\hfill}%
-\makebox[4em]{#2\hfill}\ignorespaces}
+\newcommand{\DimensUnits}[2]{\hspace*{\fill}\makebox[8em][l]{#1}%
+\makebox[4em][l]{#2}\ignorespaces}
 \newcommand{\insertnomheaders}{\item[\bfseries Hàm]%
 \textbf{Chức năng}}
 \renewcommand\nomgroup[1]{%
@@ -218,7 +218,7 @@
 		\tiny \bf 
 	\end{tabular}  }
 \fancyfoot{} % clear all footer fields
-\fancyfoot[L]{\footnotesize Homework 1 - CO3061 - Học kì 252} 
+\fancyfoot[L]{\footnotesize Homework 2 - CO3061 - Học kì 252} 
 \fancyfoot[R]{\footnotesize Trang {\thepage}/\pageref{LastPage}}
 \renewcommand{\headrulewidth}{0.3pt}
 \renewcommand{\footrulewidth}{0.3pt}
@@ -512,7 +512,7 @@
 
             \large
             
-            \textbf{BÁO CÁO HOMEWORK 1}
+            \textbf{BÁO CÁO HOMEWORK 2}
             
             \textbf{Môn học: Nhập môn Trí Tuệ Nhân Tạo} 
             
@@ -592,7 +592,7 @@ Danh sách thành viên nhóm:
 \begin{table}[H]
     \centering
     \renewcommand{\arraystretch}{1.6} 
-    \begin{tabularx}{\textwidth}{|c|l|c|X|c|}
+    \begin{tabularx}{\textwidth}{|c|l|c|>{\RaggedRight\arraybackslash}X|c|}
         \hline
         \textbf{STT} & \textbf{Họ và tên} & \textbf{MSSV} & \textbf{Nhiệm vụ phân công} & \textbf{Tỷ lệ đóng góp} \\ \hline
         1 & Nguyễn Trương Thái Bảo & 2210251 & Project Lead \& Documentation & 100\% \\ \hline

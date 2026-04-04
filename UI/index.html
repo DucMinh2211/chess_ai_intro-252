@@ -56,6 +56,14 @@
                 <input type="range" id="rollout-range" min="1" max="100" value="30" style="width:100%; accent-color:var(--accent);">
             </div>
 
+            <div id="hybrid-settings" style="display: none;">
+                <p style="margin:15px 0 5px; color:var(--text-muted);">Hybrid Iterations: <span id="hybrid-iter-value">8000</span></p>
+                <input type="range" id="hybrid-iter-range" min="100" max="10000" step="100" value="8000" style="width:100%; accent-color:var(--accent);">
+                
+                <p style="margin:15px 0 5px; color:var(--text-muted);">Top-K (AB Screen): <span id="topk-value">8</span></p>
+                <input type="range" id="topk-range" min="1" max="20" value="8" style="width:100%; accent-color:var(--accent);">
+            </div>
+
             <div id="side-picker" style="display: none;">
                 <p style="margin:15px 0 10px; color:var(--text-muted);">Play As</p>
                 <div id="side-list" class="choice-list"></div>

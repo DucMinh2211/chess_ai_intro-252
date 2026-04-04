@@ -1,6 +1,7 @@
 import eel
 from model.alpha_beta import *
 from model.mcts import *
+from model.mcts_alphabeta import ab_mcts_best_move
 import chess
 import random
 import time
@@ -83,6 +84,11 @@ def get_bot_move(fen: str, bot_type: str, params: dict):
         iters = int(params.get('iterations', 10000))
         rollout_depth = int(params.get('rollout_depth', 30))
         move = mcts(game_board, iterations=iters, rollout_depth=rollout_depth)
+    elif bot_type == 'mcts_alphabeta':
+        iters = int(params.get('iterations', 8000))
+        top_k = int(params.get('top_k', 8))
+        # top_k is moves to screen with AB
+        move = ab_mcts_best_move(game_board, iterations=iters, top_k=top_k)
     else:
         raise Exception('Unknown Bot type')
 
@@ -92,7 +98,7 @@ def get_bot_move(fen: str, bot_type: str, params: dict):
     if not move: 
         raise Exception('Bot could not find a move')
     
-    print(f"Done ({duration:.5f}s). Selected: {game_board.san(move)}")
+    print(f"Done ({duration:.2f}s). Selected: {game_board.san(move)}")
     return {
         'from': chess.square_name(move.from_square),
         'to': chess.square_name(move.to_square),
@@ -106,7 +112,7 @@ def log_session_stats():
         avg_time = sum(move_times) / len(move_times)
         print(f"\n--- AI Session Stats ---")
         print(f"Total AI moves: {len(move_times)}")
-        print(f"Average time per move: {avg_time:.5f}s")
+        print(f"Average time per move: {avg_time:.2f}s")
         print(f"------------------------\n")
         move_times = []
 
