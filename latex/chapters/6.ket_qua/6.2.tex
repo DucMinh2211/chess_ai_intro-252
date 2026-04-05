@@ -39,14 +39,14 @@ Quiescence Search đã giúp loại bỏ hoàn toàn các nước đi "mù quán
 \centering
 \caption{Kết quả Benchmark thuật toán Hybrid MCTS-AlphaBeta trên Chess.com \& VS AlphaBeta}
 \label{tab:hybridmcts_benchmark}
-\begin{tabularx}{\textwidth}{|c|l|X|c|c|c|}
+\begin{tabularx}{\textwidth}{|c|X|l|l|X|c|}
 \hline
 \textbf{STT} & \textbf{Cấu hình Bot} & \centering \textbf{Đối thủ (Elo)} & \textbf{Kết quả} & \textbf{Thời gian/Move (s)} & \textbf{Số nước} \\ \hline
-1  & Iter=3000, TopK=6 & Beginner (700)  & THẮNG  & ~14s & 60 \\ \hline
-2  & Iter=3000, TopK=6 & Intermediate (1000)  &  THUA &  ~30s & 40 \\ \hline
-4 & Iter=3000, TopK=6 & AlphaBeta(D=3,QD=2) & THUA(2 trận) & ~33s \\ \hline
-6 & Iter=5000, TopK=6 & AlphaBeta(D=4, QD=2) & THUA(2 trận) & ~47s \\ \hline
-8 & Iter=3000, TopK=6 & AlphaBeta(D=2, QD=0) & THUA(2 trận) & ~30s \\ \hline
+1  & Iter=3000, TopK=6 & Beginner (700)  & THẮNG  & $\approx$ 14s & 60 \\ \hline
+2  & Iter=3000, TopK=6 & Intermediate (1000)  &  THUA &  $\approx$ 30s & 40 \\ \hline
+4 & Iter=3000, TopK=6 & AlphaBeta(D=3,QD=2) & THUA(2 trận) & $\approx$ 33s & 43 \\ \hline
+6 & Iter=5000, TopK=6 & AlphaBeta(D=4, QD=2) & THUA(2 trận) & $\approx$ 47s & 47\\ \hline
+8 & Iter=3000, TopK=6 & AlphaBeta(D=2, QD=0) & THUA(2 trận) & $\approx$ 30s & 41\\ \hline
 \end{tabularx}
 \end{table}
 
@@ -55,3 +55,113 @@ Quiescence Search đã giúp loại bỏ hoàn toàn các nước đi "mù quán
 Dựa trên bảng kết quả cập nhật, mô hình Hybrid MCTS-AlphaBeta đã cho thấy sự tiến bộ nhất định so với phiên bản MCTS thuần túy ở khả năng dứt điểm. Việc đánh bại đối thủ 700 Elo thay vì nhận kết quả hòa bế tắc chứng tỏ cơ chế Alpha-Beta được tích hợp đã giúp engine nhìn ra các đòn phối hợp và chiếu bí tốt hơn. Dù vậy, ván đấu kéo dài tới 60 nước (thay vì dứt điểm nhanh) gợi ý rằng quá trình hiện thực hóa ưu thế ở giai đoạn tàn cuộc vẫn còn khá cồng kềnh, thuật toán chưa tối ưu được đường đi ngắn nhất đến chiến thắng.
 
 Tuy nhiên, khi đối đầu với mức Elo cao hơn (1000) hoặc engine Alpha-Beta truyền thống, mô hình Hybrid lại bộc lộ sự kém hiệu quả nghiêm trọng. Việc để thua trắng trước Alpha-Beta, kể cả ở cấu hình cực thấp (Depth 2, không có Quiescence), cho thấy điểm yếu chí mạng: cơ chế lọc cành TopK=6 của MCTS rất có thể đã loại bỏ mất những nước đi chiến thuật quan trọng trước khi Alpha-Beta kịp tính toán sâu hơn. Đồng thời, thời gian suy nghĩ quá lâu (lên tới 30 - 47 giây cho một nước đi) minh chứng cho việc hệ thống đang bị quá tải tài nguyên khi phải gồng gánh cả hai thuật toán. Kết quả là nó đánh mất tốc độ, bỏ sót chiến thuật và hoàn toàn lép vế trước sự sắc bén, toàn diện của Alpha-Beta nguyên bản.
+
+\section{So sánh tổng quan: Alpha-Beta vs MCTS vs Hybrid}
+
+Dựa trên kết quả benchmark thực nghiệm và phân tích lý thuyết, phần này trình bày đánh giá toàn diện về hiệu quả của ba phương pháp tiếp cận AI đã triển khai trong dự án.
+
+\subsection{Phân tích định lượng qua Benchmark}
+
+\begin{table}[H]
+    \centering
+    \caption{So sánh hiệu năng ba thuật toán trên các chỉ số quan trọng}
+    \label{tab:three_way_comparison}
+    \begin{tabularx}{\textwidth}{|l|X|X|X|}
+        \hline
+        \textbf{Tiêu chí} & \textbf{Alpha-Beta} & \textbf{MCTS} & \textbf{Hybrid} \\ \hline
+        \textbf{Elo ước tính} & 1600-1800 (D=3-4) & 500-700 (5000 iter) & 700-1000 (3000 iter) \\ \hline
+        \textbf{Thời gian/nước} & 0.6-14s (D=3-4) & 30-45s (1000-5000 iter) & 14-47s (3000-5000 iter) \\ \hline
+        \textbf{Tỷ lệ thắng Beginner (250)} & 100\% & 0\% (chỉ hòa) & 100\% (700 Elo) \\ \hline
+        \textbf{Khả năng dứt điểm} & Xuất sắc (15-59 nước) & Rất kém (>50 nước, không chiếu bí) & Trung bình (60 nước) \\ \hline
+        \textbf{Độ ổn định chiến thuật} & Cao (ít blunder) & Rất thấp (nhiều blunder) & Trung bình \\ \hline
+        \textbf{Vs AB (D=2, Q=0)} & N/A & Thua 20/20 & Thua 2/2 \\ \hline
+        \textbf{Vs AB (D=3, Q=2)} & N/A & Chưa test & Thua 2/2 \\ \hline
+    \end{tabularx}
+\end{table}
+
+\subsection{Phân tích định tính theo giai đoạn ván cờ}
+
+\subsubsection{Giai đoạn Khai cuộc (Opening)}
+
+\begin{itemize}
+    \item \textbf{Alpha-Beta:} Nhờ Piece-Square Tables được tinh chỉnh kỹ lưỡng, AI luôn ưu tiên kiểm soát trung tâm và phát triển quân theo nguyên tắc cổ điển. Phong cách chơi mang tính "sách vở" và ổn định.
+    \item \textbf{MCTS:} Thiếu tri thức về khai cuộc, thuật toán thường mất 30-45 giây chỉ để quyết định nước đi đầu tiên. Các nước đi có xu hướng ngẫu nhiên và thiếu mục đích chiến lược rõ ràng.
+    \item \textbf{Hybrid:} Kế thừa tốt điểm mạnh của Alpha-Beta trong việc sàng lọc nước đi hợp lý, nhưng overhead của MCTS làm chậm tốc độ phản hồi đáng kể (14-33s/nước).
+\end{itemize}
+
+\textbf{Kết luận:} Alpha-Beta chiếm ưu thế tuyệt đối trong giai đoạn này.
+
+\subsubsection{Giai đoạn Trung cuộc (Middlegame)}
+
+\begin{itemize}
+    \item \textbf{Alpha-Beta:} Đây là giai đoạn thuật toán phát huy tối đa sức mạnh. Khả năng tính toán chiến thuật chính xác giúp AI trừng phạt mọi sai lầm của đối thủ. Tuy nhiên, bị giới hạn bởi Horizon Effect ở độ sâu 3-4. \textit{Điểm yếu đáng chú ý:} Do phụ thuộc hoàn toàn vào hàm heuristic cố định, Alpha-Beta thiếu tính sáng tạo - tuyệt đối tránh các nước hi sinh quân (sacrifices) dù có thể dẫn đến lợi thế lớn, và không nhận ra các kế hoạch chiến lược dài hạn nằm ngoài tầm nhìn 4-5 nước đi.
+    \item \textbf{MCTS:} Thể hiện điểm yếu chí mạng khi đối đầu với các đòn chiến thuật phức tạp. Trong 20 ván đấu với Alpha-Beta (D=2), MCTS không thể giành được bất kỳ chiến thắng nào do thiếu khả năng nhận diện các bẫy bắt quân. \textit{Tiềm năng lý thuyết:} Nếu có đủ iterations (hàng triệu lần như AlphaZero), MCTS có xu hướng khám phá các nước đi "kỳ quặc" và sáng tạo mà Alpha-Beta bỏ qua, nhưng phiên bản hiện tại quá yếu để thể hiện ưu điểm này.
+    \item \textbf{Hybrid:} Lý thuyết cho rằng Hybrid nên cải thiện được khả năng chiến thuật nhờ Alpha-Beta Screening, nhưng kết quả thực tế cho thấy cơ chế TopK=6 lại làm mất đi các nước đi quan trọng, khiến bot vẫn thua Alpha-Beta thuần túy.
+\end{itemize}
+
+\textbf{Kết luận:} Alpha-Beta vượt trội về tính toán chiến thuật nhưng thiếu sự đột phá. MCTS và Hybrid đều tỏ ra kém hiệu quả với tài nguyên hạn chế.
+
+\subsubsection{Giai đoạn Tàn cuộc (Endgame)}
+
+\begin{itemize}
+    \item \textbf{Alpha-Beta:} Gặp khó khăn khi chuỗi chiếu bí dài hơn độ sâu tìm kiếm. Tuy nhiên, nhờ Mate Distance Penalty và Quiescence Search, AI vẫn có thể dứt điểm ổn định trong các thế trận đơn giản.
+    \item \textbf{MCTS:} Điểm yếu khủng khiếp nhất của thuật toán. Mặc dù đã chiếm ưu thế vật chất tuyệt đối, MCTS không thể nhận diện mục tiêu chiếu bí, dẫn đến hiện tượng "vờn quanh" vô nghĩa và kết thúc bằng hòa (thậm chí với Beginner 250 Elo).
+    \item \textbf{Hybrid:} Cải thiện đáng kể so với MCTS thuần, có khả năng dứt điểm trước đối thủ 700 Elo. Tuy nhiên, quá trình dứt điểm kéo dài (60 nước) cho thấy thuật toán vẫn chưa tối ưu.
+\end{itemize}
+
+\textbf{Kết luận:} Alpha-Beta tốt nhất, Hybrid cải thiện nhưng chưa đủ, MCTS hoàn toàn thất bại.
+
+\subsection{Phân tích nguyên nhân thất bại của MCTS}
+
+Kết quả thảm họa của MCTS (thua 20/20 trận trước Alpha-Beta D=2, không chiếu bí được Beginner) có thể quy về các nguyên nhân kỹ thuật sau:
+
+\begin{enumerate}
+    \item \textbf{Hiệu suất thực thi thấp:} Với 300-5000 iterations, MCTS mất 30-45 giây/nước nhưng vẫn không đủ mô phỏng để va chạm các bẫy chiến thuật. Stockfish MCTS có thể chạy hàng triệu iterations trong cùng thời gian nhờ tối ưu hóa C++.
+    
+    \item \textbf{Chất lượng Rollout kém:} Mặc dù đã tích hợp Smart Rollouts với epsilon-greedy và heuristic MVV-LVA, các simulation vẫn chưa đủ "thông minh" để mô phỏng chính xác các chuỗi chiếu bí. Điều này dẫn đến việc UCT value bị nhiễu bởi các kết quả ngẫu nhiên.
+    
+    \item \textbf{Thiếu MCTS-Solver thực sự:} Dù đã tích hợp cơ chế proven win/loss, việc triển khai chưa đủ sâu để truyền lan các trạng thái đã được chứng minh lên cây tìm kiếm một cách hiệu quả.
+    
+    \item \textbf{Không gian tìm kiếm quá rộng:} Trong cờ vua, branching factor trung bình là 35. Với 5000 iterations, mỗi nhánh chỉ được duyệt trung bình ~143 lần - quá ít để đưa ra quyết định tin cậy về các đòn chiến thuật phức tạp.
+\end{enumerate}
+
+\subsection{Phân tích nguyên nhân thất bại của Hybrid}
+
+Mô hình Hybrid, dù về mặt lý thuyết nên kết hợp được ưu điểm của cả hai, lại cho kết quả thậm chí còn tệ hơn Alpha-Beta thuần túy:
+
+\begin{enumerate}
+    \item \textbf{Cơ chế TopK gây mất thông tin:} Alpha-Beta Screening chỉ giữ lại 6 nước đi tốt nhất. Trong các thế trận phức tạp, nước đi thắng có thể nằm ở vị trí thứ 7-8 sau khi đánh giá bề nổi (depth=3), dẫn đến việc MCTS không bao giờ được khám phá nhánh đúng.
+    
+    \item \textbf{Overhead tính toán kép:} Hệ thống phải chạy cả Alpha-Beta (depth 3) lẫn MCTS (3000-5000 iter), khiến thời gian suy nghĩ tăng gấp đôi (30-47s) mà không mang lại cải thiện tương xứng về chất lượng nước đi.
+    
+    \item \textbf{Virtual Visits Seeding chưa tối ưu:} Giá trị gamma=12 có thể quá thấp, khiến các nước đi được Alpha-Beta đánh giá cao vẫn bị MCTS "thăm dò" lại quá nhiều thay vì tập trung khai thác.
+    
+    \item \textbf{Xung đột triết lý:} Alpha-Beta tin vào tính toán chính xác ngắn hạn, MCTS tin vào mô phỏng thống kê dài hạn. Việc kết hợp chúng một cách cứng nhắc (TopK) thay vì linh hoạt (adaptive weighting) dẫn đến mất đi điểm mạnh của cả hai.
+\end{enumerate}
+
+\subsection{Bài học rút ra}
+
+Kết quả benchmark cho thấy một sự thật khắc nghiệt: \textbf{trong cờ vua với tài nguyên tính toán hạn chế, Alpha-Beta Pruning kết hợp heuristic tốt vẫn là lựa chọn tối ưu nhất.}
+
+\begin{itemize}
+    \item MCTS chỉ phát huy sức mạnh khi có:
+    \begin{enumerate}
+        \item Hàng triệu iterations (yêu cầu tối ưu hóa C++/GPU)
+        \item Mạng thần kinh mạnh thay thế rollout ngẫu nhiên (như AlphaZero)
+        \item Domain knowledge ít hơn (như Go, Hex)
+    \end{enumerate}
+    
+    \item Hybrid chỉ có ý nghĩa khi:
+    \begin{enumerate}
+        \item MCTS đủ mạnh để có thể cạnh tranh với Alpha-Beta
+        \item Có cơ chế adaptive TopK thay vì fixed K=6
+        \item Tài nguyên tính toán dồi dào (server-grade hardware)
+    \end{enumerate}
+    
+    \item Alpha-Beta cần cải thiện:
+    \begin{enumerate}
+        \item Tăng độ sâu lên 5-6 bằng cách tối ưu hóa code
+        \item Tích hợp Iterative Deepening để quản lý thời gian tốt hơn
+        \item Sử dụng Opening Book để tiết kiệm tài nguyên giai đoạn đầu
+    \end{enumerate}
+\end{itemize}

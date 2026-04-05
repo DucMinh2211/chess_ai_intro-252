@@ -117,6 +117,64 @@ def is_endgame(board: chess.Board) -> bool:
     
     return True
 
+def is_passed_pawn(board: chess.Board, square: int, color: bool) -> bool:
+    """
+    Check if a pawn is a passed pawn (no enemy pawns can block its path to promotion).
+    """
+    file = chess.square_file(square)
+    rank = chess.square_rank(square)
+    
+    # Define files to check (current file and adjacent files)
+    files_to_check = [file]
+    if file > 0:
+        files_to_check.append(file - 1)
+    if file < 7:
+        files_to_check.append(file + 1)
+    
+    # For white pawns, check ranks ahead; for black, check ranks behind
+    if color == chess.WHITE:
+        ranks_to_check = range(rank + 1, 8)
+    else:
+        ranks_to_check = range(0, rank)
+    
+    # Check if there are any enemy pawns blocking
+    enemy_color = not color
+    for f in files_to_check:
+        for r in ranks_to_check:
+            check_square = chess.square(f, r)
+            piece = board.piece_at(check_square)
+            if piece and piece.piece_type == chess.PAWN and piece.color == enemy_color:
+                return False
+    
+    return True
+
+def evaluate_promotion_potential(board: chess.Board) -> int:
+    """
+    Evaluate passed pawns and promotion potential.
+    """
+    score = 0
+    
+    for square in board.pieces(chess.PAWN, chess.WHITE):
+        rank = chess.square_rank(square)
+        if is_passed_pawn(board, square, chess.WHITE):
+            # Passed pawn bonus increases as it gets closer to promotion
+            distance_to_promotion = 7 - rank
+            bonus = 50 + (7 - distance_to_promotion) * 20  # 50 to 190
+            score += bonus
+        elif rank >= 5:  # Advanced pawn (6th or 7th rank)
+            score += 15 * (rank - 4)
+    
+    for square in board.pieces(chess.PAWN, chess.BLACK):
+        rank = chess.square_rank(square)
+        if is_passed_pawn(board, square, chess.BLACK):
+            distance_to_promotion = rank
+            bonus = 50 + (7 - distance_to_promotion) * 20
+            score -= bonus
+        elif rank <= 2:  # Advanced pawn (2nd or 1st rank)
+            score -= 15 * (3 - rank)
+    
+    return score
+
 def evaluate(board: chess.Board) -> int:
     # Material calculation for draw penalty
     mat_w = sum(len(board.pieces(pt, chess.WHITE)) * PIECE_VALUES[pt] for pt in PIECE_VALUES)
@@ -136,6 +194,9 @@ def evaluate(board: chess.Board) -> int:
     score = 0
 
     endgame = is_endgame(board)
+    
+    # Add promotion potential evaluation
+    score += evaluate_promotion_potential(board)
 
     for square in chess.SQUARES:
         piece = board.piece_at(square)

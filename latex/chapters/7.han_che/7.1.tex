@@ -4,12 +4,35 @@ Thiết kế hàm Heuristic cho Alpha-Beta Pruning là một quá trình thử s
 
 \subsection{Sự cân bằng giữa vật chất và vị trí}
 Một vấn đề nan giải là việc gán trọng số cho Material so với PST. Nếu Material quá cao, AI sẽ trở nên cực kỳ "tham lam", sẵn sàng phá hỏng cấu trúc tốt của mình để ăn một quân tốt của đối thủ. Ngược lại, nếu PST quá cao, AI có thể bỏ lỡ các cơ hội ăn quân quan trọng chỉ để giữ quân ở các ô trung tâm. 
+
+Hệ quả của việc phụ thuộc hoàn toàn vào hàm heuristic cố định là Alpha-Beta \textbf{thiếu tính sáng tạo và linh hoạt trong phong cách chơi}. AI luôn chọn các nước đi "an toàn" và tránh mọi rủi ro, ngay cả khi các nước đi táo bạo có thể dẫn đến chiến thắng. Cụ thể:
+
 \begin{itemize}
+    \item \textbf{Tuyệt đối tránh hi sinh quân:} Các đại kiện tướng thường sử dụng các nước hi sinh (sacrifices) - đổi quân có giá trị để đạt lợi thế vị trí hoặc tấn công. Tuy nhiên, Alpha-Beta với hàm đánh giá dựa trên Material sẽ \textit{không bao giờ} cân nhắc các nước này nếu lợi ích không rõ ràng trong vòng 4-5 nước tiếp theo. Ví dụ, hi sinh Tượng để phá vỡ cấu trúc phòng thủ của Vua đối phương - một chiến thuật cổ điển - sẽ bị Alpha-Beta đánh giá là "thua" nếu đường chiếu bí nằm ngoài độ sâu tìm kiếm.
+    
+    \item \textbf{Không nhận ra kế hoạch dài hạn:} Trong các ván đấu cao cấp, kế hoạch chiến lược có thể kéo dài 15-20 nước (như phá vỡ cấu trúc tốt, khóa quân đối phương, chuẩn bị đột phá). Alpha-Beta $d=4$ chỉ "thấy" 4 nước đi, khiến nó hoàn toàn mù lòa trước các ý đồ sâu xa này.
+    
+    \item \textbf{Thiếu các "quiet move" tinh tế:} Nhiều nước đi mạnh nhất không phải là ăn quân hay chiếu, mà là các nước di chuyển vị trí tạo áp lực (quiet moves). Hàm đánh giá của chúng tôi chủ yếu dựa vào PST cố định, nên thường đánh giá thấp các nước đi này.
+    
     \item \textbf{Giải pháp:} Chúng tôi phải thực hiện hàng trăm ván đấu thử nghiệm giữa các phiên bản AI khác nhau (A/B Testing) để tìm ra bộ thông số cân bằng nhất.
-    \item \textbf{Kết quả:} Bộ thông số hiện tại cho phép AI chơi ổn định, nhưng vẫn còn khoảng cách xa so với tri thức của một kiện tướng thực thụ.
+    \item \textbf{Kết quả:} Bộ thông số hiện tại cho phép AI chơi ổn định, nhưng vẫn còn khoảng cách xa so với tri thức của một kiện tướng thực thụ. Phân tích benchmark cho thấy 100\% ván thắng của AI đều theo mô thức "an toàn": phát triển quân $\rightarrow$ giành ưu thế vật chất nhỏ $\rightarrow$ đơn giản hóa $\rightarrow$ thắng tàn cuộc. Không có một ván nào chứa các nước đi đột phá hay bất ngờ.
 \end{itemize}
 
-\subsection{Vấn đề thiếu hình phạt độ sâu chiếu bí (Mate Distance Penalty)}
+\subsection{Vấn đề đánh giá Promotion không chính xác (Đã cải thiện)}
+
+Một hạn chế quan trọng của phiên bản đầu tiên là hàm đánh giá không nhận biết được tiềm năng phong cấp của các quân tốt. Hàm chỉ tính điểm cho các quân hiện có trên bàn cờ, không dự đoán tương lai về các tốt sắp phong cấp.
+
+\begin{itemize}
+    \item \textbf{Biểu hiện của vấn đề:} AI không ưu tiên đẩy tốt tự do (passed pawn) đến ô phong cấp cho đến khi tốt đã ở rank 7, sát vị trí phong cấp. Điều này dẫn đến việc bỏ lỡ các cơ hội thắng ván trong tàn cuộc khi có tốt tự do ở rank 5-6.
+    
+    \item \textbf{Nguyên nhân kỹ thuật:} Hàm đánh giá ban đầu chỉ gán điểm cố định cho từng quân tốt dựa trên PST, không phân biệt giữa tốt tự do (không có tốt địch chặn đường) và tốt bị chặn.
+    
+    \item \textbf{Giải pháp đã triển khai:} Nhóm đã bổ sung hàm \texttt{evaluate\_promotion\_potential()} vào \texttt{evaluation.py}: phát hiện passed pawn, gán bonus 50-190 điểm tùy khoảng cách đến ô phong cấp (rank 7: +170, rank 6: +150, rank 5: +130), và thêm bonus nhỏ cho advanced pawns.
+    
+    \item \textbf{Kết quả:} AI giờ nhận ra và ưu tiên đẩy tốt tự do từ rank 5-6, cải thiện khả năng dứt điểm trong tàn cuộc. Tốc độ đánh giá giảm khoảng 5-10\%.
+\end{itemize}
+
+\subsection{Vấn đề thiếu hình phạt độ sâu chiếu bí}
 Trong quá trình thử nghiệm ban đầu, nhóm nhận thấy một hành vi kỳ lạ của AI khi đã ở thế thắng tuyệt đối: AI liên tục di chuyển quân Vua qua lại giữa hai ô thay vì thực hiện nước chiếu bí kết thúc ván đấu ngay lập tức.
 
 Nguyên nhân kỹ thuật nằm ở việc hàm đánh giá gán một điểm số cố định (ví dụ: 99,999) cho mọi trạng thái chiếu bí. Đối với Alpha-Beta, chiếu bí ở độ sâu 1 hay độ sâu 5 đều mang lại giá trị như nhau. Do đó, AI không có động lực để chọn con đường ngắn nhất. Nó trở nên "nhẩn nhơ" vì tin rằng kết quả cuối cùng vẫn là chiến thắng. Để khắc phục, nhóm đã phải điều chỉnh hàm Negamax để cộng/trừ thêm giá trị độ sâu còn lại vào điểm chiếu bí, từ đó ép AI ưu tiên các nước đi dẫn đến chiến thắng nhanh nhất.

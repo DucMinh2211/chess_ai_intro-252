@@ -3,7 +3,9 @@
 Mặc dù hệ thống đã hoạt động ổn định, vẫn tồn tại những rào cản ngăn cản nó trở thành một engine chuyên nghiệp.
 
 \subsection{Thiếu sự hỗ trợ từ Deep Learning}
-Hàm Heuristic của chúng tôi hoàn toàn là "tĩnh" và "tuyến tính". Trong thực tế, giá trị của một quân cờ phụ thuộc vào sự tương tác phi tuyến tính phức tạp với các quân cờ khác (ví dụ: một quân Mã bị khóa hoàn toàn sẽ có giá trị bằng 0 dù nó vẫn đứng trên bàn cờ). Việc thiếu một mạng thần kinh để đánh giá thế trận (như NNUE) khiến AI dễ bị đánh lừa trong các thế trận đóng (closed positions).
+Hàm Heuristic của chúng tôi hoàn toàn là "tĩnh" và "tuyến tính". Trong thực tế, giá trị của một quân cờ phụ thuộc vào sự tương tác phi tuyến tính phức tạp với các quân cờ khác (ví dụ: một quân Mã bị khóa hoàn toàn sẽ có giá trị bằng 0 dù nó vẫn đứng trên bàn cờ). Việc thiếu một mạng thần kinh để đánh giá thế trận khiến AI dễ bị đánh lừa trong các thế trận đóng.
+
+Vấn đề nghiêm trọng nhất là với \textbf{thế trận đóng và bí bách} - những vị trí mà chuỗi tốt của hai bên khóa chặt lẫn nhau, hạn chế không gian di chuyển. Hàm đánh giá tĩnh không thể nhận ra: (1) các quân bị "khóa chết" như Tượng bị khóa bởi tốt của chính mình (bad bishop) hay Mã ở góc bị bao vây - những quân này thực tế có giá trị ~0 nhưng vẫn được tính đầy đủ 330-320 điểm; (2) cấu trúc tốt yếu hoặc các điểm yếu vĩnh viễn không có tốt bảo vệ; (3) sự khác biệt giữa chuỗi tốt liên kết mạnh và các tốt rời rạc yếu. Kết quả là AI có thể "nghĩ" mình đang thắng +200 centipawn vì có thêm một quân Tượng, nhưng thực tế quân đó đã bị khóa chết và AI đang thua. Các engine hiện đại như Stockfish với NNUE đã giải quyết vấn đề này bằng cách học từ hàng tỷ vị trí thực tế, tự động nhận diện các pattern phi tuyến này.
 
 \subsection{Vấn đề về bộ nhớ của MCTS}
 MCTS xây dựng cây tìm kiếm trong bộ nhớ RAM. Với hàng chục ngàn iterations, cây này có thể phình to rất nhanh. 
