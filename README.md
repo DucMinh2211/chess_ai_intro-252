@@ -6,6 +6,10 @@ A high-performance Chess engine implementation in Python featuring multiple AI a
 
 ## 🎬 Featured Demo Match
 
+### Video Demo
+https://github.com/user-attachments/assets/d8928556-ecc3-4123-b90a-fc29000c0c02
+
+### Match Log (PGN)
 In this high-stakes game, the engine (playing Black) defeats **Wendy (1500 Elo)** on Chess.com using a combination of tactical precision and aggressive endgame pushing.
 
 <details>
